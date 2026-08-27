@@ -2236,8 +2236,40 @@ function loadState(){
 }
 state = loadState();
 
-/* ---------- autosave ---------- */
+/* ---------- autosave ----------
+   Everything the app knows lives in one `state` object, written to
+   localStorage immediately and mirrored to Firestore a moment later.
+
+   WHY THIS IS CHUNKED. The workspace used to go to Firestore as one
+   structured document. Two hard Firestore limits made that fail as soon
+   as a client had more than one profile carrying keywords and scans:
+
+     - a document may not exceed 1 MiB;
+     - a document may not exceed 40,000 index entries, and every listing
+       name in every scan point counts as one, so a single 7x7 scan can
+       contribute thousands.
+
+   Past either limit Firestore rejects the write outright. The first
+   profile's keywords were already in the database from an earlier,
+   smaller save, so they kept coming back, while the second location's
+   keywords and scans never reached the cloud at all — and were then
+   wiped locally by the next sign-in, which pulled the stale copy down.
+
+   The state is now serialised to a JSON string and split across as many
+   chunk documents as it needs. Firestore does not index a string field
+   longer than 1500 bytes, so the index-entry limit no longer applies,
+   and each chunk sits comfortably inside the size limit. save() also
+   stamps state.updatedAt, and sign-in refuses to adopt a cloud copy
+   older than what this browser is already holding.
+--------------------------------------------------------------------------- */
+const STATE_DOC = 'meridianState';
+const STATE_CHUNK_PREFIX = 'meridianStateChunk';
+const CLOUD_CHUNK = 700000;    /* ~0.7 MB per document, well under the 1 MiB cap */
+const CLOUD_BATCH_MAX = 8;     /* keeps one atomic commit under the request cap */
+
 let pillTimer = null;
+let cloudBusy = false, cloudDirty = false, cloudSaveFailed = false, localWriteFailed = false;
+
 function pill(mode){
   const p = $('savePill');
   if (!p) return;
@@ -2245,8 +2277,20 @@ function pill(mode){
   p.querySelector('span').textContent = mode === 'saving' ? 'Saving' : (mode === 'saved' ? 'All changes saved' : 'Autosave on');
 }
 function save(){
+  state.updatedAt = Date.now();
   memoryStore = state;
-  try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
+  try{
+    localStorage.setItem(STORE_KEY, JSON.stringify(state));
+    localWriteFailed = false;
+  }catch(e){
+    /* A full localStorage used to fail silently, which looked exactly like
+       "my keywords didn't save". Say so once, then carry on — the cloud
+       copy below is the real record. */
+    if (!localWriteFailed){
+      localWriteFailed = true;
+      toast('This browser\u2019s storage is full \u2014 your work is being kept in the cloud instead.', 'err');
+    }
+  }
   pill('saving');
   clearTimeout(pillTimer);
   pillTimer = setTimeout(() => pill('saved'), 420);
@@ -2257,19 +2301,97 @@ function queueCloud(){
   clearTimeout(fbTimer);
   fbTimer = setTimeout(cloudSave, 900);
 }
+/* Closing the tab a second after adding a keyword used to lose it, because
+   the mirror to Firestore is debounced. Push whatever is pending first. */
+function flushCloud(){
+  if (!fbReady || !fbDb) return;
+  clearTimeout(fbTimer);
+  cloudSave();
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushCloud(); });
+window.addEventListener('pagehide', flushCloud);
+
 function setSync(msg, kind){
   const el = $('syncPill');
   if (!el) return;
   el.className = 'sync' + (kind ? ' ' + kind : '');
   el.querySelector('span').textContent = msg;
 }
+function chunkState(json){
+  const chunks = [];
+  for (let i = 0; i < json.length; i += CLOUD_CHUNK) chunks.push(json.slice(i, i + CLOUD_CHUNK));
+  if (!chunks.length) chunks.push('');
+  return chunks;
+}
 async function cloudSave(){
   if (!fbUid || !fbDb) return;
+  /* Chunk writes must not interleave, or two saves could leave half of one
+     copy and half of another in the database. */
+  if (cloudBusy){ cloudDirty = true; return; }
+  cloudBusy = true;
   try{
-    await fbDb.collection('users').doc(fbUid).collection('data').doc('meridianState').set(JSON.parse(JSON.stringify(state)));
-    setSync('Synced to cloud', 'ok');
+    const chunks = chunkState(JSON.stringify(state));
+    const col = fbDb.collection('users').doc(fbUid).collection('data');
+    const head = {
+      format: 'chunked-json-v1',
+      chunks: chunks.length,
+      updatedAt: state.updatedAt || Date.now(),
+      updatedBy: fbUid
+    };
+    if (chunks.length <= CLOUD_BATCH_MAX){
+      /* One atomic commit: the header can never point at a half-written set. */
+      const batch = fbDb.batch();
+      chunks.forEach((part, i) => batch.set(col.doc(STATE_CHUNK_PREFIX + i), {part}));
+      batch.set(col.doc(STATE_DOC), head);
+      await batch.commit();
+    } else {
+      /* Enormous workspaces: write the parts first, the header last, so a
+         failure part-way through never advertises a chunk count that isn't
+         there. A torn copy fails JSON.parse on read and is ignored. */
+      for (let i = 0; i < chunks.length; i++) await col.doc(STATE_CHUNK_PREFIX + i).set({part: chunks[i]});
+      await col.doc(STATE_DOC).set(head);
+    }
+    cloudSaveFailed = false;
+    setSync('Synced to cloud \u00b7 ' + new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), 'ok');
   }catch(err){
-    setSync('Cloud save failed — saved in this browser. Check your Firestore rules.', 'err');
+    const msg = (err && err.message) ? err.message : 'unknown error';
+    setSync('Cloud save failed \u2014 ' + msg, 'err');
+    /* This used to be a quiet line in the sidebar footer, which is how a
+       failing save went unnoticed for so long. Say it out loud, once. */
+    if (!cloudSaveFailed){
+      cloudSaveFailed = true;
+      toast('Couldn\u2019t save to the cloud: ' + msg + ' \u2014 your work is still in this browser.', 'err');
+    }
+  }finally{
+    cloudBusy = false;
+    if (cloudDirty){ cloudDirty = false; queueCloud(); }
+  }
+}
+/* Reads either format: the chunked JSON written above, or the single
+   structured document written by earlier versions of this file. */
+async function cloudLoadState(){
+  if (!fbUid || !fbDb) return null;
+  const col = fbDb.collection('users').doc(fbUid).collection('data');
+  const headSnap = await col.doc(STATE_DOC).get();
+  if (!headSnap.exists) return null;
+  const head = headSnap.data() || {};
+  if (head.format !== 'chunked-json-v1') return head;   /* legacy structured copy */
+  const n = head.chunks || 0;
+  if (!n) return null;
+  const snaps = await Promise.all(
+    Array.from({length: n}, (_, i) => col.doc(STATE_CHUNK_PREFIX + i).get())
+  );
+  let json = '';
+  for (const s of snaps){
+    if (!s.exists) return null;                          /* incomplete set — ignore it */
+    json += (s.data() && s.data().part) || '';
+  }
+  try{
+    const parsed = JSON.parse(json);
+    if (parsed && typeof parsed.updatedAt !== 'number' && head.updatedAt) parsed.updatedAt = head.updatedAt;
+    return parsed;
+  }catch(e){
+    return null;                                         /* torn copy — keep local, next save repairs it */
   }
 }
 /* ---------- auth gate: everyone signs in to the same shared account, so
@@ -2299,24 +2421,32 @@ function authErrorMessage(err){
 async function loadCloudForUser(user){
   fbUid = user.uid;
   try{
-    const snap = await fbDb.collection('users').doc(fbUid).collection('data').doc('meridianState').get();
-    if (snap.exists){
-      const remote = snap.data();
-      if (remote && Array.isArray(remote.clients)){
+    const remote = await cloudLoadState();
+    if (remote){
+      if (Array.isArray(remote.clients)){
         remote.settings = Object.assign({}, DEFAULTS, remote.settings || {});
         remote.clients.forEach(migrateClient);
-        const localCount = state.clients.length;
-        if (remote.clients.length >= localCount){
+        const localStamp = state.updatedAt || 0;
+        const remoteStamp = remote.updatedAt || 0;
+        /* Newest copy wins. The old rule compared client COUNTS, which are
+           identical when you add a second profile or more keywords to an
+           existing one — so a stale cloud copy would overwrite newer local
+           work and the extra keywords disappeared. The count rule is kept
+           only for data old enough to carry no timestamp at all. */
+        const adopt = (localStamp || remoteStamp)
+          ? remoteStamp >= localStamp
+          : remote.clients.length >= state.clients.length;
+        if (adopt){
           state = remote;
           try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
         }
       }
       setSync('Synced to cloud', 'ok');
     } else {
-      setSync('Cloud ready — this browser is the first copy', 'ok');
+      setSync('Cloud ready \u2014 this browser is the first copy', 'ok');
     }
   }catch(err){
-    setSync('Cloud read failed — working locally. Check your Firestore rules.', 'err');
+    setSync('Cloud read failed \u2014 working locally. Check your Firestore rules.', 'err');
     fbReady = true;
     hydrateSettings(); renderAll(); setScreen('app');
     return;
