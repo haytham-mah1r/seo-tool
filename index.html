@@ -564,6 +564,8 @@ kbd{font-family:var(--mono);font-size:10.5px;background:#fff;border:1px solid va
 .note strong{color:var(--ink);}
 .foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-3);line-height:1.9;}
 .foot a{color:var(--brand-deep);text-decoration:none;font-weight:600;}
+.linky{background:none;border:none;padding:0;font:inherit;color:var(--brand-deep);font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px;}
+.linky:hover{color:var(--brand);}
 .foot a:hover{text-decoration:underline;}
 
 .spin{width:13px;height:13px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;}
@@ -659,20 +661,276 @@ kbd{font-family:var(--mono);font-size:10.5px;background:#fff;border:1px solid va
 }
 
 /* ---------------- auth gate (loading / sign-in) ---------------- */
-.hidden{display:none !important;}
-body.embed-mode .module-switch{display:none !important;}
-body.embed-mode #seoRail, body.embed-mode #seoStage{display:none !important;}
-
 /* ==========================================================================
-   SEO CLIENTS MODULE — additive styles only; nothing above this point
-   was touched, so the GBP Reporter looks and behaves exactly as before.
+   WORKSPACE SHELL — hub launcher + persistent top navigation
+   Three products, one console: GBP Tracker · Live SERP · SEO Clients.
+   The hub is the front door; the top nav is the way home from anywhere.
    ========================================================================== */
-.module-switch{grid-column:1/-1; background:var(--console); border-bottom:1px solid var(--console-line); padding:10px 20px;}
-.module-switch-inner{display:flex; gap:8px; max-width:520px;}
-.mod-btn{flex:1; display:flex; align-items:center; justify-content:center; gap:8px; padding:9px 14px; border-radius:var(--r-md); border:1px solid var(--console-line); background:var(--console-2); color:var(--console-ink-2); font-family:var(--ui); font-size:12.5px; font-weight:600; cursor:pointer; transition:all .15s var(--ease);}
-.mod-btn svg{width:15px; height:15px; stroke:currentColor; flex:none;}
-.mod-btn:hover{color:var(--console-ink); border-color:#465162;}
-.mod-btn.on{background:var(--brand); border-color:var(--brand); color:#fff;}
+.hidden{display:none !important;}
+body.embed-mode .topnav{display:none !important;}
+body.embed-mode #seoRail,  body.embed-mode #seoStage,
+body.embed-mode #serpRail, body.embed-mode #serpStage,
+body.embed-mode .hub{display:none !important;}
+
+/* ---------------- hub launcher ---------------- */
+.hub{
+  position:fixed; inset:0; z-index:8600; display:none; overflow-y:auto;
+  background:#0e1216;
+  background-image:
+    radial-gradient(900px 540px at 16% -10%, rgba(232,119,34,.20), transparent 62%),
+    radial-gradient(780px 520px at 94% 6%,  rgba(72,142,190,.13), transparent 60%),
+    linear-gradient(165deg,#1c232b 0%,#12171d 54%,#0b0f13 100%);
+}
+.hub.on{display:block; animation:hubIn .4s var(--ease);}
+@keyframes hubIn{from{opacity:0}to{opacity:1}}
+.hub::before{
+  content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
+  background-image:
+    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+  background-size:48px 48px;
+  -webkit-mask-image:radial-gradient(ellipse at 50% 26%, #000 0%, transparent 76%);
+          mask-image:radial-gradient(ellipse at 50% 26%, #000 0%, transparent 76%);
+}
+.hub-inner{
+  position:relative; z-index:1; max-width:1180px; margin:0 auto;
+  padding:24px 26px 48px; min-height:100%; display:flex; flex-direction:column;
+}
+
+.hub-top{display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:44px;}
+.hub-brand{display:flex; align-items:center; gap:12px; min-width:0;}
+.hub-mark{
+  height:40px; flex:none; background:#fff; border-radius:11px; padding:7px 11px;
+  display:grid; place-items:center; box-shadow:0 10px 26px -12px rgba(0,0,0,.8);
+}
+.hub-mark img{height:22px; width:auto; display:block;}
+.hub-brand h1{font-family:var(--display); font-size:15.5px; font-weight:600; margin:0; color:#fff; letter-spacing:-.012em;}
+.hub-brand p{margin:2px 0 0; font-size:9.5px; letter-spacing:.18em; text-transform:uppercase; color:#7d8b98; font-weight:700;}
+.hub-user{display:flex; align-items:center; gap:10px; flex:none;}
+.hub-mail{
+  font-family:var(--mono); font-size:11px; color:#8e9dab; background:rgba(255,255,255,.035);
+  border:1px solid rgba(255,255,255,.08); padding:6px 12px; border-radius:20px; max-width:230px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.hub-ghost{
+  background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1); color:#c3ced8;
+  border-radius:10px; padding:8px 14px; font-family:var(--ui); font-size:11.5px; font-weight:600;
+  cursor:pointer; transition:all .16s var(--ease);
+}
+.hub-ghost:hover{background:rgba(255,255,255,.09); color:#fff; border-color:rgba(255,255,255,.2);}
+
+.hub-hero{max-width:660px; margin-bottom:34px;}
+.hub-eyebrow{
+  display:inline-flex; align-items:center; gap:8px; font-size:10px; letter-spacing:.2em;
+  text-transform:uppercase; font-weight:700; color:var(--brand-hi); margin-bottom:14px;
+}
+.hub-eyebrow::before{content:""; width:22px; height:1px; background:var(--brand); display:block;}
+.hub-hero h2{
+  font-family:var(--display); font-size:34px; line-height:1.15; font-weight:600;
+  letter-spacing:-.025em; color:#fff; margin:0 0 12px;
+}
+.hub-hero p{margin:0; font-size:14px; line-height:1.7; color:#94a3b1; max-width:560px;}
+
+.hub-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+.hub-card{
+  position:relative; text-align:left; cursor:pointer; overflow:hidden;
+  display:flex; flex-direction:column; gap:0; padding:26px 24px 22px;
+  border-radius:20px; border:1px solid rgba(255,255,255,.09);
+  background:linear-gradient(168deg, rgba(255,255,255,.062) 0%, rgba(255,255,255,.022) 46%, rgba(255,255,255,.012) 100%);
+  color:var(--console-ink); font-family:var(--ui);
+  box-shadow:0 22px 50px -30px rgba(0,0,0,.9);
+  transition:transform .28s var(--ease), border-color .28s var(--ease), box-shadow .28s var(--ease), background .28s var(--ease);
+  opacity:0; animation:hubCard .5s var(--ease) forwards;
+}
+.hub-card:nth-child(1){animation-delay:.06s}
+.hub-card:nth-child(2){animation-delay:.14s}
+.hub-card:nth-child(3){animation-delay:.22s}
+@keyframes hubCard{from{opacity:0; transform:translateY(16px) scale(.985)}to{opacity:1; transform:none}}
+.hub-card::after{
+  content:""; position:absolute; left:0; right:0; top:0; height:2px;
+  background:linear-gradient(90deg,var(--brand),var(--brand-hi));
+  transform:scaleX(0); transform-origin:left; transition:transform .34s var(--ease);
+}
+.hub-card:hover, .hub-card:focus-visible{
+  transform:translateY(-5px);
+  border-color:rgba(232,119,34,.45);
+  background:linear-gradient(168deg, rgba(232,119,34,.13) 0%, rgba(255,255,255,.03) 52%, rgba(255,255,255,.014) 100%);
+  box-shadow:0 34px 66px -30px rgba(0,0,0,.95), 0 0 0 1px rgba(232,119,34,.18);
+  outline:none;
+}
+.hub-card:hover::after, .hub-card:focus-visible::after{transform:scaleX(1);}
+.hub-card:active{transform:translateY(-2px);}
+
+.hub-key{
+  position:absolute; top:18px; right:18px; font-family:var(--mono); font-size:10px; font-weight:700;
+  color:#6f7d8b; border:1px solid rgba(255,255,255,.12); background:rgba(0,0,0,.22);
+  width:22px; height:22px; border-radius:7px; display:grid; place-items:center;
+  transition:all .22s var(--ease);
+}
+.hub-card:hover .hub-key{color:#fff; border-color:rgba(232,119,34,.6); background:rgba(232,119,34,.22);}
+.hub-ico{
+  width:52px; height:52px; border-radius:15px; flex:none; display:grid; place-items:center;
+  background:linear-gradient(140deg,#2c3540,#1e252d); border:1px solid rgba(255,255,255,.09);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 12px 26px -16px rgba(0,0,0,.9);
+  margin-bottom:20px; transition:all .28s var(--ease);
+}
+.hub-ico svg{width:25px; height:25px; stroke:var(--brand-hi); fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; transition:stroke .28s var(--ease);}
+.hub-card:hover .hub-ico{
+  background:linear-gradient(140deg,var(--brand-hi),var(--brand-deep));
+  border-color:rgba(255,255,255,.22);
+  box-shadow:0 16px 34px -14px rgba(232,119,34,.7);
+  transform:translateY(-2px);
+}
+.hub-card:hover .hub-ico svg{stroke:#fff;}
+
+.hub-title{font-family:var(--display); font-size:19px; font-weight:600; letter-spacing:-.015em; color:#fff; margin:0 0 6px;}
+.hub-sub{font-size:11px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--brand-hi); margin:0 0 12px;}
+.hub-desc{font-size:12.8px; line-height:1.68; color:#93a2b0; margin:0 0 18px; flex:1;}
+
+.hub-meta{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:18px; min-height:24px;}
+.hub-chip{
+  font-family:var(--mono); font-size:10px; letter-spacing:.02em; color:#b6c3cf;
+  background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.09);
+  padding:4px 9px; border-radius:20px; white-space:nowrap;
+}
+.hub-chip b{color:#fff; font-weight:700;}
+
+.hub-go{
+  display:inline-flex; align-items:center; gap:8px; font-size:12.5px; font-weight:700;
+  color:#fff; letter-spacing:.01em; padding-top:16px; border-top:1px solid rgba(255,255,255,.08);
+  transition:gap .24s var(--ease), color .24s var(--ease);
+}
+.hub-go svg{width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;}
+.hub-card:hover .hub-go{gap:12px; color:var(--brand-hi);}
+
+.hub-foot{
+  margin-top:auto; padding-top:34px; display:flex; align-items:center; justify-content:space-between;
+  gap:14px; flex-wrap:wrap; font-size:11.5px; color:#6f7d8b;
+}
+.hub-foot .sync{margin-bottom:0;}
+.hub-kbd{display:flex; align-items:center; gap:7px;}
+.hub-kbd kbd{
+  font-family:var(--mono); font-size:10px; color:#b6c3cf; background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.11); border-bottom-width:2px; padding:2px 7px; border-radius:6px;
+}
+@media (max-width:960px){
+  .hub-grid{grid-template-columns:1fr;}
+  .hub-hero h2{font-size:26px;}
+  .hub-inner{padding:20px 18px 36px;}
+  .hub-desc{margin-bottom:14px;}
+}
+
+/* ---------------- persistent top navigation ---------------- */
+.topnav{
+  grid-column:1/-1; position:sticky; top:0; z-index:1200;
+  background:linear-gradient(180deg,#1b222a,#141920);
+  border-bottom:1px solid #0b0f13;
+  box-shadow:0 1px 0 rgba(255,255,255,.04) inset, 0 10px 30px -22px rgba(0,0,0,.9);
+  display:flex; align-items:center; gap:14px; padding:9px 18px;
+}
+.tn-home{
+  display:flex; align-items:center; gap:9px; flex:none; cursor:pointer;
+  background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1);
+  color:#cbd6e0; border-radius:11px; padding:8px 13px 8px 10px;
+  font-family:var(--ui); font-size:12.5px; font-weight:600;
+  transition:all .16s var(--ease);
+}
+.tn-home svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; flex:none;}
+.tn-home:hover{background:var(--brand); border-color:var(--brand); color:#fff; transform:translateY(-1px);}
+.tn-home:hover svg{stroke:#fff;}
+.tn-sep{width:1px; height:24px; background:rgba(255,255,255,.1); flex:none;}
+.tn-mods{display:flex; gap:3px; background:rgba(0,0,0,.28); border:1px solid rgba(255,255,255,.06); padding:3px; border-radius:13px; flex:none;}
+.tn-mod{
+  display:flex; align-items:center; gap:8px; padding:8px 15px; border-radius:10px;
+  border:none; background:none; color:#8e9dab; cursor:pointer;
+  font-family:var(--ui); font-size:12.5px; font-weight:600; white-space:nowrap;
+  transition:all .18s var(--ease);
+}
+.tn-mod svg{width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; flex:none;}
+.tn-mod:hover{color:#eaf0f5; background:rgba(255,255,255,.05);}
+.tn-mod.on{
+  background:linear-gradient(140deg,var(--brand-hi),var(--brand-deep));
+  color:#fff; box-shadow:0 8px 18px -10px rgba(232,119,34,.9);
+}
+.tn-right{margin-left:auto; display:flex; align-items:center; gap:9px; flex:none;}
+.tn-mail{
+  font-family:var(--mono); font-size:10.5px; color:#7d8b98; max-width:190px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.tn-btn{
+  background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1); color:#b6c3cf;
+  border-radius:9px; padding:7px 12px; font-family:var(--ui); font-size:11.5px; font-weight:600;
+  cursor:pointer; transition:all .16s var(--ease);
+}
+.tn-btn:hover{background:rgba(255,255,255,.09); color:#fff; border-color:rgba(255,255,255,.2);}
+@media (max-width:880px){
+  .topnav{flex-wrap:wrap; gap:9px; padding:9px 14px;}
+  .tn-sep{display:none;}
+  .tn-mods{order:3; width:100%;}
+  .tn-mod{flex:1; justify-content:center; padding:8px 8px;}
+  .tn-mod span{display:none;}
+  .tn-mail{display:none;}
+}
+
+/* ---------------- module nav pills (GBP / Live SERP) ---------------- */
+.gmode, .serp-mode{
+  border:none; background:none; padding:7px 14px; border-radius:9px; cursor:pointer;
+  font-family:var(--ui); font-size:12.5px; font-weight:600; color:var(--ink-2);
+  transition:all .18s var(--ease); white-space:nowrap;
+}
+.gmode:hover, .serp-mode:hover{color:var(--ink);}
+.gmode.on, .serp-mode.on{background:var(--card); color:var(--brand-deep); box-shadow:var(--sh-1);}
+
+/* ---------------- rail: home button + section nav (Live SERP) ---------------- */
+.rail-home{
+  display:flex; align-items:center; gap:9px; margin:12px 16px 0; padding:9px 11px;
+  border-radius:var(--r-md); cursor:pointer; text-align:left; width:calc(100% - 32px);
+  background:rgba(255,255,255,.035); border:1px solid var(--console-line); color:#c3ced8;
+  font-family:var(--ui); font-size:12px; font-weight:600; transition:all .16s var(--ease);
+}
+.rail-home svg{width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; flex:none;}
+.rail-home:hover{background:var(--brand); border-color:var(--brand); color:#fff;}
+.rail-home small{margin-left:auto; font-family:var(--mono); font-size:9.5px; opacity:.65; font-weight:600;}
+
+.rail-nav{padding:4px 10px 8px; display:flex; flex-direction:column; gap:3px;}
+.rail-nav-btn{
+  display:flex; align-items:center; gap:10px; padding:9px 11px; border-radius:var(--r-md);
+  border:1px solid transparent; background:none; color:#b9c5d0; cursor:pointer; text-align:left;
+  font-family:var(--ui); font-size:12.5px; font-weight:600; transition:all .15s var(--ease);
+}
+.rail-nav-btn svg{width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; flex:none;}
+.rail-nav-btn small{display:block; font-weight:500; font-size:10.5px; color:#7d8b98; margin-top:1px;}
+.rail-nav-btn:hover{background:#232b34; color:#fff;}
+.rail-nav-btn.on{background:linear-gradient(90deg,rgba(232,119,34,.22),rgba(232,119,34,.04)); color:#fff; box-shadow:inset 2px 0 0 var(--brand);}
+.rail-nav-btn.on small{color:#c7a184;}
+
+.recent-row{
+  display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:9px; cursor:pointer;
+  color:#b9c5d0; font-size:12px; transition:all .15s var(--ease);
+}
+.recent-row:hover{background:#232b34; color:#fff;}
+.recent-row .dot{width:6px; height:6px; border-radius:50%; background:var(--brand); flex:none; box-shadow:0 0 0 3px rgba(232,119,34,.18);}
+.recent-row .rq{flex:1; min-width:0;}
+.recent-row .rq b{display:block; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:#e3eaf0;}
+.recent-row .rq span{display:block; font-family:var(--mono); font-size:9.5px; color:#7d8b98; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+
+/* ---------------- module intro banner (top of each stage) ---------------- */
+.mod-intro{
+  display:flex; align-items:center; gap:16px; padding:18px 22px; margin-bottom:20px;
+  background:linear-gradient(120deg,#fff 0%,var(--brand-wash) 130%);
+  border:1px solid var(--line); border-left:3px solid var(--brand);
+  border-radius:var(--r-lg); box-shadow:var(--sh-1);
+}
+.mod-intro-ico{
+  width:42px; height:42px; border-radius:13px; flex:none; display:grid; place-items:center;
+  background:linear-gradient(140deg,var(--brand-hi),var(--brand-deep));
+  box-shadow:0 10px 20px -10px rgba(184,87,15,.7);
+}
+.mod-intro-ico svg{width:21px; height:21px; stroke:#fff; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round;}
+.mod-intro-txt{flex:1; min-width:0;}
+.mod-intro-txt h3{font-family:var(--display); font-size:15.5px; font-weight:600; margin:0 0 3px; letter-spacing:-.012em;}
+.mod-intro-txt p{margin:0; font-size:12.5px; color:var(--ink-2); line-height:1.6;}
+@media (max-width:640px){ .mod-intro{padding:14px 16px; gap:12px;} .mod-intro-ico{width:36px;height:36px;} }
 
 .seo-profile-head{display:flex; align-items:center; gap:16px; padding:20px 22px; background:var(--card); border:1px solid var(--line); border-radius:var(--r-xl); box-shadow:var(--sh-2); margin-bottom:18px;}
 .seo-avatar{width:52px; height:52px; border-radius:16px; flex:none; display:grid; place-items:center; font-family:var(--display); font-size:19px; font-weight:600; color:#fff; background:linear-gradient(135deg,var(--brand-hi),var(--brand-deep)); box-shadow:0 8px 18px -8px rgba(184,87,15,.55);}
@@ -965,6 +1223,7 @@ body.embed-mode #seoRail, body.embed-mode #seoStage{display:none !important;}
 .map-card.fullscreen #map,.map-card.fullscreen #cmpMap{flex:1;height:auto !important;width:100%;}
 .map-card.fullscreen .map-head,.map-card.fullscreen .legend{flex:none;}
 body.map-locked{overflow:hidden;}
+body.hub-locked{overflow:hidden;}
 
 /* ---- public embed view: one GBP's expanded map, no login, no app chrome ---- */
 body.embed-mode .rail,
@@ -1014,18 +1273,108 @@ body.embed-mode #mapCard{box-shadow:none;}
   </div>
 </div>
 
+<!-- ==================== WORKSPACE HUB (post-login launcher) ==================== -->
+<div class="hub" id="hubScreen">
+  <div class="hub-inner">
+
+    <header class="hub-top">
+      <div class="hub-brand">
+        <div class="hub-mark"><img id="hubLogo" alt="EDGE Marketing &amp; Design"/></div>
+        <div>
+          <h1>EDGE Workspace</h1>
+          <p>Search intelligence console</p>
+        </div>
+      </div>
+      <div class="hub-user">
+        <span class="hub-mail" id="hubMail"></span>
+        <button class="hub-ghost" id="hubSignOutBtn">Sign out</button>
+      </div>
+    </header>
+
+    <div class="hub-hero">
+      <span class="hub-eyebrow">Choose a workspace</span>
+      <h2>Three tools. One shared database.</h2>
+      <p>Everything your team adds in any of these lives in the same cloud record — every client, profile, keyword and scan is visible to everyone, on every computer, the moment it's saved.</p>
+    </div>
+
+    <div class="hub-grid" id="hubGrid">
+
+      <button class="hub-card" data-go="gbp" type="button">
+        <span class="hub-key">1</span>
+        <span class="hub-ico">
+          <svg viewBox="0 0 24 24"><path d="M12 21s-7-5.33-7-11a7 7 0 0 1 14 0c0 5.67-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+        </span>
+        <p class="hub-sub">Local rank grids</p>
+        <h3 class="hub-title">GBP Tracker</h3>
+        <p class="hub-desc">Every Google Business Profile your clients own, each with its own geo-grid, keyword set and scan history. Map where the listing wins and where it disappears — then share a live report link.</p>
+        <span class="hub-meta" id="hubMetaGbp"></span>
+        <span class="hub-go">Open GBP Tracker <svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
+      </button>
+
+      <button class="hub-card" data-go="serp" type="button">
+        <span class="hub-key">2</span>
+        <span class="hub-ico">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/><path d="M11 7.6v2.2M11 11h2.4"/></svg>
+        </span>
+        <p class="hub-sub">Search from anywhere</p>
+        <h3 class="hub-title">Live SERP</h3>
+        <p class="hub-desc">Pin a search to an exact latitude and longitude and see Google exactly as someone standing there would. Plus a keyword finder that pulls everything a site already ranks for.</p>
+        <span class="hub-meta" id="hubMetaSerp"></span>
+        <span class="hub-go">Open Live SERP <svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
+      </button>
+
+      <button class="hub-card" data-go="seo" type="button">
+        <span class="hub-key">3</span>
+        <span class="hub-ico">
+          <svg viewBox="0 0 24 24"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>
+        </span>
+        <p class="hub-sub">Keyword rank reporting</p>
+        <h3 class="hub-title">SEO Clients</h3>
+        <p class="hub-desc">The reporting side: every retainer client, the queries you track for them, the locations each query is measured from, current and historical positions — exportable to a clean spreadsheet.</p>
+        <span class="hub-meta" id="hubMetaSeo"></span>
+        <span class="hub-go">Open SEO Clients <svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
+      </button>
+
+    </div>
+
+    <div class="hub-foot">
+      <div class="sync" id="hubSyncPill"><i></i><span>Checking cloud sync…</span></div>
+      <div class="hub-kbd">
+        <span>Press</span><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><span>to jump straight in · <kbd>Alt</kbd>+<kbd>H</kbd> returns here from anywhere</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <div class="shell hidden" id="appShell">
-  <!-- ==================== MODULE SWITCH ==================== -->
-  <div class="module-switch" id="moduleSwitch">
-    <div class="module-switch-inner">
-      <button class="mod-btn on" data-module="gbp" id="modBtnGbp">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M12 21s-7-5.33-7-11a7 7 0 0 1 14 0c0 5.67-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
-        GBP Locations
+  <!-- ==================== PERSISTENT TOP NAV ==================== -->
+  <div class="topnav" id="topNav">
+    <button class="tn-home" id="tnHome" type="button" title="Back to all apps (Alt+H)">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.6"/><rect x="14" y="3" width="7" height="7" rx="1.6"/><rect x="3" y="14" width="7" height="7" rx="1.6"/><rect x="14" y="14" width="7" height="7" rx="1.6"/></svg>
+      All apps
+    </button>
+
+    <div class="tn-sep"></div>
+
+    <div class="tn-mods" id="tnMods">
+      <button class="tn-mod on" data-module="gbp" id="modBtnGbp" type="button" title="GBP Tracker (Alt+1)">
+        <svg viewBox="0 0 24 24"><path d="M12 21s-7-5.33-7-11a7 7 0 0 1 14 0c0 5.67-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+        <span>GBP Tracker</span>
       </button>
-      <button class="mod-btn" data-module="seo" id="modBtnSeo">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>
-        SEO Clients
+      <button class="tn-mod" data-module="serp" id="modBtnSerp" type="button" title="Live SERP (Alt+2)">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>
+        <span>Live SERP</span>
       </button>
+      <button class="tn-mod" data-module="seo" id="modBtnSeo" type="button" title="SEO Clients (Alt+3)">
+        <svg viewBox="0 0 24 24"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>
+        <span>SEO Clients</span>
+      </button>
+    </div>
+
+    <div class="tn-right">
+      <span class="tn-mail" id="tnMail"></span>
+      <button class="tn-btn" id="tnSignOut" type="button">Sign out</button>
     </div>
   </div>
 
@@ -1034,10 +1383,15 @@ body.embed-mode #mapCard{box-shadow:none;}
     <div class="rail-brand">
       <div class="rail-mark"><img id="brandLogo" alt="EDGE Marketing &amp; Design"/></div>
       <div>
-        <h1>GBP Reporter</h1>
-        <p>by EDGE Marketing</p>
+        <h1>GBP Tracker</h1>
+        <p>Local rank grids</p>
       </div>
     </div>
+
+    <button class="rail-home" id="gbpRailHome" type="button">
+      <svg viewBox="0 0 24 24"><path d="M11 5l-6 6 6 6"/><path d="M5 11h13"/></svg>
+      All apps <small>ALT+H</small>
+    </button>
 
     <div class="rail-search">
       <div class="rail-search-box">
@@ -1070,15 +1424,22 @@ body.embed-mode #mapCard{box-shadow:none;}
   <main class="stage" id="gbpStage">
     <header class="topbar">
       <div class="crumbs" id="crumbs"><span class="c-main">No client selected</span></div>
-      <nav class="modes">
-        <button class="mode on" data-view="tracker">Rank grid</button>
-        <button class="mode" data-view="checker">SERP checker</button>
-        <button class="mode" data-view="keywords">Keyword finder</button>
+      <nav class="modes" id="gbpModes">
+        <button class="gmode on" data-gview="focus" type="button">Rank grid</button>
+        <button class="gmode" data-gview="overview" type="button">Compare profiles</button>
       </nav>
       <div class="save-pill" id="savePill"><i></i><span>Autosave on</span></div>
     </header>
 
     <div class="panels">
+
+      <div class="mod-intro">
+        <div class="mod-intro-ico"><svg viewBox="0 0 24 24"><path d="M12 21s-7-5.33-7-11a7 7 0 0 1 14 0c0 5.67-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+        <div class="mod-intro-txt">
+          <h3>GBP Tracker</h3>
+          <p>Clients, their Google Business Profiles, and a geo-grid scan for every keyword. Pick a profile on the left to open its grid, or switch to <b>Compare profiles</b> to measure every location a client owns against one keyword at once.</p>
+        </div>
+      </div>
 
       <!-- ============ TRACKER ============ -->
       <div class="view on" id="view-tracker">
@@ -1525,6 +1886,77 @@ body.embed-mode #mapCard{box-shadow:none;}
         </div>
       </div>
 
+      <div class="foot">
+        <strong style="color:var(--ink)">GBP Tracker.</strong> One client can hold as many Google Business Profiles as they own — each keeps its own grid centre, keyword list and scan history, so nothing gets mixed together. Need to look at a raw Google result instead? <button class="linky" id="gbpToSerpBtn" type="button">Open Live SERP</button>.<br/>
+        <a href="https://nominatim.org/" target="_blank" rel="noopener">Geocoding by OpenStreetMap Nominatim</a> · Built for <a href="https://www.edgemarketing.ca/" target="_blank" rel="noopener">EDGE Marketing &amp; Design Inc.</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- ==================== LIVE SERP RAIL ==================== -->
+  <aside class="rail" id="serpRail" style="display:none">
+    <div class="rail-brand">
+      <div class="rail-mark"><img id="serpBrandLogo" alt="EDGE Marketing &amp; Design"/></div>
+      <div>
+        <h1>Live SERP</h1>
+        <p>Search from anywhere</p>
+      </div>
+    </div>
+
+    <button class="rail-home" id="serpRailHome" type="button">
+      <svg viewBox="0 0 24 24"><path d="M11 5l-6 6 6 6"/><path d="M5 11h13"/></svg>
+      All apps <small>ALT+H</small>
+    </button>
+
+    <div class="rail-head"><span>Sections</span></div>
+    <div class="rail-nav" id="serpRailNav">
+      <button class="rail-nav-btn on" data-serpview="checker" type="button">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>
+        <span>Search preview<small>Pin a query to a coordinate</small></span>
+      </button>
+      <button class="rail-nav-btn" data-serpview="keywords" type="button">
+        <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h11M4 17h7"/></svg>
+        <span>Keyword finder<small>What a site already ranks for</small></span>
+      </button>
+    </div>
+
+    <div class="rail-head">
+      <span>Recent searches</span>
+      <button class="rail-add" id="serpClearRecents" title="Clear recent searches" type="button">&times;</button>
+    </div>
+    <div class="rail-tree" id="serpRecents"></div>
+
+    <div class="rail-foot">
+      <div class="sync ok" id="serpSyncPill"><i></i><span>Live results &mdash; pinned by coordinate</span></div>
+      <div class="mini-row">
+        <button class="mini-btn" id="serpToGbpBtn">Open GBP Tracker</button>
+        <button class="mini-btn" id="serpSignOutBtn">Sign out</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ==================== LIVE SERP STAGE ==================== -->
+  <main class="stage" id="serpStage" style="display:none">
+    <header class="topbar">
+      <div class="crumbs" id="serpCrumbs">
+        <span class="c-main">Live SERP</span><span class="c-sep">/</span><span class="c-sub" id="serpCrumbSub">Search preview</span>
+      </div>
+      <nav class="modes">
+        <button class="serp-mode on" data-serpview="checker" type="button">Search preview</button>
+        <button class="serp-mode" data-serpview="keywords" type="button">Keyword finder</button>
+      </nav>
+      <div class="save-pill saved"><i></i><span>Live</span></div>
+    </header>
+
+    <div class="panels">
+      <div class="mod-intro">
+        <div class="mod-intro-ico"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg></div>
+        <div class="mod-intro-txt">
+          <h3>Live SERP</h3>
+          <p>Nothing here is stored against a client — it's a scratchpad for looking at real Google results from an exact place, and for pulling a site's existing keyword footprint. Send anything useful straight over to GBP Tracker.</p>
+        </div>
+      </div>
+
       <!-- ============ SERP CHECKER ============ -->
       <div class="view" id="view-checker">
         <div class="tool-wrap">
@@ -1652,9 +2084,14 @@ body.embed-mode #mapCard{box-shadow:none;}
       <div class="rail-mark"><img id="seoBrandLogo" alt="EDGE Marketing &amp; Design"/></div>
       <div>
         <h1>SEO Clients</h1>
-        <p>Keyword rank tracker</p>
+        <p>Keyword rank reporting</p>
       </div>
     </div>
+
+    <button class="rail-home" id="seoRailHome" type="button">
+      <svg viewBox="0 0 24 24"><path d="M11 5l-6 6 6 6"/><path d="M5 11h13"/></svg>
+      All apps <small>ALT+H</small>
+    </button>
 
     <div class="rail-search">
       <div class="rail-search-box">
@@ -1692,6 +2129,14 @@ body.embed-mode #mapCard{box-shadow:none;}
     </header>
 
     <div class="panels">
+
+      <div class="mod-intro">
+        <div class="mod-intro-ico"><svg viewBox="0 0 24 24"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg></div>
+        <div class="mod-intro-txt">
+          <h3>SEO Clients</h3>
+          <p>The reporting side of the workspace: every retainer client, the queries you track for them, the locations each query is measured from, and the full position history — ready to export.</p>
+        </div>
+      </div>
 
       <!-- ============ DASHBOARD ============ -->
       <div class="seo-view on" id="seoview-dashboard">
@@ -2068,6 +2513,9 @@ if (window.EDGE_LOGO){
   const bl = document.getElementById('brandLogo'); if (bl) bl.src = window.EDGE_LOGO;
   const ll = document.getElementById('loadingLogo'); if (ll) ll.src = window.EDGE_LOGO;
   const lgl = document.getElementById('loginLogo'); if (lgl) lgl.src = window.EDGE_LOGO;
+  const hbl = document.getElementById('hubLogo'); if (hbl) hbl.src = window.EDGE_LOGO;
+  const sbl = document.getElementById('seoBrandLogo'); if (sbl) sbl.src = window.EDGE_LOGO;
+  const spl = document.getElementById('serpBrandLogo'); if (spl) spl.src = window.EDGE_LOGO;
 }
 const uid = () => 'id-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,7);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -2312,10 +2760,13 @@ document.addEventListener('visibilitychange', () => { if (document.visibilitySta
 window.addEventListener('pagehide', flushCloud);
 
 function setSync(msg, kind){
-  const el = $('syncPill');
-  if (!el) return;
-  el.className = 'sync' + (kind ? ' ' + kind : '');
-  el.querySelector('span').textContent = msg;
+  /* one status, echoed everywhere it is visible: the GBP rail and the hub */
+  ['syncPill', 'hubSyncPill'].forEach(id => {
+    const el = $(id);
+    if (!el) return;
+    el.className = 'sync' + (kind ? ' ' + kind : '');
+    el.querySelector('span').textContent = msg;
+  });
 }
 function chunkState(json){
   const chunks = [];
@@ -2404,8 +2855,15 @@ function setAppVisible(on){
 function setScreen(which){
   $('loadingScreen').classList.toggle('on', which === 'loading');
   $('loginScreen').classList.toggle('on', which === 'login');
-  setAppVisible(which === 'app');
-  if (which === 'app') setTimeout(() => { map.invalidateSize(); cmpMap.invalidateSize(); }, 80);
+  const inApp = (which === 'app' || which === 'hub');
+  setAppVisible(inApp);
+  /* Signing in lands on the workspace hub, never straight into a tool. The
+     shell is mounted underneath it so whichever module is picked is already
+     laid out and only has to be revealed. */
+  if (typeof window.EDGE_showHub === 'function' && !document.body.classList.contains('embed-mode')){
+    window.EDGE_showHub(which === 'app' || which === 'hub');
+  }
+  if (inApp) setTimeout(() => { try{ map.invalidateSize(); cmpMap.invalidateSize(); }catch(e){} }, 80);
 }
 function authErrorMessage(err){
   const code = (err && err.code) || '';
@@ -2697,15 +3155,9 @@ function renderCrumbs(){
       esc(g ? (g.name || g.bizName || 'Untitled profile') : '—') + '</span>';
   }
 }
-document.querySelectorAll('.mode').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.mode').forEach(b => b.classList.remove('on'));
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('on'));
-    btn.classList.add('on');
-    $('view-' + btn.dataset.view).classList.add('on');
-    if (btn.dataset.view === 'tracker') setTimeout(() => { map.invalidateSize(); cmpMap.invalidateSize(); }, 60);
-  });
-});
+/* The old three-tab strip (Rank grid / SERP checker / Keyword finder) is gone:
+   the SERP tools are their own top-level module now. GBP's two views are wired
+   up in the workspace script at the bottom of the file. */
 
 /* ==========================================================================
    STEP ACCORDION
@@ -5474,7 +5926,7 @@ $('kwSendBtn').addEventListener('click', async () => {
   save(); renderAll();
   btn.disabled = false;
   setStatus('kwStatus', 'Added ' + added + ' keywords to ' + bizName + '. Opening the rank grid…', 'ok');
-  setTimeout(() => document.querySelector('.mode[data-view="tracker"]').click(), 500);
+  setTimeout(() => { if (window.EDGE && EDGE.go) EDGE.go('gbp'); }, 500);
 });
 
 /* ==========================================================================
@@ -5788,7 +6240,8 @@ function ensureSeoState(){
   if (!Array.isArray(state.seoClients)) state.seoClients = [];
   state.seoClients.forEach(migrateSeoClient);
   if (state.activeSeoClientId === undefined) state.activeSeoClientId = null;
-  if (!state.seoModule) state.seoModule = 'gbp';
+  if (!state.seoModule || !MODULES[state.seoModule]) state.seoModule = 'gbp';
+  if (!Array.isArray(state.serpRecents)) state.serpRecents = [];
 }
 ensureSeoState();
 
@@ -7202,44 +7655,287 @@ function renderSeoAll(){
   $('seoProviderHint').style.display = providerReady() ? 'none' : 'block';
 }
 
-function seoSetModule(m){
+/* ==========================================================================
+   WORKSPACE ROUTER
+   Three top-level products share one shell, one state object and one cloud
+   document:
+
+     gbp   GBP Tracker   clients → profiles → keywords → geo-grid scans
+     serp  Live SERP     coordinate-pinned Google previews + keyword finder
+     seo   SEO Clients   retainer reporting: queries, locations, positions
+
+   Signing in always lands on the hub, and the hub is one click (or Alt+H)
+   away from every screen in the app. Nothing below moves data between
+   modules — it only decides which rail + stage pair is on screen.
+   ========================================================================== */
+const MODULES = {
+  gbp:  { rail:'gbpRail',  stage:'gbpStage',  label:'GBP Tracker' },
+  serp: { rail:'serpRail', stage:'serpStage', label:'Live SERP'   },
+  seo:  { rail:'seoRail',  stage:'seoStage',  label:'SEO Clients' }
+};
+let hubOpen = false;
+
+/* ---------- hub ---------- */
+function renderHubMeta(){
+  ensureSeoState();
+  const nClients = state.clients.length;
+  const nGbps    = state.clients.reduce((n, c) => n + (c.gbps ? c.gbps.length : 0), 0);
+  const nGbpKw   = state.clients.reduce((n, c) =>
+                     n + (c.gbps || []).reduce((m, g) => m + (g.keywords ? g.keywords.length : 0), 0), 0);
+  const nScans   = state.clients.reduce((n, c) =>
+                     n + (c.gbps || []).reduce((m, g) =>
+                       m + (g.keywords || []).reduce((k, w) => k + (w.scans ? w.scans.length : 0), 0), 0), 0);
+
+  const nSeo     = state.seoClients.length;
+  const nSeoKw   = state.seoClients.reduce((n, c) => n + (c.keywords ? c.keywords.length : 0), 0);
+  const nSeoLoc  = state.seoClients.reduce((n, c) =>
+                     n + (c.keywords || []).reduce((m, k) => m + (k.locations ? k.locations.length : 0), 0), 0);
+
+  const nRecent  = state.serpRecents.length;
+
+  const chip = (v, l) => '<span class="hub-chip"><b>' + esc(String(v)) + '</b> ' + esc(l) + '</span>';
+  const plural = (n, one, many) => n === 1 ? one : many;
+
+  const gbpEl  = $('hubMetaGbp');
+  const serpEl = $('hubMetaSerp');
+  const seoEl  = $('hubMetaSeo');
+
+  if (gbpEl) gbpEl.innerHTML =
+    chip(nClients, plural(nClients, 'client', 'clients')) +
+    chip(nGbps, plural(nGbps, 'profile', 'profiles')) +
+    chip(nGbpKw, plural(nGbpKw, 'keyword', 'keywords')) +
+    (nScans ? chip(nScans, plural(nScans, 'scan', 'scans')) : '');
+
+  if (serpEl) serpEl.innerHTML =
+    '<span class="hub-chip">Search preview</span>' +
+    '<span class="hub-chip">Keyword finder</span>' +
+    (nRecent ? chip(nRecent, 'recent') : '');
+
+  if (seoEl) seoEl.innerHTML =
+    chip(nSeo, plural(nSeo, 'client', 'clients')) +
+    chip(nSeoKw, plural(nSeoKw, 'query', 'queries')) +
+    chip(nSeoLoc, plural(nSeoLoc, 'location', 'locations'));
+}
+
+function showHub(on){
+  const hub = $('hubScreen');
+  if (!hub) return;
+  if (document.body.classList.contains('embed-mode')) on = false;
+  hubOpen = !!on;
+  hub.classList.toggle('on', hubOpen);
+  document.body.classList.toggle('hub-locked', hubOpen);
+  if (!hubOpen) return;
+  renderHubMeta();
+  const mail = fbAuth && fbAuth.currentUser ? (fbAuth.currentUser.email || '') : '';
+  const hm = $('hubMail'); if (hm) hm.textContent = mail;
+  /* mirror whatever the GBP rail is reporting about cloud sync */
+  const src = $('syncPill'), dst = $('hubSyncPill');
+  if (src && dst){ dst.className = src.className; dst.querySelector('span').textContent = src.querySelector('span').textContent; }
+  const first = hub.querySelector('.hub-card');
+  if (first) setTimeout(() => { try{ first.focus({preventScroll:true}); }catch(e){} }, 60);
+}
+window.EDGE_showHub = showHub;
+
+/* ---------- Live SERP: section switching ---------- */
+function serpShowView(v){
+  const view = (v === 'keywords') ? 'keywords' : 'checker';
+  state.serpView = view; save();
+  document.querySelectorAll('#serpRailNav .rail-nav-btn, #serpStage .serp-mode').forEach(b =>
+    b.classList.toggle('on', b.dataset.serpview === view));
+  const chk = $('view-checker'), kws = $('view-keywords');
+  if (chk) chk.classList.toggle('on', view === 'checker');
+  if (kws) kws.classList.toggle('on', view === 'keywords');
+  const sub = $('serpCrumbSub');
+  if (sub) sub.textContent = view === 'keywords' ? 'Keyword finder' : 'Search preview';
+}
+document.querySelectorAll('#serpRailNav .rail-nav-btn, #serpStage .serp-mode').forEach(b => {
+  b.addEventListener('click', () => serpShowView(b.dataset.serpview));
+});
+
+/* ---------- Live SERP: recent searches ---------- */
+function renderSerpRecents(){
+  ensureSeoState();
+  const wrap = $('serpRecents');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  if (!state.serpRecents.length){
+    wrap.innerHTML = '<div class="rail-empty"><b>No searches yet</b>Every search you open is kept here so you can jump straight back to the same query and coordinate.</div>';
+    return;
+  }
+  state.serpRecents.forEach(r => {
+    const row = document.createElement('div');
+    row.className = 'recent-row';
+    const where = r.lat != null && r.lng != null
+      ? Number(r.lat).toFixed(4) + ', ' + Number(r.lng).toFixed(4)
+      : (r.loc || r.canonical || 'no pin');
+    row.innerHTML = '<span class="dot"></span><span class="rq"><b></b><span></span></span>';
+    row.querySelector('b').textContent = r.q || '(empty search)';
+    row.querySelector('.rq span').textContent = where;
+    row.title = 'Reload this search';
+    row.addEventListener('click', () => {
+      $('q').value = r.q || '';
+      $('loc').value = r.loc || '';
+      $('lat').value = r.lat != null ? r.lat : '';
+      $('lng').value = r.lng != null ? r.lng : '';
+      $('canonical').value = r.canonical || '';
+      if (r.regionIdx != null) $('region').value = r.regionIdx;
+      serpShowView('checker');
+      if (typeof updatePreview === 'function') updatePreview();
+      toast('Search restored', 'ok');
+    });
+    wrap.appendChild(row);
+  });
+}
+function pushSerpRecent(){
+  ensureSeoState();
+  const q = $('q').value.trim();
+  if (!q) return;
+  const latRaw = parseFloat($('lat').value), lngRaw = parseFloat($('lng').value);
+  const entry = {
+    id: uid(),
+    q,
+    loc: $('loc').value.trim(),
+    lat: isNaN(latRaw) ? null : latRaw,
+    lng: isNaN(lngRaw) ? null : lngRaw,
+    canonical: $('canonical').value.trim(),
+    regionIdx: $('region').value,
+    at: Date.now()
+  };
+  const key = r => (r.q || '').toLowerCase() + '|' + (r.lat || '') + '|' + (r.lng || '');
+  state.serpRecents = state.serpRecents.filter(r => key(r) !== key(entry));
+  state.serpRecents.unshift(entry);
+  if (state.serpRecents.length > 14) state.serpRecents.length = 14;
+  save(); renderSerpRecents();
+}
+if ($('goBtn')) $('goBtn').addEventListener('click', () => { try{ pushSerpRecent(); }catch(e){} });
+if ($('openBtn')) $('openBtn').addEventListener('click', () => { try{ pushSerpRecent(); }catch(e){} });
+if ($('serpClearRecents')) $('serpClearRecents').addEventListener('click', () => {
+  ensureSeoState();
+  if (!state.serpRecents.length) return;
+  if (!confirm('Clear the recent search list?')) return;
+  state.serpRecents = []; save(); renderSerpRecents();
+});
+
+/* ---------- GBP Tracker: two views, no SERP tools ---------- */
+function syncGbpModes(){
+  const v = state.view === 'overview' ? 'overview' : 'focus';
+  document.querySelectorAll('#gbpModes .gmode').forEach(b => b.classList.toggle('on', b.dataset.gview === v));
+}
+document.querySelectorAll('#gbpModes .gmode').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (!state.clients.length){ toast('Add a client first', 'err'); return; }
+    if (!activeClient()) state.activeClientId = state.clients[0].id;
+    selectClient(state.activeClientId, btn.dataset.gview);
+    syncGbpModes();
+    setTimeout(() => { try{ map.invalidateSize(); cmpMap.invalidateSize(); }catch(e){} }, 60);
+  });
+});
+
+/* ---------- the router itself ---------- */
+function setModule(m){
+  if (!MODULES[m]) m = 'gbp';
   state.seoModule = m; save();
-  document.querySelectorAll('.mod-btn').forEach(b => b.classList.toggle('on', b.dataset.module === m));
-  $('gbpRail').style.display = m === 'gbp' ? '' : 'none';
-  $('gbpStage').style.display = m === 'gbp' ? '' : 'none';
-  $('seoRail').style.display = m === 'seo' ? '' : 'none';
-  $('seoStage').style.display = m === 'seo' ? '' : 'none';
+
+  document.querySelectorAll('.tn-mod').forEach(b => b.classList.toggle('on', b.dataset.module === m));
+  Object.keys(MODULES).forEach(key => {
+    const on = (key === m);
+    const rail = $(MODULES[key].rail), stage = $(MODULES[key].stage);
+    if (rail)  rail.style.display  = on ? '' : 'none';
+    if (stage) stage.style.display = on ? '' : 'none';
+  });
+  if (window.EDGE_LOGO){
+    ['seoBrandLogo','serpBrandLogo'].forEach(id => { const l = $(id); if (l && !l.src) l.src = window.EDGE_LOGO; });
+  }
+  window.scrollTo({top:0, behavior:'auto'});
+  const mailEl = $('tnMail');
+  if (mailEl) mailEl.textContent = (fbAuth && fbAuth.currentUser) ? (fbAuth.currentUser.email || '') : '';
+
   if (m === 'seo'){
-    if (window.EDGE_LOGO){ const l = $('seoBrandLogo'); if (l) l.src = window.EDGE_LOGO; }
-    // Always land on the first client's Dashboard — a predictable "home"
-    // for the tab rather than wherever it happened to be left before.
-    if (state.seoClients.length) state.activeSeoClientId = state.seoClients[0].id;
+    /* Always land on the first client's Dashboard — a predictable "home"
+       for the module rather than wherever it happened to be left before. */
+    if (state.seoClients.length && !state.seoClients.some(c => c.id === state.activeSeoClientId)){
+      state.activeSeoClientId = state.seoClients[0].id;
+    }
+    if (!state.activeSeoClientId && state.seoClients.length) state.activeSeoClientId = state.seoClients[0].id;
     seoShowTab('dashboard');
     renderSeoAll();
+  } else if (m === 'serp'){
+    serpShowView(state.serpView || 'checker');
+    renderSerpRecents();
   } else {
-    // Always land on the first client's first profile, on the Rank grid —
-    // same idea as above, applied to the GBP side.
-    if (state.clients.length){
-      const first = state.clients[0];
-      state.activeClientId = first.id;
-      state.activeGbpId = first.gbps.length ? first.gbps[0].id : null;
-    }
-    state.view = 'focus';
-    // Fully re-render the GBP view every time we switch back to it. A
-    // Leaflet map that's been sitting inside a display:none container can
-    // stay visually stale/blank even after invalidateSize() alone — this
-    // makes it look like data is missing when it never left state.clients.
-    // renderAll() only redraws from current state; it never touches data.
+    /* Land on the first client's first profile, on the rank grid. */
+    if (state.clients.length && !activeClient()) state.activeClientId = state.clients[0].id;
+    const c = activeClient();
+    if (c && !c.gbps.some(g => g.id === state.activeGbpId)) state.activeGbpId = c.gbps.length ? c.gbps[0].id : null;
+    if (state.view !== 'overview') state.view = 'focus';
+    /* Fully re-render the GBP view every time we switch back to it. A Leaflet
+       map that's been sitting inside a display:none container can stay
+       visually stale even after invalidateSize() alone — which looks like
+       missing data when nothing ever left state.clients. renderAll() only
+       redraws from current state; it never touches data. */
     seoOrigRenderAll();
-    document.querySelectorAll('.mode').forEach(b => b.classList.toggle('on', b.dataset.view === 'tracker'));
-    document.querySelectorAll('#view-tracker, #view-checker, #view-keywords').forEach(v => v.classList.toggle('on', v.id === 'view-tracker'));
-    if (typeof map !== 'undefined' && map){
-      setTimeout(() => { try{ map.invalidateSize(); cmpMap.invalidateSize(); }catch(e){} }, 60);
-    }
+    syncGbpModes();
+    setTimeout(() => { try{ map.invalidateSize(); cmpMap.invalidateSize(); }catch(e){} }, 60);
   }
 }
-$('modBtnGbp').addEventListener('click', () => seoSetModule('gbp'));
-$('modBtnSeo').addEventListener('click', () => seoSetModule('seo'));
+
+/* one public entry point everything else routes through */
+window.EDGE = {
+  go(m){ showHub(false); setModule(m); },
+  hub(){ showHub(true); },
+  current(){ return state.seoModule; }
+};
+
+/* ---------- wiring ---------- */
+document.querySelectorAll('.tn-mod').forEach(b => {
+  b.addEventListener('click', () => EDGE.go(b.dataset.module));
+});
+document.querySelectorAll('#hubGrid .hub-card').forEach(card => {
+  card.addEventListener('click', () => EDGE.go(card.dataset.go));
+});
+['tnHome','gbpRailHome','seoRailHome','serpRailHome'].forEach(id => {
+  const b = $(id); if (b) b.addEventListener('click', () => showHub(true));
+});
+['hubSignOutBtn','tnSignOut','seoSignOutBtn','serpSignOutBtn'].forEach(id => {
+  const b = $(id);
+  if (b) b.addEventListener('click', () => { const s = $('signOutBtn'); if (s) s.click(); });
+});
+if ($('serpToGbpBtn')) $('serpToGbpBtn').addEventListener('click', () => EDGE.go('gbp'));
+if ($('gbpToSerpBtn')) $('gbpToSerpBtn').addEventListener('click', () => EDGE.go('serp'));
+
+/* ---------- keyboard: 1/2/3 on the hub, Alt+1/2/3 and Alt+H anywhere ---------- */
+document.addEventListener('keydown', e => {
+  if (document.body.classList.contains('embed-mode')) return;
+  const shell = $('appShell');
+  if (!shell || shell.classList.contains('hidden')) return;
+  const t = e.target;
+  const typing = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable);
+
+  if (e.altKey && !e.ctrlKey && !e.metaKey){
+    const k = (e.key || '').toLowerCase();
+    const jump = {'1':'gbp', '2':'serp', '3':'seo'};
+    if (jump[k]){ e.preventDefault(); EDGE.go(jump[k]); return; }
+    if (k === 'h' || k === '0'){ e.preventDefault(); showHub(true); return; }
+  }
+
+  if (!hubOpen || typing) return;
+  if (e.key === 'Escape'){ e.preventDefault(); showHub(false); return; }
+  const pick = {'1':'gbp', '2':'serp', '3':'seo'};
+  if (pick[e.key]){ e.preventDefault(); EDGE.go(pick[e.key]); }
+});
+
+/* ---------- boot ---------- */
+function bootWorkspace(){
+  ensureSeoState();
+  setModule(MODULES[state.seoModule] ? state.seoModule : 'gbp');
+  renderSerpRecents();
+  const mail = fbAuth && fbAuth.currentUser ? (fbAuth.currentUser.email || '') : '';
+  const tm = $('tnMail'); if (tm) tm.textContent = mail;
+  /* If the shell is already up (offline fallback signed us straight in
+     before this script parsed), put the hub in front of it. */
+  const shell = $('appShell');
+  if (shell && !shell.classList.contains('hidden')) showHub(true);
+}
 
 /* renderAll() runs every time the GBP tool finishes loading cloud data
    (after sign-in) and every time a .json backup is imported — both replace
@@ -7253,6 +7949,13 @@ renderAll = function(){
   ensureSeoState();
   renderSeoTree();
   if ($('seoStage').style.display !== 'none') renderSeoAll();
+  /* the other two modules' chrome reads from the same state object, so it
+     has to be refreshed here too — otherwise a cloud load or a .json import
+     leaves the GBP view pills, the recent-search list and the hub counters
+     describing the state that was just thrown away. */
+  syncGbpModes();
+  renderSerpRecents();
+  if (hubOpen) renderHubMeta();
 };
 
 fillRegions($('seoNewRegion'));
@@ -7261,7 +7964,7 @@ fillRegions($('seoApplyLocRegion'));
 
 // Never take over the public embed view — it uses the same #appShell.
 if (typeof EMBED_ID === 'undefined' || !EMBED_ID){
-  seoSetModule(state.seoModule === 'seo' ? 'seo' : 'gbp');
+  bootWorkspace();
 }
 
 })();
