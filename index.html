@@ -6240,7 +6240,12 @@ function ensureSeoState(){
   if (!Array.isArray(state.seoClients)) state.seoClients = [];
   state.seoClients.forEach(migrateSeoClient);
   if (state.activeSeoClientId === undefined) state.activeSeoClientId = null;
-  if (!state.seoModule || !MODULES[state.seoModule]) state.seoModule = 'gbp';
+  /* Written as a literal list on purpose: ensureSeoState() runs at the top of
+     this script, long before the MODULES map further down has been
+     initialised, so reading MODULES here would hit the temporal dead zone and
+     kill the rest of the module — but only for people who already had a saved
+     seoModule, since `!state.seoModule` short-circuits for everyone else. */
+  if (['gbp','serp','seo'].indexOf(state.seoModule) === -1) state.seoModule = 'gbp';
   if (!Array.isArray(state.serpRecents)) state.serpRecents = [];
 }
 ensureSeoState();
