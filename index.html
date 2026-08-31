@@ -277,6 +277,11 @@ input::placeholder,textarea::placeholder{color:#a9b4bd;}
 .g-inline{display:grid;grid-template-columns:1fr auto;gap:9px;align-items:end;}
 
 /* ---- resolved-coordinate readout, shared by every "Find" button ---- */
+/* An empty status line still reserves a line-box, which pushed the fields it
+   sat under out of alignment with their neighbours. The sign-in card keeps its
+   reserved space on purpose, so it is excluded. */
+.status:empty:not(.auth-status){display:none;}
+
 .geo-out{
   display:none; align-items:center; gap:9px; flex-wrap:wrap; margin-top:9px;
   padding:9px 11px; border-radius:var(--r-md);
@@ -284,6 +289,11 @@ input::placeholder,textarea::placeholder{color:#a9b4bd;}
   animation:rise .22s var(--ease);
 }
 .geo-out.on{display:flex;}
+.geo-out .geo-market{
+  font-family:var(--ui); font-size:10.5px; font-weight:700; letter-spacing:.05em;
+  text-transform:uppercase; color:var(--good); background:var(--good-wash);
+  border:1px solid #c7e6da; padding:3px 9px; border-radius:20px; white-space:nowrap; flex:none;
+}
 .geo-out .geo-coord{
   font-family:var(--mono); font-size:11.5px; font-weight:600; letter-spacing:-.01em;
   color:var(--brand-deep); background:var(--brand-wash); border:1px solid #f3d9c1;
@@ -1073,10 +1083,25 @@ body.embed-mode .hub{display:none !important;}
 
 .seo-kw-toolbar{display:flex; flex-direction:column; gap:14px;}
 .seo-kw-add{display:grid; grid-template-columns:1.3fr 1.1fr .8fr auto; gap:10px; align-items:end;}
-.seo-kw-add .f{margin:0;}
-.seo-kw-add label{font-size:10.5px;}
+.seo-kw-add > *{min-width:0;}
+/* Bottom-aligning the row only works if every cell is the same shape, so each
+   one is built the same way: a fixed 16px label line, a 6px gap, and a 38px
+   control. Left to size themselves the labels disagreed — the "optional" tag
+   renders half a point larger than the label it sits in, which was enough to
+   grow that one line box and lift the whole Starting location column above its
+   neighbours. Pinning the label height removes the argument entirely. */
+.seo-kw-add .f{margin:0; display:flex; flex-direction:column; justify-content:flex-end;}
+.seo-kw-add .f > label{
+  font-size:10.5px; line-height:16px; height:16px; margin:0 0 6px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.seo-kw-add .f > label .opt{font-size:10.5px; line-height:16px;}
 .seo-kw-add input, .seo-kw-add select{padding:10px 12px; border-radius:var(--r-sm); border:1px solid var(--line); font-family:var(--ui); font-size:13px; background:var(--card-2); width:100%; height:38px;}
-.seo-kw-add > button{height:38px;}
+.seo-kw-add > button{height:38px; align-self:end;}
+/* the Find button has to match the input it sits beside, or the whole row
+   steps down by a couple of pixels */
+.seo-kw-add .g-inline .btn{height:38px; padding:0 14px; white-space:nowrap;}
+.seo-kw-add .f > .g-inline{margin:0; height:38px; align-items:stretch;}
 .seo-kw-actions{display:flex; gap:8px; flex-wrap:wrap; padding-top:2px; border-top:1px solid var(--line-2); padding-top:14px;}
 .seo-kw-actions .btn-go{margin-right:auto;}
 .seo-scan-progress{display:flex; align-items:center; gap:10px; font-size:12px; color:var(--ink-2); background:var(--brand-wash); border-radius:var(--r-sm); padding:9px 12px;}
@@ -1188,6 +1213,7 @@ body.embed-mode .hub{display:none !important;}
 @media (max-width:900px){
   .seo-stats-grid{grid-template-columns:1fr 1fr;}
   .seo-kw-add{grid-template-columns:1fr 1fr;}
+  .seo-kw-add > button{grid-column:1 / -1;}
   .seo-lg-top{flex-wrap:wrap;}
   .seo-lg-unassigned-row{flex-wrap:wrap;}
   .seo-lg-quick-loc{width:100%; order:1;}
@@ -2059,15 +2085,15 @@ body.embed-mode #mapCard{box-shadow:none;}
               <div class="f">
                 <label for="kwLocationName">Area</label>
                 <div class="g-inline">
-                  <input id="kwLocationName" type="text" placeholder="Red Deer,Alberta,Canada" autocomplete="off"/>
+                  <input id="kwLocationName" type="text" placeholder="Red Deer, Alberta" autocomplete="off"/>
                   <button class="btn" id="kwGeocodeBtn" type="button">Find</button>
                 </div>
-                <div class="hint">Type it however you like — Find rewrites it into DataForSEO's <code>City,Region,Country</code> format and shows you the coordinates it resolved to.</div>
-                <div class="status" id="kwGeoStatus"></div>
-                <div class="geo-out" id="kwGeoOut"></div>
               </div>
               <div class="f"><label for="kwRegion">Language</label><select id="kwRegion"></select></div>
             </div>
+            <div class="status" id="kwGeoStatus"></div>
+            <div class="geo-out" id="kwGeoOut"></div>
+            <div class="hint" style="margin-bottom:14px">Type any city or address. DataForSEO Labs reports by <b>country</b>, so the market shown above is what the results describe — the coordinates are kept for the grid centre when you send keywords to a client.</div>
             <div class="g2">
               <div class="f"><label for="kwMinVolume">Minimum monthly volume</label><input id="kwMinVolume" type="text" inputmode="numeric" placeholder="0" autocomplete="off"/></div>
               <div class="f"><label for="kwMaxPosition">Highest position to include</label><input id="kwMaxPosition" type="text" inputmode="numeric" placeholder="100" autocomplete="off"/></div>
@@ -2343,8 +2369,6 @@ body.embed-mode #mapCard{box-shadow:none;}
                   <input id="seoNewLocation" type="text" placeholder="City, region, or address" autocomplete="off"/>
                   <button class="btn" id="seoNewLocFindBtn" type="button">Find</button>
                 </div>
-                <div class="status" id="seoNewLocStatus"></div>
-                <div class="geo-out" id="seoNewLocOut"></div>
               </div>
               <div class="f">
                 <label for="seoNewRegion">Region</label>
@@ -2352,6 +2376,8 @@ body.embed-mode #mapCard{box-shadow:none;}
               </div>
               <button class="btn btn-dark" id="seoAddKeywordBtn">Add keyword</button>
             </div>
+            <div class="status" id="seoNewLocStatus"></div>
+            <div class="geo-out" id="seoNewLocOut"></div>
             <div class="seo-kw-actions">
               <button class="btn btn-go" id="seoScanAllBtn">Scan all keywords</button>
               <button class="btn" id="seoBulkImportBtn">Bulk import…</button>
@@ -2667,22 +2693,55 @@ const uuleForUrl = u => u.slice(0,2) + u.slice(2).replace(/\+/g,'%2B').replace(/
    rejected outright, and guessing the punctuation is the single most common
    way a keyword lookup fails. ---------------------------------------------- */
 async function nominatim(q){
-  const res = await fetch('https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=1&q=' + encodeURIComponent(q), {headers:{Accept:'application/json'}});
+  /* accept-language=en matters more than it looks. Without it Nominatim answers
+     in the local language — a Tokyo address comes back with country "日本" — and
+     that string is then unusable as a DataForSEO location_name. Asking for
+     English once here keeps every downstream label in one language. */
+  const res = await fetch('https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&accept-language=en&limit=1&q=' + encodeURIComponent(q), {headers:{Accept:'application/json'}});
   if (!res.ok) throw new Error('HTTP ' + res.status);
   const data = await res.json();
   return data.length ? data[0] : null;
 }
 
-/* Nominatim's address object → DataForSEO's location_name. Falls back down the
-   granularity ladder (city → town → village → county) because rural addresses
-   often carry no "city" at all, and returns whatever it can: a bare country is
-   still a location DataForSEO accepts. */
-function dfsLocationName(hit){
+/* The DataForSEO Labs API — which is what the keyword finder talks to — only
+   supports COUNTRIES. "Country is the only supported location_type for this
+   API", per their locations_and_languages reference, because the Labs keyword
+   and SERP databases are built per-market rather than per-city. Sending
+   "Red Deer,Alberta,Canada" is rejected outright with Invalid Field:
+   'location_name', no matter how the punctuation is arranged.
+   So the area someone types is used for two different jobs: the coordinates
+   pin the map, and the COUNTRY it sits in is what actually goes to Labs. */
+function dfsCountryName(hit){
   const a = (hit && hit.address) || {};
-  const city    = a.city || a.town || a.village || a.municipality || a.hamlet || a.suburb || a.county || '';
-  const region  = a.state || a.province || a.region || a['state_district'] || '';
-  const country = a.country || '';
-  return [city, region, country].filter(Boolean).join(',');
+  return a.country || '';
+}
+
+/* Matching countries by NAME is what kept breaking. "Canada" happens to be
+   spelled the way DataForSEO spells it; "United States of America",
+   "The Netherlands" and "Türkiye" are not, and every one of those comes back
+   as Invalid Field: 'location_name'.
+   Numbers don't have that problem. DataForSEO's country location_code is the
+   Google geo-target ID, which is simply 2000 + the ISO-3166 numeric code — so
+   the two-letter country code Nominatim already returns can be turned into the
+   exact integer their API wants, with no spelling involved at all. */
+const ISO_NUMERIC = (function(){
+  const src = 'AD20 AE784 AF4 AG28 AI660 AL8 AM51 AO24 AQ10 AR32 AS16 AT40 AU36 AW533 AX248 AZ31 BA70 BB52 BD50 BE56 BF854 BG100 BH48 BI108 BJ204 BL652 BM60 BN96 BO68 BQ535 BR76 BS44 BT64 BV74 BW72 BY112 BZ84 CA124 CC166 CD180 CF140 CG178 CH756 CI384 CK184 CL152 CM120 CN156 CO170 CR188 CU192 CV132 CW531 CX162 CY196 CZ203 DE276 DJ262 DK208 DM212 DO214 DZ12 EC218 EE233 EG818 EH732 ER232 ES724 ET231 FI246 FJ242 FK238 FM583 FO234 FR250 GA266 GB826 GD308 GE268 GF254 GG831 GH288 GI292 GL304 GM270 GN324 GP312 GQ226 GR300 GS239 GT320 GU316 GW624 GY328 HK344 HM334 HN340 HR191 HT332 HU348 ID360 IE372 IL376 IM833 IN356 IO86 IQ368 IR364 IS352 IT380 JE832 JM388 JO400 JP392 KE404 KG417 KH116 KI296 KM174 KN659 KP408 KR410 KW414 KY136 KZ398 LA418 LB422 LC662 LI438 LK144 LR430 LS426 LT440 LU442 LV428 LY434 MA504 MC492 MD498 ME499 MF663 MG450 MH584 MK807 ML466 MM104 MN496 MO446 MP580 MQ474 MR478 MS500 MT470 MU480 MV462 MW454 MX484 MY458 MZ508 NA516 NC540 NE562 NF574 NG566 NI558 NL528 NO578 NP524 NR520 NU570 NZ554 OM512 PA591 PE604 PF258 PG598 PH608 PK586 PL616 PM666 PN612 PR630 PS275 PT620 PW585 PY600 QA634 RE638 RO642 RS688 RU643 RW646 SA682 SB90 SC690 SD729 SE752 SG702 SH654 SI705 SJ744 SK703 SL694 SM674 SN686 SO706 SR740 SS728 ST678 SV222 SX534 SY760 SZ748 TC796 TD148 TF260 TG768 TH764 TJ762 TK772 TL626 TM795 TN788 TO776 TR792 TT780 TV798 TW158 TZ834 UA804 UG800 UM581 US840 UY858 UZ860 VA336 VC670 VE862 VG92 VI850 VN704 VU548 WF876 WS882 YE887 YT175 ZA710 ZM894 ZW716';
+  const map = {};
+  src.split(' ').forEach(tok => { map[tok.slice(0,2)] = parseInt(tok.slice(2), 10); });
+  return map;
+})();
+function dfsCountryIso(hit){
+  const a = (hit && hit.address) || {};
+  return (a.country_code || '').toUpperCase();
+}
+function labsLocationCode(iso){
+  const n = ISO_NUMERIC[(iso || '').toUpperCase()];
+  return n ? 2000 + n : null;
+}
+/* DataForSEO wants a bare two-letter language code. The region picker carries
+   browser-style tags like "pt-BR", which their Labs endpoint rejects. */
+function labsLanguageCode(hl){
+  return ((hl || 'en').split('-')[0] || 'en').toLowerCase();
 }
 
 function geoOutClear(out){ const e = typeof out === 'string' ? $(out) : out; if (e){ e.classList.remove('on'); e.innerHTML = ''; } }
@@ -2703,8 +2762,18 @@ function renderGeoOut(out, g){
 
   const name = document.createElement('span');
   name.className = 'geo-name';
-  name.textContent = g.dfs || g.label;
+  name.textContent = g.label;
   name.title = g.label;
+
+  /* Only the keyword finder sets market:true — it is the one field whose value
+     is handed to a country-level API, so it is the one place worth saying out
+     loud which market the results will actually describe. */
+  let market = null;
+  if (g.market && g.country){
+    market = document.createElement('span');
+    market.className = 'geo-market';
+    market.textContent = 'Labs market: ' + g.country;
+  }
 
   const copy = document.createElement('button');
   copy.type = 'button'; copy.className = 'geo-act'; copy.textContent = 'Copy';
@@ -2724,7 +2793,9 @@ function renderGeoOut(out, g){
   view.href = 'https://www.openstreetmap.org/?mlat=' + g.lat + '&mlon=' + g.lng + '#map=14/' + g.lat + '/' + g.lng;
   view.target = '_blank'; view.rel = 'noopener';
 
-  e.appendChild(coord); e.appendChild(name); e.appendChild(copy); e.appendChild(view);
+  e.appendChild(coord);
+  if (market) e.appendChild(market);
+  e.appendChild(name); e.appendChild(copy); e.appendChild(view);
 }
 
 /* Wires one Find button to one location field. Every location input in the
@@ -2747,16 +2818,20 @@ function wireGeoFinder(cfg){
       }
       const lat = parseFloat(parseFloat(hit.lat).toFixed(7));
       const lng = parseFloat(parseFloat(hit.lon).toFixed(7));
-      const dfs = dfsLocationName(hit);
+      const country = dfsCountryName(hit);
+      const iso = dfsCountryIso(hit);
       if (cfg.lat && $(cfg.lat)) $(cfg.lat).value = lat;
       if (cfg.lng && $(cfg.lng)) $(cfg.lng).value = lng;
-      /* Only the DataForSEO-backed fields get their text rewritten — the map
-         pin fields keep whatever the person typed, since a street address is
-         more precise than the city it sits in. */
-      if (cfg.normalize === 'dfs' && dfs) input.value = dfs;
-      setStatus(cfg.status, hit.display_name, 'ok');
-      renderGeoOut(cfg.out, {lat, lng, dfs, label: hit.display_name});
-      if (typeof cfg.after === 'function') cfg.after({lat, lng, dfs, label: hit.display_name, hit});
+      /* Nothing rewrites what was typed — a street address pins more precisely
+         than the city containing it, so the text is left exactly as entered. */
+      input.dataset.geoCountry = country;
+      input.dataset.geoIso = iso;
+      input.dataset.geoLat = lat; input.dataset.geoLng = lng;
+      /* The readout already names the place, so the status line underneath it
+         would just say the same thing twice. */
+      setStatus(cfg.status, '', '');
+      renderGeoOut(cfg.out, {lat, lng, country, label: hit.display_name, market: cfg.market});
+      if (typeof cfg.after === 'function') cfg.after({lat, lng, country, label: hit.display_name, hit});
     }catch(err){
       setStatus(cfg.status, 'Lookup failed: ' + ((err && err.message) || err), 'err');
       geoOutClear(cfg.out);
@@ -2764,6 +2839,12 @@ function wireGeoFinder(cfg){
   };
   btn.addEventListener('click', run);
   input.addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); run(); } });
+  /* Editing the place invalidates the pin that was found for the old one. */
+  input.addEventListener('input', () => {
+    delete input.dataset.geoCountry; delete input.dataset.geoIso;
+    delete input.dataset.geoLat; delete input.dataset.geoLng;
+    geoOutClear(cfg.out); setStatus(cfg.status, '', '');
+  });
 }
 
 /* ==========================================================================
@@ -5816,7 +5897,7 @@ wireGeoFinder({
    also rewrites the field into the punctuation their API will accept. */
 wireGeoFinder({
   btn:'kwGeocodeBtn', input:'kwLocationName',
-  status:'kwGeoStatus', out:'kwGeoOut', normalize:'dfs'
+  status:'kwGeoStatus', out:'kwGeoOut', market:true
 });
 function buildCheckerUrl(){
   const q = $('q').value.trim();
@@ -5869,19 +5950,13 @@ $('q').addEventListener('keydown', e => { if (e.key === 'Enter') $('goBtn').clic
    TOOL: KEYWORD FINDER
    ========================================================================== */
 let kwResults = [];
-async function dfsRankedKeywords(domain, locationName, languageCode){
-  const login = (state.settings.dfsLogin || '').trim();
-  const pass = (state.settings.dfsPassword || '').trim();
-  if (!login || !pass){
-    const e = new Error('add your DataForSEO login and API password on the profile screen, step four');
-    e.fatal = true; throw e;
-  }
-  const url = (state.settings.proxyPrefix || '').trim() + 'https://api.dataforseo.com/v3/dataforseo_labs/google/ranked_keywords/live';
-  const task = {
-    target: domain, location_name: locationName, language_code: languageCode,
-    limit: 300, load_rank_absolute: true,
+/* One attempt at the Labs endpoint. Returns the task object so the caller can
+   decide whether a task-level rejection is worth retrying differently. */
+async function dfsLabsAttempt(url, login, pass, where, domain){
+  const task = Object.assign({
+    target: domain, limit: 300, load_rank_absolute: true,
     order_by: ['ranked_serp_element.serp_item.rank_absolute,asc']
-  };
+  }, where);
   let res;
   try{
     res = await fetch(url, {
@@ -5889,14 +5964,57 @@ async function dfsRankedKeywords(domain, locationName, languageCode){
       headers:{'Authorization':'Basic ' + btoa(login + ':' + pass), 'Content-Type':'application/json'},
       body: JSON.stringify([task])
     });
-  }catch(e){ throw new Error('the request was blocked by the browser — set a CORS proxy prefix on step four'); }
-  if (res.status === 401 || res.status === 403) throw new Error('DataForSEO rejected those credentials');
+  }catch(e){
+    const err = new Error('the request was blocked by the browser — set a CORS proxy prefix on step four');
+    err.fatal = true; throw err;
+  }
+  if (res.status === 401 || res.status === 403){
+    const err = new Error('DataForSEO rejected those credentials');
+    err.fatal = true; throw err;
+  }
   if (!res.ok) throw new Error('HTTP ' + res.status);
   const data = await res.json();
   if (data.status_code && data.status_code !== 20000) throw new Error('DataForSEO said: ' + (data.status_message || data.status_code));
-  const t = (data.tasks || [])[0];
-  if (t && t.status_code && t.status_code !== 20000) throw new Error('DataForSEO task error: ' + (t.status_message || t.status_code));
-  const items = (((t || {}).result || [])[0] || {}).items || [];
+  return (data.tasks || [])[0] || {};
+}
+
+/* The market and the language are the only two fields this endpoint is fussy
+   about, so rather than betting the whole lookup on one spelling, the same
+   request is tried through a short ladder: numeric country code first (the one
+   form that cannot be misspelled), then the country name, then the same pair
+   again in English. The first task that comes back clean wins, and a task that
+   is rejected costs nothing — only the successful call is billed. */
+async function dfsRankedKeywords(domain, market, languageCode){
+  const login = (state.settings.dfsLogin || '').trim();
+  const pass = (state.settings.dfsPassword || '').trim();
+  if (!login || !pass){
+    const e = new Error('add your DataForSEO login and API password on the profile screen, step four');
+    e.fatal = true; throw e;
+  }
+  const url = (state.settings.proxyPrefix || '').trim() + 'https://api.dataforseo.com/v3/dataforseo_labs/google/ranked_keywords/live';
+
+  const m = (market && typeof market === 'object') ? market : {name: market};
+  const lang = labsLanguageCode(languageCode);
+  const wheres = [];
+  const push = w => { if (!wheres.some(x => JSON.stringify(x) === JSON.stringify(w))) wheres.push(w); };
+  if (m.code) push({location_code: m.code, language_code: lang});
+  if (m.name) push({location_name: m.name, language_code: lang});
+  if (m.code) push({location_code: m.code, language_code: 'en'});
+  if (m.name) push({location_name: m.name, language_code: 'en'});
+  if (!wheres.length) throw new Error('that area didn\u2019t resolve to a country — try just the city and country');
+
+  let t = null, lastMsg = '';
+  for (let i = 0; i < wheres.length; i++){
+    t = await dfsLabsAttempt(url, login, pass, wheres[i], domain);
+    if (!t.status_code || t.status_code === 20000) break;
+    lastMsg = t.status_message || String(t.status_code);
+    t = null;
+  }
+  if (!t){
+    const shown = m.name || (m.code ? 'location ' + m.code : 'that area');
+    throw new Error('DataForSEO wouldn\u2019t accept ' + shown + ' as a market (' + lastMsg + '). Labs reports by country — try the country on its own.');
+  }
+  const items = ((t.result || [])[0] || {}).items || [];
   return items.map(it => {
     const kd = it.keyword_data || {}, info = kd.keyword_info || {};
     const serp = (it.ranked_serp_element || {}).serp_item || {};
@@ -5955,6 +6073,32 @@ function renderKwResults(){
 }
 $('kwMinVolume').addEventListener('input', renderKwResults);
 $('kwMaxPosition').addEventListener('input', renderKwResults);
+/* Turns whatever was typed in the Area box into a country DataForSEO Labs will
+   accept. If Find was already pressed the answer is sitting in the dataset;
+   otherwise the place is geocoded on the spot so nobody has to know that the
+   endpoint is country-only. */
+async function kwResolveMarket(typed){
+  const el = $('kwLocationName');
+  if (el.dataset.geoCountry || el.dataset.geoIso){
+    const iso = el.dataset.geoIso || '';
+    return {code: labsLocationCode(iso), name: el.dataset.geoCountry || '', iso};
+  }
+  const hit = await nominatim(typed);
+  const country = dfsCountryName(hit);
+  const iso = dfsCountryIso(hit);
+  if (country || iso){
+    el.dataset.geoCountry = country;
+    el.dataset.geoIso = iso;
+    renderGeoOut('kwGeoOut', {
+      lat: parseFloat(parseFloat(hit.lat).toFixed(7)),
+      lng: parseFloat(parseFloat(hit.lon).toFixed(7)),
+      country: country || iso, label: hit.display_name, market: true
+    });
+    return {code: labsLocationCode(iso), name: country, iso};
+  }
+  /* No country came back — hand the raw text over and let DataForSEO judge it. */
+  return {code: null, name: typed, iso: ''};
+}
 $('kwFindBtn').addEventListener('click', async () => {
   const domain = cleanDomain($('kwSiteUrl').value);
   const loc = $('kwLocationName').value.trim();
@@ -5963,13 +6107,16 @@ $('kwFindBtn').addEventListener('click', async () => {
   if (!loc){ setStatus('kwStatus', 'Type the area — it decides which market the keywords come from.', 'err'); return; }
   const btn = $('kwFindBtn');
   btn.disabled = true;
-  setStatus('kwStatus', 'Looking up ' + domain + ' in ' + loc + '…', 'busy');
+  setStatus('kwStatus', 'Working out which market ' + loc + ' belongs to…', 'busy');
   try{
-    const items = await dfsRankedKeywords(domain, loc, region.hl);
-    if (!items.length) setStatus('kwStatus', 'No ranked keywords came back. Check the spelling of the domain and the area.', 'err');
+    const market = await kwResolveMarket(loc);
+    const marketLabel = market.name || market.iso || loc;
+    setStatus('kwStatus', 'Looking up ' + domain + ' across ' + marketLabel + '…', 'busy');
+    const items = await dfsRankedKeywords(domain, market, region.hl);
+    if (!items.length) setStatus('kwStatus', 'No ranked keywords came back for ' + domain + ' in ' + marketLabel + '. Check the spelling of the domain.', 'err');
     else {
       mergeKw(items, 'api'); renderKwResults();
-      setStatus('kwStatus', 'Found ' + items.length + ' keywords. Filter them above, then pick the ones to track.', 'ok');
+      setStatus('kwStatus', 'Found ' + items.length + ' keywords ranking across ' + marketLabel + '. Filter them above, then pick the ones to track.', 'ok');
     }
   }catch(err){ setStatus('kwStatus', 'Lookup failed: ' + err.message, 'err'); }
   finally{ btn.disabled = false; }
