@@ -1293,6 +1293,103 @@ body.embed-mode #mapCard{box-shadow:none;}
   background:linear-gradient(160deg,#1c232b 0%,#10141a 100%);color:var(--console-ink);
   font-family:var(--ui);font-size:14px;line-height:1.6;
 }
+
+/* ==========================================================================
+   PUBLIC KEYWORD REPORT — the same location cards the tool shows, published
+   read-only at ?report=<id> so a client (or an embed widget in a report
+   platform) can open them without a login. Deliberately built from the same
+   .seo-lg-* classes as the live list: if the tool's rows change shape, the
+   published report changes with them and the two can't drift apart.
+   ========================================================================== */
+body.report-mode{background:var(--paper); overflow-y:auto;}
+body.report-mode .topnav, body.report-mode .hub,
+body.report-mode #seoRail, body.report-mode #serpRail,
+body.report-mode .toast-wrap{display:none !important;}
+.kwr-root{display:none;}
+body.report-mode .kwr-root{display:block; font-family:var(--ui); color:var(--ink);}
+
+/* Reports get embedded in narrow iframe widgets far more often than they get
+   opened full-width, so the shell stays modest and centred rather than
+   stretching to whatever the container happens to be. */
+.kwr-shell{max-width:940px; margin:0 auto; padding:26px 20px 40px;}
+
+.kwr-head{
+  display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+  background:var(--card); border:1px solid var(--line); border-radius:var(--r-lg);
+  padding:20px 24px; box-shadow:var(--sh-2); margin-bottom:16px;
+}
+.kwr-logo{width:44px; height:44px; border-radius:11px; object-fit:contain; background:var(--card-2); border:1px solid var(--line); flex:none; padding:5px;}
+.kwr-head-text{flex:1; min-width:180px;}
+.kwr-title{font-family:var(--display); font-size:21px; font-weight:600; letter-spacing:-.02em; margin:0; color:var(--ink);}
+.kwr-sub{font-size:12.5px; color:var(--ink-2); margin:5px 0 0; line-height:1.55;}
+.kwr-stamp{
+  font-size:10.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--ink-3); background:var(--card-2); border:1px solid var(--line);
+  border-radius:20px; padding:6px 12px; white-space:nowrap; flex:none;
+}
+
+.kwr-stats{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:16px;}
+.kwr-stat{background:var(--card); border:1px solid var(--line); border-radius:var(--r-md); padding:14px 16px; box-shadow:var(--sh-1);}
+.kwr-stat b{display:block; font-family:var(--display); font-size:22px; font-weight:600; letter-spacing:-.02em; color:var(--ink); line-height:1.1;}
+.kwr-stat span{display:block; font-size:10.5px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--ink-3); margin-top:5px;}
+.kwr-stat.good b{color:var(--good);}
+
+/* Read-only rows reuse the tool's row, minus every control that would imply
+   the reader can change something. */
+.kwr-root .seo-lg-card{cursor:default;}
+.kwr-root .seo-lg-row:hover{background:transparent;}
+.kwr-root .seo-lg-top{gap:12px;}
+.kwr-root .seo-lg-text{flex:1; min-width:0; font-size:13.5px; font-weight:600; color:var(--ink);}
+.kwr-rank{flex:none; display:flex; align-items:center; gap:7px;}
+.kwr-delta{font-family:var(--mono); font-size:11px; color:var(--ink-3); width:56px; text-align:right; flex:none;}
+.kwr-delta.up{color:var(--good); font-weight:700;}
+.kwr-delta.down{color:var(--bad); font-weight:700;}
+.kwr-meta{font-size:11px; color:var(--ink-3); padding-left:1px;}
+.kwr-meta a{color:var(--ink-2); text-decoration:underline; text-decoration-color:var(--line);}
+.kwr-meta a:hover{color:var(--brand-deep); text-decoration-color:var(--brand);}
+
+.kwr-foot{margin-top:20px; text-align:center; font-size:11px; color:var(--ink-3); line-height:1.7;}
+.kwr-foot a{color:var(--brand-deep); text-decoration:none;}
+.kwr-foot a:hover{text-decoration:underline;}
+
+/* In the tool one card is open at a time, so its lifted shadow reads as
+   focus. A report opens every card at once, and a dozen stacked lifts turn
+   the page to mud — so published cards stay flat. */
+.kwr-root .seo-lg-card.open{box-shadow:var(--sh-1); border-color:var(--line);}
+
+@media (max-width:760px){
+  .kwr-stats{grid-template-columns:1fr 1fr;}
+  .kwr-shell{padding:16px 12px 28px;}
+  .kwr-delta{width:auto;}
+}
+
+/* Printing a report to PDF is how most of these end up in a client's inbox,
+   so collapsed cards open up and nothing is allowed to split mid-card. */
+@media print{
+  body.report-mode{background:#fff;}
+  .kwr-shell{max-width:none; padding:0;}
+  .kwr-head, .kwr-stat, .seo-lg-card{box-shadow:none;}
+  .kwr-root .seo-lg-body{display:block !important;}
+  .seo-lg-card{break-inside:avoid; page-break-inside:avoid;}
+  .kwr-root .seo-lg-caret{display:none;}
+}
+
+/* ---- share dialog ---- */
+.kwr-loc-picker{
+  max-height:190px; overflow-y:auto; border:1px solid var(--line); border-radius:var(--r-sm);
+  background:var(--card-2); padding:9px 11px; display:flex; flex-direction:column; gap:7px;
+}
+.kwr-loc-picker label, .kwr-opt-list label{
+  display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--ink-2); cursor:pointer; text-transform:none; letter-spacing:0; font-weight:500; margin:0;
+}
+.kwr-loc-picker input[type=checkbox], .kwr-opt-list input[type=checkbox]{width:auto; margin:0; flex:none;}
+.kwr-loc-picker .kwr-loc-n{margin-left:auto; font-size:10.5px; color:var(--ink-3); font-family:var(--mono);}
+.kwr-opt-list{display:grid; grid-template-columns:1fr 1fr; gap:9px 14px;}
+.kwr-out{display:none; flex-direction:column; gap:11px; margin-top:4px;}
+.kwr-out.on{display:flex;}
+.kwr-out-row .lbl{margin-bottom:5px;}
+.kwr-out-row .g-inline input{font-family:var(--mono); font-size:11.5px;}
+@media (max-width:620px){ .kwr-opt-list{grid-template-columns:1fr;} }
 </style>
 </head>
 <body>
@@ -2381,6 +2478,7 @@ body.embed-mode #mapCard{box-shadow:none;}
             <div class="seo-kw-actions">
               <button class="btn btn-go" id="seoScanAllBtn">Scan all keywords</button>
               <button class="btn" id="seoBulkImportBtn">Bulk import…</button>
+              <button class="btn" id="seoShareReportBtn">Share / embed…</button>
               <button class="btn" id="seoExportClientBtn">Export .xlsx</button>
             </div>
             <div class="seo-scan-progress" id="seoScanProgress" style="display:none">
@@ -2503,6 +2601,62 @@ custom home builder | Red Deer, AB; Calgary, AB"></textarea>
     </div>
   </div>
 </div>
+
+<!-- ==================== SEO SHARE / EMBED REPORT MODAL ==================== -->
+<div class="backdrop" id="seoShareBackdrop">
+  <div class="modal modal-wide">
+    <h3>Share this keyword list</h3>
+    <p>Publishes a read-only copy of the list exactly as it looks here — same locations, same rank pills, same order. Anyone with the link can open it without signing in. Publish again any time to refresh it; the link never changes.</p>
+    <div class="f">
+      <label for="seoShareTitle">Report title</label>
+      <input id="seoShareTitle" type="text" placeholder="Advance Construction — keyword rankings" autocomplete="off"/>
+    </div>
+    <div class="f">
+      <label for="seoShareIntro">Intro line <span class="opt">optional</span></label>
+      <input id="seoShareIntro" type="text" placeholder="Positions checked from each location listed below." autocomplete="off"/>
+    </div>
+    <div class="f">
+      <span class="lbl">Locations to include</span>
+      <div class="kwr-loc-picker" id="seoShareLocs"></div>
+    </div>
+    <div class="f">
+      <span class="lbl">What to show</span>
+      <div class="kwr-opt-list">
+        <label><input type="checkbox" id="seoShareShowDates" checked/> Date each rank was checked</label>
+        <label><input type="checkbox" id="seoShareShowLinks" checked/> Link to the live search</label>
+        <label><input type="checkbox" id="seoShareShowDelta" checked/> Change since the last scan</label>
+        <label><input type="checkbox" id="seoShareShowStats" checked/> Summary numbers at the top</label>
+        <label><input type="checkbox" id="seoShareShowUnranked" checked/> Keywords not ranking yet</label>
+        <label><input type="checkbox" id="seoShareOpenAll" checked/> Every location expanded</label>
+      </div>
+    </div>
+    <div class="status" id="seoShareStatus"></div>
+    <div class="kwr-out" id="seoShareOut">
+      <div class="kwr-out-row">
+        <span class="lbl">Link</span>
+        <div class="g-inline">
+          <input id="seoShareUrl" type="text" readonly/>
+          <button class="btn" type="button" id="seoShareCopyUrl">Copy</button>
+        </div>
+      </div>
+      <div class="kwr-out-row">
+        <span class="lbl">Embed code <span class="opt">for a report platform's iFrame widget</span></span>
+        <div class="g-inline">
+          <input id="seoShareEmbed" type="text" readonly/>
+          <button class="btn" type="button" id="seoShareCopyEmbed">Copy</button>
+        </div>
+      </div>
+    </div>
+    <div class="acts">
+      <button class="btn" id="seoShareCancel">Close</button>
+      <button class="btn" id="seoSharePreview" style="display:none">Open preview</button>
+      <button class="btn btn-go" id="seoShareOk">Publish &amp; copy link</button>
+    </div>
+  </div>
+</div>
+
+<!-- The published report renders here, in place of the whole app shell. -->
+<div class="kwr-root" id="kwReportRoot"></div>
 
 <div class="backdrop" id="backdrop">
   <div class="modal">
@@ -6431,8 +6585,22 @@ document.addEventListener('keydown', e => {
 const EMBED_QUERY_ID = new URLSearchParams(location.search).get('embed');
 const EMBED_HASH_ROUTE = location.hash.match(/^#\/embed\/([^/?#]+)$/);
 const EMBED_ID = EMBED_QUERY_ID || (EMBED_HASH_ROUTE ? decodeURIComponent(EMBED_HASH_ROUTE[1]) : null);
+
+/* The published keyword report is a second, separate public route. It shares
+   the embed route's "no login, no chrome" behaviour but none of its map, so
+   it is claimed here and handed to the SEO module further down — this script
+   has already run by the time that module defines its renderer. */
+const REPORT_QUERY_ID = new URLSearchParams(location.search).get('report');
+const REPORT_HASH_ROUTE = location.hash.match(/^#\/report\/([^/?#]+)$/);
+const REPORT_ID = REPORT_QUERY_ID || (REPORT_HASH_ROUTE ? decodeURIComponent(REPORT_HASH_ROUTE[1]) : null);
+
 if (EMBED_ID){
   bootEmbedView(EMBED_ID);
+} else if (REPORT_ID){
+  document.body.classList.add('embed-mode', 'report-mode');
+  setAppVisible(false);
+  if ($('loginScreen')) $('loginScreen').classList.remove('on');
+  if ($('loadingScreen')) $('loadingScreen').classList.add('on');
 } else {
   fillRegions($('region'));
   fillRegions($('tRegion'));
@@ -8203,6 +8371,367 @@ document.addEventListener('keydown', e => {
   if (pick[e.key]){ e.preventDefault(); EDGE.go(pick[e.key]); }
 });
 
+/* ==========================================================================
+   PUBLISHED KEYWORD REPORT
+
+   The same location cards this tool shows, published read-only so a client can
+   open them without a login — or so a report platform can pull them into an
+   iFrame widget. The share id is derived from the client id and never changes,
+   which means a link pasted into a monthly report keeps working: publishing
+   again overwrites the same document rather than minting a new URL.
+
+   Everything published is a snapshot. Nothing here reads live data, so a
+   client never sees a rank that hasn't been reviewed — the report only moves
+   when someone presses Publish.
+   ========================================================================== */
+function seoReportShareId(c){ return 'kwreport-' + c.id; }
+function seoReportUrlFor(shareId){
+  return location.origin + location.pathname + '?report=' + encodeURIComponent(shareId);
+}
+function seoReportEmbedCode(url){
+  return '<iframe src="' + url + '" style="width:100%;height:900px;border:0" loading="lazy" title="Keyword rankings"></iframe>';
+}
+function seoReportDefaults(c){
+  return {
+    title: (c.name || 'Client') + ' \u2014 keyword rankings',
+    intro: '',
+    locKeys: null,          // null means "every location"
+    showDates: true, showLinks: true, showDelta: true,
+    showStats: true, showUnranked: true, openAll: true
+  };
+}
+
+/* Builds exactly what gets stored. Firestore rejects `undefined`, so every
+   optional value is normalised to null on the way out. */
+function buildSeoReportPayload(c, opts){
+  const {groups} = seoBuildLocationGroups(c);
+  const wanted = Array.isArray(opts.locKeys) ? opts.locKeys : groups.map(g => g.key);
+  const outGroups = groups
+    .filter(g => wanted.indexOf(g.key) !== -1)
+    .map(g => ({
+      label: g.label,
+      keywords: g.entries
+        .slice()
+        .sort((a, b) => a.k.text.localeCompare(b.k.text))
+        .filter(({loc}) => opts.showUnranked || (loc.rank != null && loc.rank > 0))
+        .map(({k, loc}) => ({
+          text: k.text || '',
+          rank: loc.rank == null ? null : loc.rank,
+          prevRank: opts.showDelta && loc.prevRank != null ? loc.prevRank : null,
+          manual: !!loc.manual,
+          checkedAt: opts.showDates && loc.checkedAt ? loc.checkedAt : null,
+          sourceUrl: opts.showLinks && loc.sourceUrl ? loc.sourceUrl : null
+        }))
+    }))
+    .filter(g => g.keywords.length);
+
+  return {
+    type: 'kwreport',
+    clientId: c.id,
+    clientName: c.name || 'Client',
+    logoUrl: (c.logoUrl || '').trim() || null,
+    website: (c.website || '').trim() || null,
+    title: (opts.title || '').trim() || ((c.name || 'Client') + ' \u2014 keyword rankings'),
+    intro: (opts.intro || '').trim() || null,
+    showStats: !!opts.showStats,
+    openAll: !!opts.openAll,
+    groups: outGroups,
+    updatedAt: Date.now(),
+    updatedBy: fbUid || null
+  };
+}
+
+async function publishSeoReport(c, opts){
+  if (!fbDb || !fbUid) return {ok:false, reason:'offline'};
+  const payload = buildSeoReportPayload(c, opts);
+  if (!payload.groups.length) return {ok:false, reason:'empty'};
+  try{
+    await fbDb.collection('publicViews').doc(seoReportShareId(c)).set(payload);
+    return {ok:true, id: seoReportShareId(c)};
+  }catch(err){
+    return {ok:false, reason:'write', message:(err && err.message) || ''};
+  }
+}
+
+/* ---------- share dialog ---------- */
+let seoShareClientId = null;
+function seoShareReadOpts(){
+  const locKeys = Array.from($('seoShareLocs').querySelectorAll('input[type=checkbox]'))
+    .filter(cb => cb.checked).map(cb => cb.value);
+  return {
+    title: $('seoShareTitle').value,
+    intro: $('seoShareIntro').value,
+    locKeys,
+    showDates: $('seoShareShowDates').checked,
+    showLinks: $('seoShareShowLinks').checked,
+    showDelta: $('seoShareShowDelta').checked,
+    showStats: $('seoShareShowStats').checked,
+    showUnranked: $('seoShareShowUnranked').checked,
+    openAll: $('seoShareOpenAll').checked
+  };
+}
+function openSeoShareModal(){
+  const c = activeSeoClient();
+  if (!c){ toast('Open a client first', 'err'); return; }
+  const {groups} = seoBuildLocationGroups(c);
+  if (!groups.length){
+    toast('Give at least one keyword a location before sharing \u2014 the report is grouped by location.', 'err');
+    return;
+  }
+  seoShareClientId = c.id;
+  const saved = Object.assign(seoReportDefaults(c), c.reportOpts || {});
+
+  $('seoShareTitle').value = saved.title;
+  $('seoShareIntro').value = saved.intro || '';
+  $('seoShareShowDates').checked = saved.showDates !== false;
+  $('seoShareShowLinks').checked = saved.showLinks !== false;
+  $('seoShareShowDelta').checked = saved.showDelta !== false;
+  $('seoShareShowStats').checked = saved.showStats !== false;
+  $('seoShareShowUnranked').checked = saved.showUnranked !== false;
+  $('seoShareOpenAll').checked = saved.openAll !== false;
+
+  const box = $('seoShareLocs');
+  box.innerHTML = '';
+  groups.forEach(g => {
+    const lab = document.createElement('label');
+    const cb = document.createElement('input');
+    cb.type = 'checkbox'; cb.value = g.key;
+    cb.checked = !Array.isArray(saved.locKeys) || saved.locKeys.indexOf(g.key) !== -1;
+    const name = document.createElement('span');
+    name.textContent = g.label;
+    const n = document.createElement('span');
+    n.className = 'kwr-loc-n';
+    n.textContent = g.entries.length + ' kw';
+    lab.appendChild(cb); lab.appendChild(name); lab.appendChild(n);
+    box.appendChild(lab);
+  });
+
+  setStatus('seoShareStatus', '', '');
+  $('seoShareOut').classList.remove('on');
+  $('seoSharePreview').style.display = 'none';
+  $('seoShareOk').textContent = 'Publish & copy link';
+  $('seoShareBackdrop').classList.add('on');
+}
+function closeSeoShareModal(){ $('seoShareBackdrop').classList.remove('on'); seoShareClientId = null; }
+
+const seoShareBtn = $('seoShareReportBtn');
+if (seoShareBtn) seoShareBtn.addEventListener('click', openSeoShareModal);
+$('seoShareCancel').addEventListener('click', closeSeoShareModal);
+$('seoShareBackdrop').addEventListener('click', e => { if (e.target === $('seoShareBackdrop')) closeSeoShareModal(); });
+
+$('seoShareOk').addEventListener('click', async () => {
+  const c = state.seoClients.find(x => x.id === seoShareClientId) || activeSeoClient();
+  if (!c) return;
+  const opts = seoShareReadOpts();
+  if (!opts.locKeys.length){ setStatus('seoShareStatus', 'Tick at least one location.', 'err'); return; }
+
+  /* Remembered on the client, so next month's report goes out looking like
+     last month's without anyone rebuilding the selection. */
+  c.reportOpts = opts;
+  save();
+
+  const btn = $('seoShareOk');
+  btn.disabled = true;
+  setStatus('seoShareStatus', 'Publishing\u2026', 'busy');
+  const res = await publishSeoReport(c, opts);
+  btn.disabled = false;
+
+  if (!res.ok){
+    if (res.reason === 'offline') setStatus('seoShareStatus', 'You need to be signed in and online to publish.', 'err');
+    else if (res.reason === 'empty') setStatus('seoShareStatus', 'Nothing to publish \u2014 those locations have no keywords left once the filters are applied.', 'err');
+    else setStatus('seoShareStatus', 'Couldn\u2019t publish. Check the publicViews Firestore rule near the top of the file.' + (res.message ? ' (' + res.message + ')' : ''), 'err');
+    return;
+  }
+
+  const url = seoReportUrlFor(res.id);
+  $('seoShareUrl').value = url;
+  $('seoShareEmbed').value = seoReportEmbedCode(url);
+  $('seoShareOut').classList.add('on');
+  $('seoSharePreview').style.display = '';
+  $('seoShareOk').textContent = 'Publish again';
+  try{ await navigator.clipboard.writeText(url); }catch(e){ /* the link is on screen either way */ }
+  setStatus('seoShareStatus', 'Published \u2014 link copied. Publish again any time to refresh it; the link stays the same.', 'ok');
+});
+$('seoSharePreview').addEventListener('click', () => {
+  const u = $('seoShareUrl').value;
+  if (u) window.open(u, '_blank', 'noopener');
+});
+function seoShareCopyField(inputId, btn){
+  const el = $(inputId);
+  el.select();
+  const done = () => { const t = btn.textContent; btn.textContent = 'Copied'; setTimeout(() => { btn.textContent = t; }, 1400); };
+  navigator.clipboard.writeText(el.value).then(done).catch(() => { try{ document.execCommand('copy'); done(); }catch(e){} });
+}
+$('seoShareCopyUrl').addEventListener('click', e => seoShareCopyField('seoShareUrl', e.currentTarget));
+$('seoShareCopyEmbed').addEventListener('click', e => seoShareCopyField('seoShareEmbed', e.currentTarget));
+
+/* ---------- the public view itself ---------- */
+function kwrDeltaText(rank, prevRank){
+  if (rank == null || prevRank == null || prevRank === rank) return {text:'\u2014', cls:''};
+  if (rank === 0) return {text:'\u25bc lost', cls:'down'};
+  if (prevRank === 0) return {text:'\u25b2 found', cls:'up'};
+  const d = prevRank - rank;
+  return {text:(d > 0 ? '\u25b2 +' : '\u25bc ') + Math.abs(d), cls:(d > 0 ? 'up' : 'down')};
+}
+function renderSeoReport(data){
+  const root = $('kwReportRoot');
+  root.innerHTML = '';
+  const groups = Array.isArray(data.groups) ? data.groups : [];
+
+  const shell = document.createElement('div');
+  shell.className = 'kwr-shell';
+
+  /* ---- header ---- */
+  const head = document.createElement('div');
+  head.className = 'kwr-head';
+  if (data.logoUrl){
+    const img = document.createElement('img');
+    img.className = 'kwr-logo'; img.src = data.logoUrl; img.alt = '';
+    img.addEventListener('error', () => img.remove());
+    head.appendChild(img);
+  }
+  const headText = document.createElement('div');
+  headText.className = 'kwr-head-text';
+  const h1 = document.createElement('h1');
+  h1.className = 'kwr-title';
+  h1.textContent = data.title || ((data.clientName || 'Client') + ' \u2014 keyword rankings');
+  headText.appendChild(h1);
+  if (data.intro){
+    const p = document.createElement('p');
+    p.className = 'kwr-sub'; p.textContent = data.intro;
+    headText.appendChild(p);
+  }
+  head.appendChild(headText);
+  const stamp = document.createElement('span');
+  stamp.className = 'kwr-stamp';
+  stamp.textContent = data.updatedAt ? 'Updated ' + new Date(data.updatedAt).toLocaleDateString() : 'Published';
+  head.appendChild(stamp);
+  shell.appendChild(head);
+
+  /* ---- summary numbers ---- */
+  const rows = groups.reduce((n, g) => n + g.keywords.length, 0);
+  let top3 = 0, best = null;
+  groups.forEach(g => g.keywords.forEach(k => {
+    if (k.rank != null && k.rank > 0){
+      if (k.rank <= 3) top3++;
+      if (best == null || k.rank < best) best = k.rank;
+    }
+  }));
+  if (data.showStats !== false){
+    const stats = document.createElement('div');
+    stats.className = 'kwr-stats';
+    [
+      {v: rows, l: 'Rankings tracked'},
+      {v: groups.length, l: 'Locations'},
+      {v: top3, l: 'In the top 3', good: top3 > 0},
+      {v: best == null ? '\u2014' : '#' + best, l: 'Best position', good: best != null && best <= 3}
+    ].forEach(s => {
+      const card = document.createElement('div');
+      card.className = 'kwr-stat' + (s.good ? ' good' : '');
+      card.innerHTML = '<b></b><span></span>';
+      card.querySelector('b').textContent = s.v;
+      card.querySelector('span').textContent = s.l;
+      stats.appendChild(card);
+    });
+    shell.appendChild(stats);
+  }
+
+  /* ---- the location cards, built the same way the live list builds them ---- */
+  groups.forEach(g => {
+    let gBest = null;
+    g.keywords.forEach(k => { if (k.rank != null && k.rank > 0 && (gBest == null || k.rank < gBest)) gBest = k.rank; });
+
+    const card = document.createElement('div');
+    card.className = 'seo-lg-card' + (data.openAll === false ? '' : ' open');
+
+    const cardHead = document.createElement('div');
+    cardHead.className = 'seo-lg-head';
+    cardHead.innerHTML =
+      '<svg class="seo-lg-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>' +
+      '<svg class="seo-lg-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6-5.686-6-10a6 6 0 0 1 12 0c0 4.314-6 10-6 10z"/><circle cx="12" cy="11" r="2.2"/></svg>' +
+      '<span class="seo-lg-label">' + esc(g.label || 'Location') + '</span>' +
+      '<span class="seo-lg-count">' + g.keywords.length + ' keyword' + (g.keywords.length === 1 ? '' : 's') + '</span>' +
+      seoRankPill(gBest);
+    cardHead.addEventListener('click', () => card.classList.toggle('open'));
+    card.appendChild(cardHead);
+
+    const body = document.createElement('div');
+    body.className = 'seo-lg-body';
+    g.keywords.forEach(k => {
+      const row = document.createElement('div');
+      row.className = 'seo-lg-row';
+
+      const top = document.createElement('div');
+      top.className = 'seo-lg-top';
+
+      const text = document.createElement('span');
+      text.className = 'seo-lg-text';
+      text.textContent = k.text || '';
+
+      const rank = document.createElement('div');
+      rank.className = 'kwr-rank';
+      rank.innerHTML = seoRankPill(k.rank == null ? null : k.rank) + (k.manual ? '<span class="seo-manual-tag">manual</span>' : '');
+
+      const d = kwrDeltaText(k.rank, k.prevRank);
+      const delta = document.createElement('div');
+      delta.className = 'kwr-delta' + (d.cls ? ' ' + d.cls : '');
+      delta.textContent = d.text;
+
+      top.appendChild(text); top.appendChild(rank); top.appendChild(delta);
+      row.appendChild(top);
+
+      if (k.checkedAt || k.sourceUrl){
+        const meta = document.createElement('div');
+        meta.className = 'kwr-meta';
+        let html = k.checkedAt ? esc(fmtWhen(k.checkedAt)) : '';
+        if (k.sourceUrl){
+          html += (html ? ' \u00b7 ' : '') +
+            '<a href="' + esc(k.sourceUrl) + '" target="_blank" rel="noopener">view the search</a>';
+        }
+        meta.innerHTML = html;
+        row.appendChild(meta);
+      }
+      body.appendChild(row);
+    });
+    card.appendChild(body);
+    shell.appendChild(card);
+  });
+
+  if (!groups.length){
+    const empty = document.createElement('div');
+    empty.className = 'kwr-sub';
+    empty.style.textAlign = 'center';
+    empty.textContent = 'Nothing has been published for this client yet.';
+    shell.appendChild(empty);
+  }
+
+  const foot = document.createElement('div');
+  foot.className = 'kwr-foot';
+  foot.innerHTML = 'Positions are recorded from a real search run at each location listed above.<br/>Prepared by <a href="https://www.edgemarketing.ca/" target="_blank" rel="noopener">EDGE Marketing &amp; Design Inc.</a>';
+  shell.appendChild(foot);
+
+  root.appendChild(shell);
+  document.title = data.title || 'Keyword rankings';
+}
+async function bootSeoReportView(shareId){
+  document.body.classList.add('embed-mode', 'report-mode');
+  setAppVisible(false);
+  if ($('loginScreen')) $('loginScreen').classList.remove('on');
+  const done = () => { if ($('loadingScreen')) $('loadingScreen').classList.remove('on'); };
+  if (!fbDb){ done(); showEmbedMessage('This report needs an internet connection to load.'); return; }
+  try{
+    const snap = await fbDb.collection('publicViews').doc(shareId).get();
+    done();
+    if (!snap.exists){ showEmbedMessage('This report link is no longer available.'); return; }
+    const data = snap.data();
+    if (!data || data.type !== 'kwreport'){ showEmbedMessage('This link points to a different kind of report.'); return; }
+    renderSeoReport(data);
+  }catch(err){
+    done();
+    showEmbedMessage('Couldn\u2019t load this report right now.');
+  }
+}
+
 /* ---------- boot ---------- */
 function bootWorkspace(){
   ensureSeoState();
@@ -8241,8 +8770,11 @@ fillRegions($('seoNewRegion'));
 fillRegions($('seoBulkDefaultRegion'));
 fillRegions($('seoApplyLocRegion'));
 
-// Never take over the public embed view — it uses the same #appShell.
-if (typeof EMBED_ID === 'undefined' || !EMBED_ID){
+// Never take over either public view — both share the same #appShell, and the
+// report route is claimed here because its renderer lives in this module.
+if (typeof REPORT_ID !== 'undefined' && REPORT_ID){
+  bootSeoReportView(REPORT_ID);
+} else if (typeof EMBED_ID === 'undefined' || !EMBED_ID){
   bootWorkspace();
 }
 
