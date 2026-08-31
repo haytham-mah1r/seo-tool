@@ -276,6 +276,31 @@ input::placeholder,textarea::placeholder{color:#a9b4bd;}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px;}
 .g-inline{display:grid;grid-template-columns:1fr auto;gap:9px;align-items:end;}
 
+/* ---- resolved-coordinate readout, shared by every "Find" button ---- */
+.geo-out{
+  display:none; align-items:center; gap:9px; flex-wrap:wrap; margin-top:9px;
+  padding:9px 11px; border-radius:var(--r-md);
+  background:var(--card-2); border:1px solid var(--line);
+  animation:rise .22s var(--ease);
+}
+.geo-out.on{display:flex;}
+.geo-out .geo-coord{
+  font-family:var(--mono); font-size:11.5px; font-weight:600; letter-spacing:-.01em;
+  color:var(--brand-deep); background:var(--brand-wash); border:1px solid #f3d9c1;
+  padding:3px 9px; border-radius:20px; white-space:nowrap; flex:none;
+}
+.geo-out .geo-name{
+  flex:1; min-width:120px; font-size:12px; color:var(--ink-2);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.geo-out .geo-act{
+  flex:none; background:var(--card); border:1px solid var(--line); color:var(--ink-2);
+  border-radius:7px; padding:4px 9px; font-family:var(--ui); font-size:10.5px; font-weight:700;
+  letter-spacing:.04em; text-transform:uppercase; cursor:pointer; text-decoration:none;
+  transition:all .15s var(--ease);
+}
+.geo-out .geo-act:hover{border-color:var(--brand); color:var(--brand-deep); background:var(--brand-wash);}
+
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:7px;
   padding:10px 15px;border-radius:var(--r-md);border:1.5px solid var(--line);background:var(--card);
@@ -1518,6 +1543,7 @@ body.embed-mode #mapCard{box-shadow:none;}
                       <button class="btn" id="tGeocodeBtn">Find</button>
                     </div>
                     <div class="status" id="tGeoStatus"></div>
+                    <div class="geo-out" id="tGeoOut"></div>
                   </div>
                   <div class="f">
                     <span class="lbl">Coordinates</span>
@@ -1786,6 +1812,7 @@ body.embed-mode #mapCard{box-shadow:none;}
                   <button class="btn" id="cmpGeocodeBtn">Find</button>
                 </div>
                 <div class="status" id="cmpGeoStatus"></div>
+                <div class="geo-out" id="cmpGeoOut"></div>
               </div>
               <div class="f">
                 <span class="lbl">Coordinates</span>
@@ -1977,6 +2004,7 @@ body.embed-mode #mapCard{box-shadow:none;}
                 <button class="btn" id="geocodeBtn">Find</button>
               </div>
               <div class="status" id="geoStatus"></div>
+              <div class="geo-out" id="geoOut"></div>
             </div>
             <div class="f">
               <span class="lbl">Coordinates</span>
@@ -2030,8 +2058,13 @@ body.embed-mode #mapCard{box-shadow:none;}
             <div class="g2">
               <div class="f">
                 <label for="kwLocationName">Area</label>
-                <input id="kwLocationName" type="text" placeholder="Red Deer,Alberta,Canada" autocomplete="off"/>
-                <div class="hint">DataForSEO's format: City,Region,Country — or just a country.</div>
+                <div class="g-inline">
+                  <input id="kwLocationName" type="text" placeholder="Red Deer,Alberta,Canada" autocomplete="off"/>
+                  <button class="btn" id="kwGeocodeBtn" type="button">Find</button>
+                </div>
+                <div class="hint">Type it however you like — Find rewrites it into DataForSEO's <code>City,Region,Country</code> format and shows you the coordinates it resolved to.</div>
+                <div class="status" id="kwGeoStatus"></div>
+                <div class="geo-out" id="kwGeoOut"></div>
               </div>
               <div class="f"><label for="kwRegion">Language</label><select id="kwRegion"></select></div>
             </div>
@@ -2306,7 +2339,12 @@ body.embed-mode #mapCard{box-shadow:none;}
               </div>
               <div class="f">
                 <label for="seoNewLocation">Starting location <span class="opt">optional</span></label>
-                <input id="seoNewLocation" type="text" placeholder="City, region, or address" autocomplete="off"/>
+                <div class="g-inline">
+                  <input id="seoNewLocation" type="text" placeholder="City, region, or address" autocomplete="off"/>
+                  <button class="btn" id="seoNewLocFindBtn" type="button">Find</button>
+                </div>
+                <div class="status" id="seoNewLocStatus"></div>
+                <div class="geo-out" id="seoNewLocOut"></div>
               </div>
               <div class="f">
                 <label for="seoNewRegion">Region</label>
@@ -2366,7 +2404,12 @@ body.embed-mode #mapCard{box-shadow:none;}
     <div class="g2">
       <div class="f">
         <label for="seoBulkDefaultLocation">Default location</label>
-        <input id="seoBulkDefaultLocation" type="text" placeholder="Red Deer, AB" autocomplete="off"/>
+        <div class="g-inline">
+          <input id="seoBulkDefaultLocation" type="text" placeholder="Red Deer, AB" autocomplete="off"/>
+          <button class="btn" id="seoBulkLocFindBtn" type="button">Find</button>
+        </div>
+        <div class="status" id="seoBulkLocStatus"></div>
+        <div class="geo-out" id="seoBulkLocOut"></div>
       </div>
       <div class="f">
         <label for="seoBulkDefaultRegion">Default region</label>
@@ -2398,6 +2441,7 @@ custom home builder | Red Deer, AB; Calgary, AB"></textarea>
         <button class="btn" id="seoApplyLocFindBtn" type="button">Find</button>
       </div>
       <div class="status" id="seoApplyLocStatus"></div>
+      <div class="geo-out" id="seoApplyLocOut"></div>
     </div>
     <div class="f">
       <span class="lbl">Coordinates <span class="opt">pinned once, used for every selected keyword</span></span>
@@ -2616,12 +2660,110 @@ function uuleLatLng(lat,lng,radius){
 }
 const uuleForUrl = u => u.slice(0,2) + u.slice(2).replace(/\+/g,'%2B').replace(/\//g,'%2F').replace(/=/g,'%3D');
 
-/* ---------- geocoding ---------- */
+/* ---------- geocoding ----------
+   One lookup serves the whole app. addressdetails=1 is requested so the same
+   response can also be folded into the "City,Region,Country" shape DataForSEO
+   expects for location_name — typing "Red Deer, Alberta" into that field is
+   rejected outright, and guessing the punctuation is the single most common
+   way a keyword lookup fails. ---------------------------------------------- */
 async function nominatim(q){
-  const res = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(q), {headers:{Accept:'application/json'}});
+  const res = await fetch('https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=1&q=' + encodeURIComponent(q), {headers:{Accept:'application/json'}});
   if (!res.ok) throw new Error('HTTP ' + res.status);
   const data = await res.json();
   return data.length ? data[0] : null;
+}
+
+/* Nominatim's address object → DataForSEO's location_name. Falls back down the
+   granularity ladder (city → town → village → county) because rural addresses
+   often carry no "city" at all, and returns whatever it can: a bare country is
+   still a location DataForSEO accepts. */
+function dfsLocationName(hit){
+  const a = (hit && hit.address) || {};
+  const city    = a.city || a.town || a.village || a.municipality || a.hamlet || a.suburb || a.county || '';
+  const region  = a.state || a.province || a.region || a['state_district'] || '';
+  const country = a.country || '';
+  return [city, region, country].filter(Boolean).join(',');
+}
+
+function geoOutClear(out){ const e = typeof out === 'string' ? $(out) : out; if (e){ e.classList.remove('on'); e.innerHTML = ''; } }
+
+/* The readout every Find button shares: the coordinates that were resolved,
+   the place they belong to, and a way to copy or eyeball them. Seeing the pin
+   before running anything is the whole point — a silent lat/lng in a box is
+   impossible to sanity-check. */
+function renderGeoOut(out, g){
+  const e = typeof out === 'string' ? $(out) : out;
+  if (!e) return;
+  e.innerHTML = '';
+  e.classList.add('on');
+
+  const coord = document.createElement('span');
+  coord.className = 'geo-coord';
+  coord.textContent = g.lat.toFixed(6) + ', ' + g.lng.toFixed(6);
+
+  const name = document.createElement('span');
+  name.className = 'geo-name';
+  name.textContent = g.dfs || g.label;
+  name.title = g.label;
+
+  const copy = document.createElement('button');
+  copy.type = 'button'; copy.className = 'geo-act'; copy.textContent = 'Copy';
+  copy.addEventListener('click', async () => {
+    const text = g.lat.toFixed(7) + ', ' + g.lng.toFixed(7);
+    try{ await navigator.clipboard.writeText(text); }
+    catch(err){
+      const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta);
+      ta.select(); try{ document.execCommand('copy'); }catch(e2){} ta.remove();
+    }
+    copy.textContent = 'Copied';
+    setTimeout(() => { copy.textContent = 'Copy'; }, 1400);
+  });
+
+  const view = document.createElement('a');
+  view.className = 'geo-act'; view.textContent = 'Map';
+  view.href = 'https://www.openstreetmap.org/?mlat=' + g.lat + '&mlon=' + g.lng + '#map=14/' + g.lat + '/' + g.lng;
+  view.target = '_blank'; view.rel = 'noopener';
+
+  e.appendChild(coord); e.appendChild(name); e.appendChild(copy); e.appendChild(view);
+}
+
+/* Wires one Find button to one location field. Every location input in the
+   app goes through this, so they all behave identically: Enter submits, the
+   coordinates land in whatever lat/lng boxes were named, and the readout
+   below shows what was actually found. */
+function wireGeoFinder(cfg){
+  const btn = $(cfg.btn), input = $(cfg.input);
+  if (!btn || !input) return;
+  const run = async () => {
+    const q = input.value.trim();
+    if (!q){ setStatus(cfg.status, 'Type a place or address first.', 'err'); geoOutClear(cfg.out); return; }
+    btn.disabled = true;
+    setStatus(cfg.status, 'Looking up ' + q + '\u2026', 'busy');
+    try{
+      const hit = await nominatim(q);
+      if (!hit){
+        setStatus(cfg.status, 'No match. Add the city, province or country and try again.', 'err');
+        geoOutClear(cfg.out); return;
+      }
+      const lat = parseFloat(parseFloat(hit.lat).toFixed(7));
+      const lng = parseFloat(parseFloat(hit.lon).toFixed(7));
+      const dfs = dfsLocationName(hit);
+      if (cfg.lat && $(cfg.lat)) $(cfg.lat).value = lat;
+      if (cfg.lng && $(cfg.lng)) $(cfg.lng).value = lng;
+      /* Only the DataForSEO-backed fields get their text rewritten — the map
+         pin fields keep whatever the person typed, since a street address is
+         more precise than the city it sits in. */
+      if (cfg.normalize === 'dfs' && dfs) input.value = dfs;
+      setStatus(cfg.status, hit.display_name, 'ok');
+      renderGeoOut(cfg.out, {lat, lng, dfs, label: hit.display_name});
+      if (typeof cfg.after === 'function') cfg.after({lat, lng, dfs, label: hit.display_name, hit});
+    }catch(err){
+      setStatus(cfg.status, 'Lookup failed: ' + ((err && err.message) || err), 'err');
+      geoOutClear(cfg.out);
+    }finally{ btn.disabled = false; }
+  };
+  btn.addEventListener('click', run);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); run(); } });
 }
 
 /* ==========================================================================
@@ -3305,34 +3447,14 @@ function renderGridInfo(){
 }
 
 /* ---------- geocoding buttons ---------- */
-$('tGeocodeBtn').addEventListener('click', async () => {
-  const q = $('tLoc').value.trim();
-  if (!q){ setStatus('tGeoStatus', 'Type an address or place name first.', 'err'); return; }
-  $('tGeocodeBtn').disabled = true;
-  setStatus('tGeoStatus', 'Looking up ' + q + '…', 'busy');
-  try{
-    const hit = await nominatim(q);
-    if (!hit){ setStatus('tGeoStatus', 'No match. Add the city or province and try again.', 'err'); return; }
-    $('tLat').value = parseFloat(hit.lat).toFixed(7);
-    $('tLng').value = parseFloat(hit.lon).toFixed(7);
-    setStatus('tGeoStatus', hit.display_name, 'ok');
-    persistGbp(); recenterMap();
-  }catch(err){ setStatus('tGeoStatus', 'Lookup failed: ' + err.message, 'err'); }
-  finally{ $('tGeocodeBtn').disabled = false; }
+wireGeoFinder({
+  btn:'tGeocodeBtn', input:'tLoc', lat:'tLat', lng:'tLng',
+  status:'tGeoStatus', out:'tGeoOut',
+  after(){ persistGbp(); recenterMap(); }
 });
-$('cmpGeocodeBtn').addEventListener('click', async () => {
-  const q = $('cmpLoc').value.trim();
-  if (!q){ setStatus('cmpGeoStatus', 'Type an address or place name first.', 'err'); return; }
-  $('cmpGeocodeBtn').disabled = true;
-  setStatus('cmpGeoStatus', 'Looking up ' + q + '…', 'busy');
-  try{
-    const hit = await nominatim(q);
-    if (!hit){ setStatus('cmpGeoStatus', 'No match. Add the city or province.', 'err'); return; }
-    $('cmpLat').value = parseFloat(hit.lat).toFixed(7);
-    $('cmpLng').value = parseFloat(hit.lon).toFixed(7);
-    setStatus('cmpGeoStatus', hit.display_name, 'ok');
-  }catch(err){ setStatus('cmpGeoStatus', 'Lookup failed: ' + err.message, 'err'); }
-  finally{ $('cmpGeocodeBtn').disabled = false; }
+wireGeoFinder({
+  btn:'cmpGeocodeBtn', input:'cmpLoc', lat:'cmpLat', lng:'cmpLng',
+  status:'cmpGeoStatus', out:'cmpGeoOut'
 });
 
 /* ---------- keywords ---------- */
@@ -5685,20 +5807,16 @@ $('cmpPdfBtn').addEventListener('click', async () => {
 /* ==========================================================================
    TOOL: SERP CHECKER
    ========================================================================== */
-$('geocodeBtn').addEventListener('click', async () => {
-  const q = $('loc').value.trim();
-  if (!q){ setStatus('geoStatus', 'Type a place or address first.', 'err'); return; }
-  $('geocodeBtn').disabled = true;
-  setStatus('geoStatus', 'Looking up ' + q + '…', 'busy');
-  try{
-    const hit = await nominatim(q);
-    if (!hit){ setStatus('geoStatus', 'No match. Add a region or country.', 'err'); return; }
-    $('lat').value = parseFloat(hit.lat).toFixed(7);
-    $('lng').value = parseFloat(hit.lon).toFixed(7);
-    setStatus('geoStatus', hit.display_name, 'ok');
-    updatePreview();
-  }catch(err){ setStatus('geoStatus', 'Lookup failed: ' + err.message, 'err'); }
-  finally{ $('geocodeBtn').disabled = false; }
+wireGeoFinder({
+  btn:'geocodeBtn', input:'loc', lat:'lat', lng:'lng',
+  status:'geoStatus', out:'geoOut',
+  after(){ updatePreview(); }
+});
+/* The keyword finder's Area box feeds DataForSEO, not a map pin, so this one
+   also rewrites the field into the punctuation their API will accept. */
+wireGeoFinder({
+  btn:'kwGeocodeBtn', input:'kwLocationName',
+  status:'kwGeoStatus', out:'kwGeoOut', normalize:'dfs'
 });
 function buildCheckerUrl(){
   const q = $('q').value.trim();
@@ -7253,24 +7371,33 @@ $('seoApplyLocInput').addEventListener('input', () => {
     setStatus($('seoApplyLocStatus'), 'Location changed \u2014 click Find again to re-pin it.', '');
   }
 });
-$('seoApplyLocFindBtn').addEventListener('click', async () => {
-  const q = $('seoApplyLocInput').value.trim();
-  if (!q){ setStatus($('seoApplyLocStatus'), 'Type an address or place name first.', 'err'); return; }
-  $('seoApplyLocFindBtn').disabled = true;
-  setStatus($('seoApplyLocStatus'), 'Looking up ' + q + '\u2026', 'busy');
-  try{
-    // Same lookup the GBP grid's Area-to-test step and the per-keyword Find
-    // button use, so the pin lands in exactly the same place either way.
-    const hit = await nominatim(q);
-    if (!hit){ setStatus($('seoApplyLocStatus'), 'No match. Add the city or province and try again.', 'err'); return; }
-    $('seoApplyLocLat').value = parseFloat(parseFloat(hit.lat).toFixed(7));
-    $('seoApplyLocLng').value = parseFloat(parseFloat(hit.lon).toFixed(7));
-    setStatus($('seoApplyLocStatus'), hit.display_name, 'ok');
-  }catch(err){
-    setStatus($('seoApplyLocStatus'), 'Lookup failed: ' + ((err && err.message) || err), 'err');
-  }finally{
-    $('seoApplyLocFindBtn').disabled = false;
-  }
+/* Every location field in the SEO module resolves through the same shared
+   finder the GBP and Live SERP tools use, so a place typed here lands on
+   exactly the same coordinates it would anywhere else in the app. Resolved
+   pins are written straight into the client's locationCache, which means the
+   scan that runs later reuses them instead of geocoding a second time. */
+function seoCacheLocation(label, g){
+  const c = activeSeoClient();
+  if (!c || !label) return;
+  if (!c.locationCache) c.locationCache = {};
+  c.locationCache[label.trim().toLowerCase()] = { lat: g.lat, lng: g.lng };
+  save();
+}
+wireGeoFinder({
+  btn:'seoApplyLocFindBtn', input:'seoApplyLocInput',
+  lat:'seoApplyLocLat', lng:'seoApplyLocLng',
+  status:'seoApplyLocStatus', out:'seoApplyLocOut',
+  after(g){ seoCacheLocation($('seoApplyLocInput').value, g); }
+});
+wireGeoFinder({
+  btn:'seoNewLocFindBtn', input:'seoNewLocation',
+  status:'seoNewLocStatus', out:'seoNewLocOut',
+  after(g){ seoCacheLocation($('seoNewLocation').value, g); }
+});
+wireGeoFinder({
+  btn:'seoBulkLocFindBtn', input:'seoBulkDefaultLocation',
+  status:'seoBulkLocStatus', out:'seoBulkLocOut',
+  after(g){ seoCacheLocation($('seoBulkDefaultLocation').value, g); }
 });
 $('seoApplyLocOk').addEventListener('click', async () => {
   ensureSeoState();
