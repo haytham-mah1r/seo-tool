@@ -1390,6 +1390,510 @@ body.report-mode .kwr-root{display:block; font-family:var(--ui); color:var(--ink
 .kwr-out-row .lbl{margin-bottom:5px;}
 .kwr-out-row .g-inline input{font-family:var(--mono); font-size:11.5px;}
 @media (max-width:620px){ .kwr-opt-list{grid-template-columns:1fr;} }
+
+/* ==========================================================================
+   ═══ PREMIUM LAYER ═══
+   A finish pass over everything above. Nothing here changes behaviour, and
+   nothing here renames a class or an id — it re-tunes the tokens the whole
+   app already draws from, then adds depth, motion and graphic weight on top.
+   Because it loads last, it wins on equal specificity, so the layer can be
+   removed wholesale and the app still renders exactly as it did before.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1 · TOKENS, RETUNED
+   The old palette was flat mid-greys on white. These are the same hues with
+   a cool cast mixed in, which makes the orange read hotter without raising
+   its saturation, and gives white cards something to sit against.
+   -------------------------------------------------------------------------- */
+:root{
+  --brand:#ea7a20;
+  --brand-hi:#fb9f42;
+  --brand-lo:#d0620f;
+  --brand-deep:#a54c07;
+  --brand-wash:#fef3e8;
+  --brand-glow:rgba(234,122,32,.30);
+
+  --console:#12171d;
+  --console-2:#1b222a;
+  --console-3:#28313b;
+  --console-line:#333d49;
+  --console-ink:#eaf0f5;
+  --console-ink-2:#93a2b1;
+
+  --paper:#eef2f6;
+  --paper-2:#e6ecf1;
+  --card:#ffffff;
+  --card-2:#f6f9fb;
+  --card-3:#f0f4f8;
+  --line:#e0e7ed;
+  --line-2:#edf1f5;
+
+  --ink:#141a21;
+  --ink-2:#4f5d6a;
+  --ink-3:#8593a1;
+
+  --good:#0d7150;
+  --good-hi:#16a173;
+  --good-wash:#e3f4ed;
+  --mid:#ea7a20;
+  --bad:#bd5a15;
+  --lost:#8e3325;
+  --none:#a7b2bb;
+  --alert:#b32f24;
+  --cool:#3d7ea6;
+  --cool-wash:#e8f1f7;
+
+  --r-2xl:26px;
+  --r-xl:20px;
+  --r-lg:15px;
+  --r-md:11px;
+  --r-sm:9px;
+
+  /* A four-stop elevation scale. Each level adds a wider, softer ambient
+     shadow rather than a darker one, so stacked surfaces stay legible. */
+  --sh-1:0 1px 2px rgba(16,24,32,.05), 0 1px 1px rgba(16,24,32,.03);
+  --sh-2:0 2px 4px -1px rgba(16,24,32,.05), 0 10px 24px -12px rgba(16,24,32,.16);
+  --sh-3:0 4px 10px -3px rgba(16,24,32,.07), 0 30px 64px -28px rgba(16,24,32,.30);
+  --sh-4:0 8px 18px -6px rgba(16,24,32,.10), 0 48px 96px -40px rgba(16,24,32,.42);
+  --sh-brand:0 12px 28px -12px rgba(234,122,32,.55);
+  --ring:0 0 0 4px rgba(234,122,32,.16);
+  --hair:inset 0 1px 0 rgba(255,255,255,.9);
+
+  --topnav-h:54px;
+  --rail-w:300px;
+  --ease:cubic-bezier(.22,.8,.3,1);
+  --ease-spring:cubic-bezier(.34,1.4,.5,1);
+}
+body.embed-mode{--topnav-h:0px;}
+
+/* --------------------------------------------------------------------------
+   2 · THE CANVAS
+   A flat grey field made every card look pasted on. Two very soft colour
+   pools and a faint engineering grid give the paper somewhere to sit — the
+   grid is masked out toward the bottom so long pages don't turn busy.
+   -------------------------------------------------------------------------- */
+body{background:var(--paper); letter-spacing:-.003em;}
+/* position:relative only — deliberately NOT isolation:isolate. Isolating the
+   stage would trap the expanded full-screen map (z-index 3800) inside it,
+   and the top nav would paint over the map. A negative-z pseudo-element
+   still lands where it should without it. */
+.stage{position:relative;}
+.stage::before{
+  content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
+  background-image:
+    radial-gradient(760px 420px at 88% -6%, rgba(234,122,32,.075), transparent 62%),
+    radial-gradient(680px 400px at 4% 2%, rgba(61,126,166,.07), transparent 60%),
+    linear-gradient(180deg, #f5f8fa 0%, var(--paper) 340px);
+}
+.panels{position:relative; padding:28px 30px 40px; max-width:1620px;}
+.panels::before{
+  content:""; position:absolute; inset:0; z-index:-1; pointer-events:none; opacity:.55;
+  background-image:
+    linear-gradient(rgba(20,26,33,.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(20,26,33,.028) 1px, transparent 1px);
+  background-size:44px 44px;
+  -webkit-mask-image:linear-gradient(180deg,#000 0,transparent 420px);
+          mask-image:linear-gradient(180deg,#000 0,transparent 420px);
+}
+
+::-webkit-scrollbar{width:11px;height:11px;}
+::-webkit-scrollbar-thumb{background:#c3cfd9;border-radius:20px;border:3px solid transparent;background-clip:padding-box;}
+::-webkit-scrollbar-thumb:hover{background:#a5b4c1;background-clip:padding-box;}
+::selection{background:rgba(234,122,32,.22); color:var(--brand-deep);}
+
+/* Focus is a first-class state here rather than an afterthought: keyboard
+   users get the same ring the brand uses everywhere else. Scoped to things
+   that are actually operable so it can't leak onto layout containers. */
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible, summary:focus-visible{
+  outline:none; box-shadow:var(--ring), 0 0 0 1px var(--brand);
+}
+.btn:focus-visible{box-shadow:var(--ring), var(--sh-2);}
+
+/* --------------------------------------------------------------------------
+   3 · CHROME — top nav, rail, top bar
+   The two sticky bars used to fight for the same 0px, so the workspace bar
+   vanished under the nav on scroll. They're stacked properly now, and both
+   are glass so content reads through them.
+   -------------------------------------------------------------------------- */
+.topnav{
+  min-height:var(--topnav-h); padding:0 20px; gap:16px;
+  background:linear-gradient(180deg, rgba(24,31,39,.94), rgba(15,20,26,.96));
+  backdrop-filter:blur(18px) saturate(140%);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);
+  border-bottom:1px solid rgba(0,0,0,.6);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 14px 34px -26px rgba(0,0,0,1);
+}
+.tn-home{border-radius:12px; padding:8px 14px 8px 11px;}
+.tn-home:hover{background:rgba(255,255,255,.09); border-color:rgba(255,255,255,.2); transform:translateY(-1px);}
+.tn-mods{border-radius:14px; padding:4px; background:rgba(0,0,0,.34);}
+.tn-mod{border-radius:10px; transition:all .2s var(--ease);}
+.tn-mod.on{
+  background:linear-gradient(180deg, rgba(234,122,32,.22), rgba(234,122,32,.12));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12), 0 6px 16px -10px rgba(234,122,32,.8);
+}
+
+.rail{
+  position:sticky; top:var(--topnav-h); height:calc(100vh - var(--topnav-h));
+  background:
+    radial-gradient(420px 240px at 50% 0%, rgba(234,122,32,.10), transparent 68%),
+    linear-gradient(180deg,#1b222a 0%,#12171d 100%);
+  border-right:1px solid #090d11;
+  box-shadow:1px 0 0 rgba(255,255,255,.03) inset;
+}
+.rail-brand{padding:22px 20px 18px;}
+.rail-mark{border-radius:11px; box-shadow:0 10px 24px -12px rgba(0,0,0,.9), 0 0 0 1px rgba(255,255,255,.08);}
+
+/* Rail rows: a growing accent bar on the left edge instead of a flat fill.
+   It reads as position rather than as a highlight, which matters in a list
+   you scroll through all day. */
+.tree-row, .tree-kid, .rail-nav-btn, .recent-row{position:relative; border-radius:10px; transition:all .18s var(--ease);}
+.tree-row::before, .tree-kid::before, .rail-nav-btn::before{
+  content:""; position:absolute; left:0; top:50%; width:3px; height:0; border-radius:0 3px 3px 0;
+  background:linear-gradient(180deg,var(--brand-hi),var(--brand));
+  transform:translateY(-50%); transition:height .22s var(--ease); pointer-events:none;
+}
+.tree-client.open > .tree-row::before, .tree-kid.on::before, .rail-nav-btn.on::before{height:60%;}
+.tree-row:hover, .tree-kid:hover, .rail-nav-btn:hover, .recent-row:hover{transform:translateX(2px);}
+
+/* Rail-mounted counters and ranks get the mono treatment used for every
+   other number in the app, so the eye can skip them when scanning names. */
+.tree-count, .seo-tree-rank{font-variant-numeric:tabular-nums;}
+
+.topbar{
+  top:var(--topnav-h); height:66px; padding:0 30px; gap:20px;
+  background:rgba(244,247,250,.78);
+  backdrop-filter:blur(20px) saturate(160%);
+  -webkit-backdrop-filter:blur(20px) saturate(160%);
+  border-bottom:1px solid rgba(224,231,237,.9);
+  box-shadow:0 1px 0 rgba(255,255,255,.7) inset, 0 18px 30px -30px rgba(16,24,32,.5);
+}
+.crumbs .c-main{font-size:17px; letter-spacing:-.018em;}
+.crumbs .c-tag{background:linear-gradient(180deg,var(--brand-wash),#fde7d3); border:1px solid #f6d5b4;}
+.modes{background:rgba(20,26,33,.055); padding:4px; border-radius:14px; border:1px solid rgba(20,26,33,.04);}
+.mode, .seo-mode{border-radius:10px; padding:8px 15px;}
+.mode.on, .seo-mode.on{background:var(--card); box-shadow:var(--sh-1), 0 0 0 1px rgba(20,26,33,.05);}
+.save-pill{border-radius:20px; padding:6px 13px; box-shadow:var(--sh-1);}
+
+/* --------------------------------------------------------------------------
+   4 · PRIMITIVES — surfaces, buttons, fields
+   -------------------------------------------------------------------------- */
+
+/* Cards carry a top highlight and a whisper of gradient so they read as a
+   physical sheet rather than a white rectangle. No pseudo-elements, so
+   nothing inside ever gets clipped. */
+.card, .tbl-card, .map-card, .verdict, .tips, .step, .seo-lg-card, .seo-profile-head, .modal{
+  background-image:linear-gradient(180deg,#ffffff 0%,#fcfdfe 100%);
+  box-shadow:var(--sh-2), var(--hair);
+  border-color:var(--line);
+}
+.card, .tbl-card, .map-card, .verdict, .tips{border-radius:var(--r-2xl);}
+.tbl-card, .map-card{overflow:hidden;}
+
+.section-h{margin-bottom:16px; gap:14px;}
+.section-h h2{font-size:17.5px; letter-spacing:-.02em; display:flex; align-items:center; gap:11px;}
+/* A short brand tick in front of every section title — cheap to read, and it
+   gives long scrolling pages a rhythm to follow. */
+.section-h h2::before{
+  content:""; width:4px; height:19px; border-radius:3px; flex:none;
+  background:linear-gradient(180deg,var(--brand-hi),var(--brand-lo));
+  box-shadow:0 3px 8px -3px var(--brand-glow);
+}
+.section-h .rule{background:linear-gradient(90deg,var(--line),transparent);}
+.eyebrow{letter-spacing:.18em;}
+
+/* Buttons: a real hierarchy. Primary carries the gradient and the glow;
+   secondary is a quiet chip; both lift on hover and settle on press. */
+.btn{
+  position:relative; overflow:hidden; border-radius:11px; padding:10px 15px;
+  font-weight:600; letter-spacing:-.005em;
+  background-image:linear-gradient(180deg,#ffffff,#f6f9fb);
+  box-shadow:var(--sh-1);
+  transition:transform .16s var(--ease), box-shadow .18s var(--ease), border-color .18s var(--ease), background .18s var(--ease), color .18s var(--ease);
+}
+.btn:hover{transform:translateY(-1px); box-shadow:var(--sh-2); border-color:#cfdae3;}
+.btn:active{transform:translateY(0); box-shadow:var(--sh-1);}
+.btn:disabled{opacity:.5; transform:none; box-shadow:none; cursor:not-allowed;}
+.btn-sm{border-radius:9px; padding:7px 12px;}
+
+.btn-go{
+  background-image:linear-gradient(180deg,var(--brand-hi) 0%,var(--brand) 52%,var(--brand-lo) 100%);
+  border-color:var(--brand-lo); color:#fff;
+  box-shadow:var(--sh-brand), inset 0 1px 0 rgba(255,255,255,.28);
+  text-shadow:0 1px 1px rgba(120,52,0,.28);
+}
+.btn-go:hover{
+  transform:translateY(-1.5px);
+  box-shadow:0 16px 34px -12px rgba(234,122,32,.65), inset 0 1px 0 rgba(255,255,255,.34);
+  border-color:var(--brand-lo);
+}
+/* A single sheen that sweeps across on hover. Purely decorative, and it sits
+   under the label because the pseudo-element is behind the button text. */
+.btn-go::after{
+  content:""; position:absolute; inset:0; pointer-events:none; opacity:0;
+  background:linear-gradient(105deg, transparent 30%, rgba(255,255,255,.42) 48%, transparent 66%);
+  transform:translateX(-80%);
+}
+.btn-go:hover::after{animation:sheen .8s var(--ease);}
+@keyframes sheen{
+  0%{opacity:0; transform:translateX(-80%);}
+  22%{opacity:1;}
+  100%{opacity:0; transform:translateX(80%);}
+}
+
+.btn-dark{
+  background-image:linear-gradient(180deg,#2a333d,#161c23);
+  border-color:#0e1319; color:#fff;
+  box-shadow:0 10px 22px -12px rgba(16,24,32,.8), inset 0 1px 0 rgba(255,255,255,.1);
+}
+.btn-dark:hover{background-image:linear-gradient(180deg,#333e4a,#1d242c); border-color:#0e1319;}
+
+/* Fields: taller, softer, and with a focus state that glows rather than
+   just outlines — easier to spot on a dense form. */
+input[type=text],input[type=password],select,textarea{
+  border-radius:var(--r-md); border-width:1.5px; padding:12px 14px;
+  background:var(--card-2); transition:all .16s var(--ease);
+}
+input[type=text]:hover,input[type=password]:hover,select:hover,textarea:hover{background:var(--card); border-color:#cfdae3;}
+input[type=text]:focus,input[type=password]:focus,select:focus,textarea:focus{
+  background:var(--card); border-color:var(--brand);
+  box-shadow:var(--ring), 0 4px 14px -8px var(--brand-glow);
+}
+.f label,.lbl{letter-spacing:.1em; color:var(--ink-2);}
+.coord{border-radius:var(--r-md); overflow:hidden;}
+
+.sw i{background:#cdd8e1;}
+.sw input:checked + i{background:linear-gradient(180deg,var(--brand-hi),var(--brand)); box-shadow:0 4px 12px -5px var(--brand-glow);}
+
+.chip{border-radius:20px; transition:all .16s var(--ease);}
+.chip:hover{border-color:#cfdae3; transform:translateY(-1px);}
+.chip.on{background:linear-gradient(180deg,var(--brand-wash),#fde7d3); border-color:#f2cba6; color:var(--brand-deep);}
+
+.geo-out{border-radius:var(--r-lg); background:linear-gradient(180deg,var(--card-2),var(--card-3)); box-shadow:var(--hair);}
+.preview-box{border-radius:var(--r-md);}
+
+/* --------------------------------------------------------------------------
+   5 · DATA DISPLAY
+   Numbers are the product here, so they get the most graphic treatment:
+   oversized display figures, tabular alignment, and a colour-coded accent
+   edge you can read from across a desk.
+   -------------------------------------------------------------------------- */
+.stats, .seo-stats-grid{gap:14px;}
+.stat, .seo-stat, .kwr-stat{
+  position:relative; overflow:hidden; border-radius:var(--r-xl);
+  background-image:linear-gradient(180deg,#ffffff 0%,#f9fbfc 100%);
+  box-shadow:var(--sh-2), var(--hair);
+  transition:transform .22s var(--ease), box-shadow .22s var(--ease);
+}
+.stat:hover, .seo-stat:hover, .kwr-stat:hover{transform:translateY(-2px); box-shadow:var(--sh-3), var(--hair);}
+/* The accent edge. Neutral by default; the good/warn variants below repaint
+   it, which is what makes a wall of stat cards scannable at a glance. */
+.stat::before, .seo-stat::before, .kwr-stat::before{
+  content:""; position:absolute; left:0; top:14%; bottom:14%; width:3px; border-radius:0 3px 3px 0;
+  background:linear-gradient(180deg,var(--brand-hi),var(--brand-lo)); opacity:.85;
+}
+.kwr-stat.good::before, .seo-stat.good::before{background:linear-gradient(180deg,var(--good-hi),var(--good));}
+.stat b, .seo-stat-value, .kwr-stat b{
+  font-family:var(--display); font-variant-numeric:tabular-nums; letter-spacing:-.03em;
+}
+.stat b{font-size:30px;}
+.seo-stat-value{font-size:24px;}
+.kwr-stat b{font-size:26px;}
+.stat span, .seo-stat-label, .kwr-stat span{letter-spacing:.12em;}
+.seo-stat{padding:17px 19px 17px 22px;}
+
+/* Rank pills carry a ring and a gradient so a #1 actually looks like a win
+   instead of like a table cell. */
+.rank-pill{
+  padding:3px 10px; font-size:11.5px; letter-spacing:-.01em; font-variant-numeric:tabular-nums;
+  box-shadow:inset 0 0 0 1px rgba(20,26,33,.05);
+}
+.rp-good{background:linear-gradient(180deg,#e9f7f1,var(--good-wash)); color:var(--good); box-shadow:inset 0 0 0 1px rgba(13,113,80,.16);}
+.rp-mid{background:linear-gradient(180deg,#fef5eb,var(--brand-wash)); color:var(--brand-deep); box-shadow:inset 0 0 0 1px rgba(165,76,7,.16);}
+.rp-bad{background:linear-gradient(180deg,#fcece6,#f9e2da); color:var(--lost); box-shadow:inset 0 0 0 1px rgba(142,51,37,.14);}
+.rp-none{background:var(--line-2); color:var(--ink-3);}
+
+.tbl-card > h4{
+  padding:17px 20px; font-size:14px; letter-spacing:-.01em;
+  background:linear-gradient(180deg,var(--card-2),#fff); border-bottom:1px solid var(--line-2);
+}
+.tbl th{
+  background:linear-gradient(180deg,#fff,var(--card-2));
+  box-shadow:0 1px 0 var(--line-2);
+}
+.tbl td{transition:background .14s var(--ease);}
+.tbl tbody tr:hover td{background:var(--card-2);}
+.tbl .num, .tbl td:has(.rank-pill){font-variant-numeric:tabular-nums;}
+
+/* Location group cards: the spine of the SEO tool. Closed they read as a
+   quiet list; open, a brand edge marks where you are. */
+.seo-lg-card{border-radius:var(--r-2xl); transition:box-shadow .24s var(--ease), border-color .24s var(--ease), transform .24s var(--ease);}
+.seo-lg-card.open{box-shadow:var(--sh-3), inset 3px 0 0 var(--brand), var(--hair); border-color:#dae3ea;}
+.seo-lg-head{padding:18px 24px; gap:13px;}
+.seo-lg-head:hover{background:linear-gradient(90deg, rgba(234,122,32,.05), transparent 60%);}
+.seo-lg-label{font-size:15.5px; letter-spacing:-.015em;}
+.seo-lg-pin{stroke:var(--brand);}
+.seo-lg-count{background:linear-gradient(180deg,#fff,var(--card-2)); box-shadow:var(--sh-1); font-variant-numeric:tabular-nums;}
+.seo-lg-body{padding:2px 24px 18px;}
+.seo-lg-row{border-radius:11px; padding:14px 12px; margin:0 -12px;}
+.seo-lg-row:hover{background:var(--card-2); box-shadow:var(--hair);}
+.seo-lg-text{font-size:14px; letter-spacing:-.01em;}
+.seo-loc-scan-btn:hover{border-color:var(--brand); color:var(--brand-deep); background-image:linear-gradient(180deg,#fff,var(--brand-wash));}
+.seo-loc-delta, .kwr-delta{font-variant-numeric:tabular-nums;}
+
+/* The add-keyword bar follows you down a long list. On a client with sixty
+   keywords this is the difference between adding one and scrolling back up
+   to find the field. */
+.seo-kw-toolbar{
+  position:sticky; top:calc(var(--topnav-h) + 66px); z-index:20;
+  padding:20px 22px; border-radius:var(--r-2xl);
+  background-image:linear-gradient(180deg, rgba(255,255,255,.97), rgba(252,253,254,.95));
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  box-shadow:var(--sh-3), var(--hair);
+}
+.seo-kw-actions{padding-top:15px; border-top:1px solid var(--line-2);}
+.seo-bulk-bar{background:linear-gradient(180deg,var(--card-2),#fff);}
+.seo-scan-progress{border-radius:var(--r-md); background:linear-gradient(180deg,var(--brand-wash),#fdeadb); box-shadow:var(--hair);}
+.seo-scan-bar i{background:linear-gradient(90deg,var(--brand-hi),var(--brand-lo));}
+
+/* Client identity block — the avatar is the one place a splash of colour is
+   welcome, so it gets a proper gradient and a cast shadow. */
+.seo-profile-head{border-radius:var(--r-2xl); padding:22px 24px;}
+.seo-avatar{
+  width:56px; height:56px; border-radius:18px; font-size:20px;
+  background:linear-gradient(140deg,var(--brand-hi) 0%,var(--brand) 45%,var(--brand-deep) 100%);
+  box-shadow:0 14px 28px -12px rgba(165,76,7,.6), inset 0 1px 0 rgba(255,255,255,.35);
+}
+.seo-profile-name{font-size:21px; letter-spacing:-.022em;}
+.seo-ext-btn{border-radius:12px; background-image:linear-gradient(180deg,#fff,var(--card-2)); box-shadow:var(--sh-1); transition:all .18s var(--ease);}
+.seo-ext-btn:hover{transform:translateY(-1.5px); box-shadow:var(--sh-2); border-color:#f2cba6;}
+
+.mod-intro{border-radius:var(--r-2xl); background-image:linear-gradient(115deg,var(--brand-wash) 0%,#fff 58%);}
+.mod-intro-ico{box-shadow:var(--sh-brand);}
+
+.gbp-card{border-radius:var(--r-xl); transition:transform .22s var(--ease), box-shadow .22s var(--ease), border-color .22s var(--ease);}
+.gbp-card:hover{transform:translateY(-3px); box-shadow:var(--sh-3);}
+.meter{border-radius:var(--r-xl);}
+.grade{box-shadow:var(--sh-1);}
+.toast{border-radius:13px; box-shadow:var(--sh-4);}
+.modal{border-radius:var(--r-2xl); box-shadow:var(--sh-4);}
+.backdrop{background:rgba(14,19,25,.55); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);}
+.empty{border-radius:var(--r-2xl);}
+.empty svg{stroke:var(--brand); opacity:.6;}
+
+/* --------------------------------------------------------------------------
+   6 · HUB — the front door does the most work on first impression
+   -------------------------------------------------------------------------- */
+.hub{
+  background-image:
+    radial-gradient(1000px 600px at 14% -12%, rgba(234,122,32,.24), transparent 62%),
+    radial-gradient(860px 560px at 96% 4%, rgba(61,126,166,.16), transparent 60%),
+    radial-gradient(700px 500px at 50% 108%, rgba(234,122,32,.10), transparent 64%),
+    linear-gradient(165deg,#1d242d 0%,#12171d 54%,#090d11 100%);
+}
+.hub-inner{max-width:1240px; padding:26px 30px 52px;}
+.hub-hero{max-width:720px; margin-bottom:40px;}
+.hub-hero h2{
+  font-size:42px; letter-spacing:-.035em; line-height:1.08;
+  background:linear-gradient(180deg,#fff 30%,#b9c6d2 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.hub-hero p{font-size:14.5px; color:#9dabb9;}
+.hub-grid{gap:20px;}
+.hub-card{border-radius:24px; padding:28px 26px 24px;}
+.hub-card:hover, .hub-card:focus-visible{transform:translateY(-7px);}
+.hub-ico{width:56px; height:56px; border-radius:17px;}
+.hub-title{font-size:21px;}
+.hub-mark{box-shadow:0 14px 30px -14px rgba(0,0,0,.9), 0 0 0 1px rgba(255,255,255,.1);}
+
+/* --------------------------------------------------------------------------
+   7 · PUBLISHED REPORT — the one screen a client actually sees
+   -------------------------------------------------------------------------- */
+body.report-mode{
+  background-image:
+    radial-gradient(820px 460px at 88% -8%, rgba(234,122,32,.10), transparent 62%),
+    radial-gradient(720px 420px at 2% 0%, rgba(61,126,166,.08), transparent 60%),
+    linear-gradient(180deg,#f6f9fb 0%,var(--paper) 420px);
+  background-attachment:fixed;
+}
+.kwr-shell{max-width:1000px; padding:34px 22px 48px;}
+.kwr-head{
+  border-radius:var(--r-2xl); padding:24px 28px; gap:18px;
+  background-image:linear-gradient(120deg,#fff 0%,#fcfdfe 55%,var(--brand-wash) 190%);
+  box-shadow:var(--sh-3), var(--hair);
+}
+.kwr-title{font-size:25px; letter-spacing:-.028em;}
+.kwr-logo{width:52px; height:52px; border-radius:14px;}
+.kwr-stamp{background:linear-gradient(180deg,#fff,var(--card-2)); box-shadow:var(--sh-1);}
+.kwr-stats{gap:12px; margin-bottom:20px;}
+.kwr-stat{padding:16px 18px 16px 21px;}
+.kwr-root .seo-lg-card.open{box-shadow:var(--sh-2), inset 3px 0 0 rgba(234,122,32,.55), var(--hair);}
+.kwr-foot{margin-top:26px;}
+
+/* --------------------------------------------------------------------------
+   8 · MOTION
+   Views arrive rather than blink in, and cards inside a fresh view stagger
+   by a few frames each. Everything respects a reduced-motion preference.
+   -------------------------------------------------------------------------- */
+@keyframes riseIn{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:none;}}
+.view.on, .seo-view.on{animation:riseIn .34s var(--ease);}
+/* Stat cards are the one group worth staggering — they read as a row of
+   readings coming online, and none of them contains a sticky child. */
+.stats .stat, .seo-stats-grid .seo-stat, .kwr-stats .kwr-stat{animation:riseIn .44s var(--ease) both;}
+.stats .stat:nth-child(2), .seo-stats-grid .seo-stat:nth-child(2), .kwr-stats .kwr-stat:nth-child(2){animation-delay:.06s;}
+.stats .stat:nth-child(3), .seo-stats-grid .seo-stat:nth-child(3), .kwr-stats .kwr-stat:nth-child(3){animation-delay:.12s;}
+.stats .stat:nth-child(4), .seo-stats-grid .seo-stat:nth-child(4), .kwr-stats .kwr-stat:nth-child(4){animation-delay:.18s;}
+
+@media (prefers-reduced-motion:reduce){
+  *, *::before, *::after{animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important;}
+}
+
+/* --------------------------------------------------------------------------
+   9 · NARROW SCREENS
+   The sticky offsets have to relax first — on a phone a sticky toolbar eats
+   the screen — and the rail stops being a fixed column.
+   -------------------------------------------------------------------------- */
+@media (max-width:900px){
+  .panels{padding:18px 14px 32px;}
+  .topbar{height:auto; padding:12px 16px; flex-wrap:wrap; gap:10px;}
+  .seo-kw-toolbar{position:static; padding:16px 16px;}
+  .hub-hero h2{font-size:30px;}
+  .kwr-shell{padding:20px 14px 34px;}
+}
+@media print{
+  .stage::before, .panels::before{display:none;}
+}
+
+/* --------------------------------------------------------------------------
+   10 · DATA GRAPHICS
+   Two small drawings made from numbers the app already keeps. Neither adds a
+   request or a stored field — the sparkline reads each location's existing
+   scan history, and the mix bar counts the ranks already on screen.
+   -------------------------------------------------------------------------- */
+
+/* Sparkline: the last ten scans for one keyword in one location. Up is
+   better, because a rank of #1 is drawn at the top. */
+.seo-spark{width:64px; height:20px; flex:none; overflow:visible; color:var(--ink-3); opacity:.9;}
+.seo-spark polyline{fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round;}
+.seo-spark circle{fill:currentColor; stroke:#fff; stroke-width:1.4;}
+.seo-spark.up{color:var(--good-hi);}
+.seo-spark.down{color:var(--bad);}
+.seo-spark-pad{width:64px; flex:none;}
+.seo-spark-wrap{display:inline-flex; align-items:center; width:64px; flex:none;}
+
+/* Mix bar: how a whole location is doing, in one 76px strip. Green is the
+   top three, orange the rest of page one, rust page two and beyond, grey
+   everything not ranking. */
+.seo-mix{
+  display:inline-flex; width:76px; height:7px; border-radius:20px; overflow:hidden;
+  background:var(--line-2); flex:none; box-shadow:inset 0 0 0 1px rgba(20,26,33,.05);
+}
+.seo-mix i{display:block; height:100%; min-width:0;}
+.seo-mix .mx-good{background:linear-gradient(180deg,var(--good-hi),var(--good));}
+.seo-mix .mx-mid{background:linear-gradient(180deg,var(--brand-hi),var(--brand));}
+.seo-mix .mx-bad{background:linear-gradient(180deg,#d38055,var(--lost));}
+.seo-mix .mx-none{background:#cdd7df;}
+@media (max-width:900px){ .seo-mix{display:none;} .seo-spark, .seo-spark-pad{display:none;} }
 </style>
 </head>
 <body>
@@ -6686,6 +7190,58 @@ ensureSeoState();
 const activeSeoClient = () => state.seoClients.find(c => c.id === state.activeSeoClientId) || null;
 
 /* ---------- rank helpers (same thresholds as the GBP keyword finder) ---------- */
+/* ---------- data graphics -----------------------------------------------
+   Both of these read numbers that are already in state — no new field, no
+   request, nothing to keep in sync. If the history is missing or too short
+   to say anything, they return an empty string and the row just doesn't get
+   a drawing, rather than getting a misleading flat line. ------------------ */
+
+/* A rank of 0 means "not ranking at all". Plotted literally it would sit at
+   the top of the chart next to #1, which is exactly backwards, so it's
+   parked just past the bottom of the scale instead. */
+const SPARK_FLOOR = 105;
+function seoSparkline(history){
+  const pts = (history || []).filter(h => h && h.rank != null).slice(-10);
+  if (pts.length < 2) return '';
+  const W = 64, H = 20, P = 3;
+  const vals = pts.map(h => (h.rank === 0 ? SPARK_FLOOR : h.rank));
+  const min = Math.min.apply(null, vals), max = Math.max.apply(null, vals);
+  const span = Math.max(max - min, 1);
+  const xy = vals.map((v, i) => {
+    const x = P + (i * (W - 2 * P)) / (vals.length - 1);
+    const y = P + ((v - min) / span) * (H - 2 * P);   // best rank sits highest
+    return [x, y];
+  });
+  const first = vals[0], last = vals[vals.length - 1];
+  const cls = last < first ? 'up' : last > first ? 'down' : '';
+  const label = 'Last ' + vals.length + ' checks: ' +
+    vals.map(v => (v === SPARK_FLOOR ? 'not ranking' : '#' + v)).join(' \u2192 ');
+  const end = xy[xy.length - 1];
+  return '<svg class="seo-spark ' + cls + '" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(label) + '">' +
+    '<title>' + esc(label) + '</title>' +
+    '<polyline points="' + xy.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ') + '"/>' +
+    '<circle cx="' + end[0].toFixed(1) + '" cy="' + end[1].toFixed(1) + '" r="2.3"/></svg>';
+}
+
+/* One strip summarising a whole location. Segments are flex-weighted, so the
+   bar always fills regardless of how many keywords sit under it. */
+function seoRankMixBar(ranks){
+  const n = ranks.length;
+  if (!n) return '';
+  let good = 0, mid = 0, bad = 0, none = 0;
+  ranks.forEach(r => {
+    if (r == null || r === 0) none++;
+    else if (r <= 3) good++;
+    else if (r <= 10) mid++;
+    else bad++;
+  });
+  const seg = (cls, count) => count ? '<i class="' + cls + '" style="flex:' + count + '"></i>' : '';
+  const label = [good + ' in the top 3', mid + ' on page one', bad + ' beyond page one', none + ' not ranking'].join(' \u00b7 ');
+  return '<span class="seo-mix" title="' + esc(label) + '">' +
+    seg('mx-good', good) + seg('mx-mid', mid) + seg('mx-bad', bad) + seg('mx-none', none) +
+    '</span>';
+}
+
 function seoRankPill(rank){
   if (rank == null) return '<span class="rank-pill rp-none">—</span>';
   if (rank === 0) return '<span class="rank-pill rp-bad">100+</span>';
@@ -7301,6 +7857,13 @@ function seoLocGroupRow(c, k, loc){
   text.className = 'seo-lg-text';
   text.textContent = k.text;
 
+  /* The trend for this keyword at this location. Rows with only one scan get
+     a spacer instead, so every row's rank pill still lines up. */
+  const sparkHtml = seoSparkline(loc.history);
+  const spark = document.createElement('span');
+  spark.className = sparkHtml ? 'seo-spark-wrap' : 'seo-spark-pad';
+  spark.innerHTML = sparkHtml;
+
   const rankBox = document.createElement('div');
   rankBox.innerHTML = seoRankPill(loc.rank) + (loc.manual ? '<span class="seo-manual-tag">manual</span>' : '');
 
@@ -7363,7 +7926,7 @@ function seoLocGroupRow(c, k, loc){
     save(); renderSeoKeywords();
   });
 
-  [check, text, rankBox, deltaBox, sourceEl, copyEl, scanBtn, delBtn].forEach(el => top.appendChild(el));
+  [check, text, spark, rankBox, deltaBox, sourceEl, copyEl, scanBtn, delBtn].forEach(el => top.appendChild(el));
 
   /* ---- secondary line: quiet status, plus an optional drawer for the
      things you rarely touch — the exact location text, its pinned
@@ -7620,7 +8183,8 @@ function renderSeoKeywords(){
     const best = seoGroupRankSummary(g.entries);
     const flaggedCount = seoGroupFlaggedCount(g.entries);
     const flagHtml = flaggedCount ? '<span class="seo-lg-flag-badge" title="' + flaggedCount + ' dropped since the last scan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>' + flaggedCount + '</span>' : '';
-    const badgeHtml = '<span class="seo-lg-count">' + g.entries.length + ' keyword' + (g.entries.length === 1 ? '' : 's') + '</span>' + flagHtml + seoRankPill(best);
+    const badgeHtml = seoRankMixBar(g.entries.map(e => e.loc.rank)) +
+      '<span class="seo-lg-count">' + g.entries.length + ' keyword' + (g.entries.length === 1 ? '' : 's') + '</span>' + flagHtml + seoRankPill(best);
     buildGroupCard(g.key, g.label, badgeHtml, (body) => {
       g.entries
         .sort((a, b) => a.k.text.localeCompare(b.k.text))
@@ -8420,7 +8984,13 @@ function buildSeoReportPayload(c, opts){
           prevRank: opts.showDelta && loc.prevRank != null ? loc.prevRank : null,
           manual: !!loc.manual,
           checkedAt: opts.showDates && loc.checkedAt ? loc.checkedAt : null,
-          sourceUrl: opts.showLinks && loc.sourceUrl ? loc.sourceUrl : null
+          sourceUrl: opts.showLinks && loc.sourceUrl ? loc.sourceUrl : null,
+          /* Ten points is enough to show a direction and small enough that a
+             hundred-keyword client still publishes in one write. Tied to the
+             same switch as the change column, since both describe movement. */
+          history: opts.showDelta
+            ? (loc.history || []).filter(h => h && h.rank != null).slice(-10).map(h => ({rank: h.rank}))
+            : []
         }))
     }))
     .filter(g => g.keywords.length);
@@ -8650,6 +9220,7 @@ function renderSeoReport(data){
       '<svg class="seo-lg-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>' +
       '<svg class="seo-lg-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6-5.686-6-10a6 6 0 0 1 12 0c0 4.314-6 10-6 10z"/><circle cx="12" cy="11" r="2.2"/></svg>' +
       '<span class="seo-lg-label">' + esc(g.label || 'Location') + '</span>' +
+      seoRankMixBar(g.keywords.map(k => k.rank)) +
       '<span class="seo-lg-count">' + g.keywords.length + ' keyword' + (g.keywords.length === 1 ? '' : 's') + '</span>' +
       seoRankPill(gBest);
     cardHead.addEventListener('click', () => card.classList.toggle('open'));
@@ -8668,6 +9239,11 @@ function renderSeoReport(data){
       text.className = 'seo-lg-text';
       text.textContent = k.text || '';
 
+      const sparkHtml = seoSparkline(k.history);
+      const spark = document.createElement('span');
+      spark.className = sparkHtml ? 'seo-spark-wrap' : 'seo-spark-pad';
+      spark.innerHTML = sparkHtml;
+
       const rank = document.createElement('div');
       rank.className = 'kwr-rank';
       rank.innerHTML = seoRankPill(k.rank == null ? null : k.rank) + (k.manual ? '<span class="seo-manual-tag">manual</span>' : '');
@@ -8677,7 +9253,7 @@ function renderSeoReport(data){
       delta.className = 'kwr-delta' + (d.cls ? ' ' + d.cls : '');
       delta.textContent = d.text;
 
-      top.appendChild(text); top.appendChild(rank); top.appendChild(delta);
+      top.appendChild(text); top.appendChild(spark); top.appendChild(rank); top.appendChild(delta);
       row.appendChild(top);
 
       if (k.checkedAt || k.sourceUrl){
