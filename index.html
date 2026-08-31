@@ -2003,6 +2003,152 @@ body.report-mode{
   .seo-panel .seo-view-grid{grid-template-columns:1fr;}
   .seo-panel .seo-view-field:nth-child(2){border-top:1px solid var(--line-2); padding-top:13px;}
 }
+/* --------------------------------------------------------------------------
+   12 · COMPARISON INSIGHT REPORT
+   Replaces the shared-grid map as the primary output. Six palette slots so
+   each profile keeps one colour across the territory bar, the legend and its
+   card — colour is the only thing tying those three views together, so it
+   has to be stable.
+   -------------------------------------------------------------------------- */
+.cmp-report{display:flex; flex-direction:column; gap:16px;}
+.cmp-report-empty{
+  background:var(--card); border:1px dashed #d3dde5; border-radius:var(--r-2xl);
+  padding:34px 26px; text-align:center; color:var(--ink-3); font-size:13px; line-height:1.7;
+}
+.cmp-report-empty b{color:var(--ink-2);}
+
+.cmp-rep-head{
+  display:flex; align-items:flex-end; gap:16px; flex-wrap:wrap;
+  background-image:linear-gradient(115deg,#fff 0%,#fcfdfe 52%,var(--brand-wash) 210%);
+  border:1px solid var(--line); border-radius:var(--r-2xl); padding:22px 24px;
+  box-shadow:var(--sh-2), var(--hair);
+}
+.cmp-rep-title{flex:1; min-width:220px;}
+.cmp-rep-title h3{font-family:var(--display); font-size:23px; font-weight:600; letter-spacing:-.025em; margin:8px 0 6px; color:var(--ink);}
+.cmp-rep-title p{margin:0; font-size:12px; color:var(--ink-3); line-height:1.6;}
+.cmp-rep-acts{display:flex; gap:8px; flex-wrap:wrap; flex:none;}
+
+.cmp-kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:12px;}
+.cmp-kpi{
+  position:relative; overflow:hidden; background:var(--card); border:1px solid var(--line);
+  border-radius:var(--r-xl); padding:16px 18px 16px 21px; box-shadow:var(--sh-1), var(--hair);
+}
+.cmp-kpi::before{content:""; position:absolute; left:0; top:16%; bottom:16%; width:3px; border-radius:0 3px 3px 0; background:var(--none);}
+.cmp-kpi.good::before{background:linear-gradient(180deg,var(--good-hi),var(--good));}
+.cmp-kpi.warn::before{background:linear-gradient(180deg,var(--brand-hi),var(--brand-lo));}
+.cmp-kpi.bad::before{background:linear-gradient(180deg,#d38055,var(--lost));}
+.cmp-kpi b{display:block; font-family:var(--display); font-size:24px; font-weight:600; letter-spacing:-.03em; font-variant-numeric:tabular-nums; color:var(--ink);}
+.cmp-kpi span{display:block; font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3); margin-top:5px; line-height:1.4;}
+
+.cmp-block{
+  background:var(--card); border:1px solid var(--line); border-radius:var(--r-2xl);
+  padding:20px 22px 22px; box-shadow:var(--sh-2), var(--hair);
+}
+.cmp-block-h{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:16px;}
+.cmp-block-h h4{font-family:var(--display); font-size:15px; font-weight:600; letter-spacing:-.015em; margin:0; color:var(--ink);}
+.cmp-block-note{font-size:11.5px; color:var(--ink-3); line-height:1.5;}
+
+/* six stable profile colours */
+.t0{background:#2f7fae;} .t1{background:#ea7a20;} .t2{background:#12876a;}
+.t3{background:#8a5fbf;} .t4{background:#c4485f;} .t5{background:#4f6d86;}
+
+.cmp-terr{display:flex; height:26px; border-radius:20px; overflow:hidden; background:var(--line-2); box-shadow:inset 0 0 0 1px rgba(20,26,33,.05);}
+.cmp-terr-seg{display:block; min-width:3px; cursor:pointer; transition:opacity .18s var(--ease), filter .18s var(--ease);}
+.cmp-terr-seg.none{background:repeating-linear-gradient(45deg,#dfe6ec 0 6px,#eef2f6 6px 12px); cursor:default;}
+.cmp-terr-seg:hover{filter:brightness(1.12);}
+.cmp-terr-seg.on{box-shadow:inset 0 0 0 2px rgba(255,255,255,.85);}
+.cmp-terr-key{display:flex; flex-wrap:wrap; gap:7px; margin-top:12px;}
+.cmp-key{
+  display:inline-flex; align-items:center; gap:7px; cursor:pointer;
+  background:var(--card-2); border:1px solid var(--line); border-radius:20px;
+  padding:5px 11px 5px 8px; font-family:var(--ui); font-size:11.5px; font-weight:600; color:var(--ink-2);
+  transition:all .16s var(--ease);
+}
+.cmp-key:hover{border-color:#cfdae3; color:var(--ink); transform:translateY(-1px);}
+.cmp-key.on{border-color:var(--brand); background:var(--brand-wash); color:var(--brand-deep);}
+.cmp-key.static{cursor:default;}
+.cmp-key i{width:9px; height:9px; border-radius:50%; flex:none;}
+.cmp-key i.none{background:#cdd7df;}
+.cmp-key b{font-family:var(--mono); font-size:10.5px; color:var(--ink-3); font-weight:700;}
+.cmp-key.on b{color:var(--brand-deep);}
+
+.cmp-cards{display:grid; grid-template-columns:repeat(auto-fill,minmax(268px,1fr)); gap:12px;}
+.cmp-card{
+  display:flex; flex-direction:column; gap:10px; text-align:left; cursor:pointer;
+  background:linear-gradient(180deg,#fff,#fbfcfd); border:1px solid var(--line);
+  border-radius:var(--r-xl); padding:15px 16px; font-family:var(--ui);
+  box-shadow:var(--sh-1); transition:all .2s var(--ease);
+}
+.cmp-card:hover{transform:translateY(-2px); box-shadow:var(--sh-2); border-color:#cfdae3;}
+.cmp-card.on{border-color:var(--brand); box-shadow:var(--sh-2), 0 0 0 3px rgba(234,122,32,.13);}
+.cmp-card-top{display:flex; align-items:center; gap:9px;}
+.cmp-swatch{width:10px; height:10px; border-radius:3px; flex:none;}
+.cmp-card-name{flex:1; min-width:0; font-size:13.5px; font-weight:650; color:var(--ink); letter-spacing:-.01em; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.cmp-card-name small{display:block; font-size:10.5px; font-weight:500; color:var(--ink-3); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.cmp-verdict{font-size:11.5px; line-height:1.5; color:var(--ink-2); padding-left:10px; border-left:2px solid var(--line);}
+.cmp-verdict.good{border-left-color:var(--good); color:var(--good);}
+.cmp-verdict.mid{border-left-color:var(--brand); color:var(--brand-deep);}
+.cmp-verdict.bad{border-left-color:var(--lost); color:var(--lost);}
+.cmp-verdict.none{border-left-color:#cdd7df; color:var(--ink-3); font-style:italic;}
+.cmp-card-nums{display:grid; grid-template-columns:repeat(4,1fr); gap:6px;}
+.cmp-card-nums span{font-size:9.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3);}
+.cmp-card-nums b{display:block; font-family:var(--mono); font-size:14px; color:var(--ink); letter-spacing:-.02em; margin-bottom:1px;}
+
+.cmp-rings{display:flex; flex-direction:column; gap:13px;}
+.cmp-ring{display:grid; grid-template-columns:170px minmax(0,1fr) 150px; gap:14px; align-items:center;}
+.cmp-ring-h b{display:block; font-size:12.5px; font-weight:650; color:var(--ink);}
+.cmp-ring-h span{display:block; font-size:10.5px; color:var(--ink-3);}
+.cmp-bar{display:block; height:10px; border-radius:20px; background:var(--line-2); overflow:hidden; box-shadow:inset 0 0 0 1px rgba(20,26,33,.05);}
+.cmp-bar i{display:block; height:100%; border-radius:20px; transition:width .45s var(--ease);}
+.tone-good{background:linear-gradient(90deg,var(--good-hi),var(--good));}
+.tone-mid{background:linear-gradient(90deg,var(--brand-hi),var(--brand));}
+.tone-bad{background:linear-gradient(90deg,#d38055,var(--lost));}
+.tone-none{background:#cdd7df;}
+.cmp-ring-nums{display:flex; align-items:baseline; gap:9px; justify-content:flex-end;}
+.cmp-ring-avg{font-family:var(--mono); font-size:15px; font-weight:700; letter-spacing:-.02em;}
+.cmp-ring-avg.tone-good{background:none; color:var(--good);}
+.cmp-ring-avg.tone-mid{background:none; color:var(--brand-deep);}
+.cmp-ring-avg.tone-bad{background:none; color:var(--lost);}
+.cmp-ring-avg.tone-none{background:none; color:var(--ink-3);}
+.cmp-ring-nums span:last-child{font-size:11px; color:var(--ink-3); white-space:nowrap;}
+
+.cmp-note{margin-top:14px; font-size:12px; line-height:1.7; color:var(--ink-2); background:var(--card-2); border:1px solid var(--line-2); border-radius:var(--r-md); padding:12px 14px;}
+.cmp-note.warn{background:var(--brand-wash); border-color:#f2cba6; color:var(--brand-deep);}
+
+.cmp-matrix-wrap{margin-top:18px; padding-top:16px; border-top:1px solid var(--line-2);}
+.cmp-matrix{display:grid; gap:3px; max-width:340px;}
+.cmp-cell{
+  aspect-ratio:1; border-radius:5px; display:grid; place-items:center;
+  font-family:var(--mono); font-size:9.5px; font-weight:700; color:#fff; font-style:normal;
+  transition:transform .14s var(--ease);
+}
+.cmp-cell:hover{transform:scale(1.16); position:relative; z-index:1;}
+.cmp-cell.good{background:linear-gradient(180deg,var(--good-hi),var(--good));}
+.cmp-cell.mid{background:linear-gradient(180deg,var(--brand-hi),var(--brand));}
+.cmp-cell.bad{background:linear-gradient(180deg,#d38055,var(--bad));}
+.cmp-cell.lost{background:#e9dcd7; color:var(--lost);}
+.cmp-cell.none{background:var(--line-2);}
+.cmp-matrix-key{display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin-top:11px; font-size:10.5px; color:var(--ink-3);}
+.cmp-matrix-key span{display:inline-flex; align-items:center; gap:5px;}
+.cmp-matrix-key i{width:10px; height:10px; border-radius:3px; display:block;}
+.cmp-matrix-key i.good{background:var(--good);} .cmp-matrix-key i.mid{background:var(--brand);}
+.cmp-matrix-key i.bad{background:var(--bad);} .cmp-matrix-key i.lost{background:#e9dcd7;}
+.cmp-matrix-key i.none{background:var(--line-2);}
+.cmp-matrix-key em{font-style:normal; margin-left:auto; letter-spacing:.08em; text-transform:uppercase; font-weight:700; font-size:9.5px;}
+
+@media (max-width:820px){
+  .cmp-kpis{grid-template-columns:1fr 1fr;}
+  .cmp-ring{grid-template-columns:1fr; gap:6px;}
+  .cmp-ring-nums{justify-content:flex-start;}
+}
+/* The manual run lives at the foot of the schedule panel, separated by a rule
+   so it reads as an action rather than another setting. */
+.seo-runnow{margin-top:16px; padding-top:16px; border-top:1px solid var(--line-2);}
+.seo-runnow .btn-go{display:inline-flex; align-items:center; justify-content:center; gap:8px;}
+.seo-runnow .btn-go svg{width:14px; height:14px; stroke:currentColor; flex:none;}
+.seo-runnow .hint{margin-top:8px; text-align:center;}
+.seo-runnow .seo-scan-progress{margin-top:12px;}
+.seo-runnow .seo-scan-progress span{font-variant-numeric:tabular-nums; white-space:nowrap;}
 </style>
 </head>
 <body>
@@ -2593,7 +2739,15 @@ body.report-mode{
             </div>
 
             <div class="results">
-              <div class="map-card" id="cmpMapCard">
+              <!-- The comparison's primary output. Profiles in one client are
+                   usually in different towns, so a single shared grid drawn on
+                   a map answers the wrong question — it shows where each pin
+                   is, not whether each profile is winning the area it actually
+                   serves. This report answers the second one. The map is still
+                   here, one click away, for when the geography itself matters. -->
+              <div id="cmpReport" class="cmp-report"></div>
+
+              <div class="map-card" id="cmpMapCard" style="display:none">
                 <div class="map-head">
                   <h3>Best-placed profile at each point</h3>
                   <div class="map-sub" id="cmpMapSub"></div>
@@ -3095,6 +3249,18 @@ body.report-mode{
                     <div class="seo-autoscan-status" id="seoAutoStatusLine"></div>
                   </div>
                   <div class="hint seo-autoscan-note">Runs only while GBP Reporter is open in a browser tab somewhere. It checks once a minute and catches up on the next visit if a run was missed.</div>
+                  <div class="seo-runnow">
+                    <button class="btn btn-go btn-full" id="seoRunNowBtn" type="button">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3.2-6.9"/><path d="M21 3v6h-6"/></svg>
+                      Run all scans now
+                    </button>
+                    <div class="hint" id="seoRunNowHint">Rescans every keyword that has a location, for this client only.</div>
+                    <div class="seo-scan-progress" id="seoDashScanProgress" style="display:none">
+                      <div class="seo-scan-bar"><i id="seoDashScanBarFill"></i></div>
+                      <span id="seoDashScanProgressLabel">Scanning…</span>
+                      <button class="btn btn-sm" id="seoDashScanStopBtn" type="button">Stop</button>
+                    </div>
+                  </div>
                 </div>
               </section>
 
@@ -6052,7 +6218,342 @@ function updateCompareStatus(scan){
   else if (done < total) setStatus(el, done + ' of ' + total + ' points read.', '');
   else setStatus(el, 'Every point read.', 'ok');
 }
+/* ==========================================================================
+   COMPARISON INSIGHT REPORT
+
+   A client's profiles are usually in different towns. Plotting them all on
+   one shared grid shows where the pins sit, which is not the question worth
+   asking — the question is whether each profile is winning the area it was
+   opened to serve. So every number here is computed twice: once across the
+   whole grid, and once in rings measured from that profile's OWN centre.
+   A profile can look weak on the grid and still be doing its job perfectly,
+   if the grid happens to sit over someone else's town.
+
+   Everything is derived from the scan already in state. No extra requests,
+   nothing stored, so the report redraws live as points come in.
+   ========================================================================== */
+function cmpDistanceKm(aLat, aLng, bLat, bLng){
+  const R = 6371, toRad = d => d * Math.PI / 180;
+  const dLat = toRad(bLat - aLat), dLng = toRad(bLng - aLng);
+  const s = Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(aLat)) * Math.cos(toRad(bLat)) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(s));
+}
+const CMP_BANDS = [
+  {max:2,   label:'0–2 km',  note:'the immediate neighbourhood'},
+  {max:5,   label:'2–5 km',  note:'across town'},
+  {max:10,  label:'5–10 km', note:'the edge of the service area'},
+  {max:1e9, label:'10 km +', note:'beyond the usual catchment'}
+];
+
+function computeCompareInsights(scan, gbps){
+  const read = scan.points.filter(p => p.results);
+  const byId = {};
+  const profiles = gbps.map(g => {
+    const hasCentre = !!(g.center && g.center.lat != null && g.center.lng != null);
+    const p = {
+      id: g.id,
+      name: g.name || g.bizName || 'Untitled profile',
+      area: (g.center && g.center.label) || '',
+      hasCentre,
+      found:0, top3:0, sum:0, n:0, best:null, wins:0,
+      mix:{good:0, mid:0, bad:0, none:0},
+      bands: CMP_BANDS.map(b => ({label:b.label, note:b.note, max:b.max, found:0, total:0, sum:0, n:0})),
+      nearest:null
+    };
+    byId[g.id] = p;
+    return p;
+  });
+
+  read.forEach(pt => {
+    profiles.forEach(pr => {
+      const r = pt.results[pr.id];
+      const rank = (r && r.rank >= 1) ? r.rank : null;
+      if (rank != null){
+        pr.found++; pr.sum += rank; pr.n++;
+        if (rank <= 3){ pr.top3++; pr.mix.good++; }
+        else if (rank <= 10) pr.mix.mid++;
+        else pr.mix.bad++;
+        if (pr.best == null || rank < pr.best) pr.best = rank;
+      } else {
+        pr.mix.none++;
+      }
+      if (pr.hasCentre){
+        const g = gbps.find(x => x.id === pr.id);
+        const d = cmpDistanceKm(g.center.lat, g.center.lng, pt.lat, pt.lng);
+        if (pr.nearest == null || d < pr.nearest) pr.nearest = d;
+        const band = pr.bands.find(b => d <= b.max);
+        band.total++;
+        if (rank != null){ band.found++; band.sum += rank; band.n++; }
+      }
+    });
+  });
+
+  let unclaimed = 0, contested = 0;
+  read.forEach(pt => {
+    const b = bestAt(pt, gbps);
+    if (b && byId[b.id]) byId[b.id].wins++;
+    else unclaimed++;
+    let here = 0;
+    profiles.forEach(pr => { const r = pt.results[pr.id]; if (r && r.rank >= 1) here++; });
+    if (here > 1) contested++;
+  });
+
+  profiles.forEach(pr => {
+    pr.avg = pr.n ? pr.sum / pr.n : null;
+    pr.coverage = read.length ? pr.found / read.length : 0;
+    pr.bands.forEach(b => { b.avg = b.n ? b.sum / b.n : null; });
+    /* The headline judgement. Read across the whole grid a profile can look
+       poor simply because the grid is centred on another town, so the verdict
+       is taken from the closest ring that actually has points in it. */
+    const home = pr.bands.find(b => b.total > 0) || null;
+    pr.home = home;
+    pr.verdict = cmpVerdict(pr, home);
+  });
+
+  profiles.sort((a, b) =>
+    b.wins - a.wins ||
+    b.found - a.found ||
+    (a.avg == null ? 999 : a.avg) - (b.avg == null ? 999 : b.avg));
+
+  return {read, total:scan.points.length, profiles, unclaimed, contested};
+}
+
+/* Plain-language reading of one profile, phrased around the area it serves
+   rather than around the grid. */
+function cmpVerdict(pr, home){
+  /* Out of range is not the same as losing. A profile whose own town is a
+     hundred kilometres from this grid should not be reported as a failure —
+     it was never being measured on anything it competes for. */
+  if (pr.hasCentre && pr.nearest != null && pr.nearest > 10 && !pr.found){
+    return {tone:'none', text:'Out of range — its area is ' + pr.nearest.toFixed(0) + ' km from this grid'};
+  }
+  if (!pr.found) return {tone:'bad', text:'Not found anywhere on this grid'};
+  if (!pr.hasCentre){
+    if (pr.avg <= 3) return {tone:'good', text:'Top three on average across the grid'};
+    if (pr.avg <= 10) return {tone:'mid', text:'On page one across the grid'};
+    return {tone:'bad', text:'Ranking, but below page one'};
+  }
+  if (home && home.avg != null){
+    const where = home.label.toLowerCase();
+    if (home.avg <= 3) return {tone:'good', text:'Owns its own area — top three within ' + where};
+    if (home.avg <= 10) return {tone:'mid', text:'Holds page one within ' + where + ' of its centre'};
+    return {tone:'bad', text:'Weak on its own doorstep — #' + home.avg.toFixed(0) + ' average within ' + where};
+  }
+  return {tone:'mid', text:'Found on the grid, but no points near its own centre'};
+}
+
+let cmpSelectedProfileId = null;
+
+function cmpBar(pct, cls){
+  return '<span class="cmp-bar"><i class="' + cls + '" style="width:' + Math.max(0, Math.min(100, pct)) + '%"></i></span>';
+}
+function cmpMixStrip(mix){
+  const seg = (cls, v) => v ? '<i class="' + cls + '" style="flex:' + v + '"></i>' : '';
+  const label = mix.good + ' top 3 · ' + mix.mid + ' on page one · ' + mix.bad + ' below · ' + mix.none + ' absent';
+  return '<span class="seo-mix" title="' + esc(label) + '">' +
+    seg('mx-good', mix.good) + seg('mx-mid', mix.mid) + seg('mx-bad', mix.bad) + seg('mx-none', mix.none) + '</span>';
+}
+function cmpRankTone(avg){
+  if (avg == null) return 'none';
+  if (avg <= 3) return 'good';
+  if (avg <= 10) return 'mid';
+  return 'bad';
+}
+
+function renderCompareReport(scan){
+  const host = $('cmpReport');
+  if (!host) return;
+  const c = activeClient();
+  const gbps = c ? c.gbps : [];
+
+  if (!scan || !gbps.length){
+    host.innerHTML = '<div class="cmp-report-empty">Build a grid and run a comparison to see how each profile performs in the area it actually serves.</div>';
+    return;
+  }
+  const data = computeCompareInsights(scan, gbps);
+  if (!data.read.length){
+    host.innerHTML = '<div class="cmp-report-empty">Grid ready — <b>' + data.total + ' points</b> waiting. ' +
+      'Results appear here the moment the first point is read.</div>';
+    return;
+  }
+
+  if (!data.profiles.some(p => p.id === cmpSelectedProfileId)) cmpSelectedProfileId = data.profiles[0].id;
+  const sel = data.profiles.find(p => p.id === cmpSelectedProfileId) || data.profiles[0];
+
+  /* ---- header + headline numbers ---- */
+  const claimed = data.read.length - data.unclaimed;
+  let html = '' +
+    '<div class="cmp-rep-head">' +
+      '<div class="cmp-rep-title">' +
+        '<span class="eyebrow">Comparison report</span>' +
+        '<h3>“' + esc(scan.keyword) + '”</h3>' +
+        '<p>' + data.read.length + ' of ' + data.total + ' points read · ' +
+          esc(scan.grid.rows + ' × ' + scan.grid.rows + ' grid, ' + scan.grid.spacingKm + ' km apart') + ' · ' +
+          esc(new Date(scan.ts).toLocaleDateString([], {month:'short', day:'numeric', year:'numeric'})) + '</p>' +
+      '</div>' +
+      '<div class="cmp-rep-acts">' +
+        '<button class="btn btn-sm" type="button" data-cmp-act="pdf">Download PDF</button>' +
+        '<button class="btn btn-sm" type="button" data-cmp-act="map">View grid map</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="cmp-kpis">' +
+      cmpKpi(claimed + '/' + data.read.length, 'Points a profile holds', claimed === data.read.length ? 'good' : '') +
+      cmpKpi(String(data.profiles.filter(p => p.found).length) + '/' + data.profiles.length, 'Profiles visible here', '') +
+      cmpKpi(String(data.contested), 'Points more than one profile reaches', data.contested ? 'warn' : '') +
+      cmpKpi(String(data.unclaimed), 'Points nobody holds', data.unclaimed ? 'bad' : 'good') +
+    '</div>';
+
+  /* ---- territory split ---- */
+  const winners = data.profiles.filter(p => p.wins > 0);
+  html += '<section class="cmp-block">' +
+    '<header class="cmp-block-h"><h4>Who holds the ground</h4>' +
+      '<span class="cmp-block-note">Share of points where this profile is the best-placed of the group</span></header>' +
+    '<div class="cmp-terr">' +
+      winners.map((p, i) =>
+        '<i class="cmp-terr-seg t' + (i % 6) + (p.id === sel.id ? ' on' : '') + '" data-cmp-pick="' + esc(p.id) + '" ' +
+        'style="flex:' + p.wins + '" title="' + esc(p.name + ' — best at ' + p.wins + ' of ' + data.read.length + ' points') + '"></i>').join('') +
+      (data.unclaimed ? '<i class="cmp-terr-seg none" style="flex:' + data.unclaimed + '" title="' + data.unclaimed + ' points with no profile found"></i>' : '') +
+    '</div>' +
+    '<div class="cmp-terr-key">' +
+      winners.map((p, i) =>
+        '<button type="button" class="cmp-key' + (p.id === sel.id ? ' on' : '') + '" data-cmp-pick="' + esc(p.id) + '">' +
+          '<i class="t' + (i % 6) + '"></i>' + esc(p.name) +
+          '<b>' + Math.round(p.wins / data.read.length * 100) + '%</b></button>').join('') +
+      (data.unclaimed ? '<span class="cmp-key static"><i class="none"></i>Nobody<b>' + Math.round(data.unclaimed / data.read.length * 100) + '%</b></span>' : '') +
+    '</div>' +
+  '</section>';
+
+  /* ---- leaderboard ---- */
+  html += '<section class="cmp-block">' +
+    '<header class="cmp-block-h"><h4>Every profile, ranked</h4>' +
+      '<span class="cmp-block-note">Pick one to see how it performs around its own centre</span></header>' +
+    '<div class="cmp-cards">' +
+      data.profiles.map((p, i) => cmpProfileCard(p, i, data, p.id === sel.id)).join('') +
+    '</div>' +
+  '</section>';
+
+  /* ---- the selected profile, measured from its own centre ---- */
+  html += cmpFocusBlock(sel, data, scan);
+
+  host.innerHTML = html;
+
+  host.querySelectorAll('[data-cmp-pick]').forEach(el => {
+    el.addEventListener('click', () => {
+      cmpSelectedProfileId = el.dataset.cmpPick;
+      renderCompareReport(scan);
+      const focus = $('cmpFocusBlock');
+      if (focus) focus.scrollIntoView({behavior:'smooth', block:'nearest'});
+    });
+  });
+  const pdfBtn = host.querySelector('[data-cmp-act="pdf"]');
+  if (pdfBtn) pdfBtn.addEventListener('click', () => { const b = $('cmpPdfBtn'); if (b) b.click(); });
+  const mapBtn = host.querySelector('[data-cmp-act="map"]');
+  if (mapBtn) mapBtn.addEventListener('click', () => {
+    const card = $('cmpMapCard');
+    const showing = card.style.display !== 'none';
+    card.style.display = showing ? 'none' : '';
+    mapBtn.textContent = showing ? 'View grid map' : 'Hide grid map';
+    if (!showing){
+      /* Leaflet measures itself as zero while hidden, so it has to be told to
+         re-measure the moment the card is put back on screen. */
+      setTimeout(() => { try{ cmpMap.invalidateSize(); fitToPoints(cmpMap, scan.points); }catch(e){} }, 60);
+      card.scrollIntoView({behavior:'smooth', block:'nearest'});
+    }
+  });
+}
+
+function cmpKpi(value, label, tone){
+  return '<div class="cmp-kpi' + (tone ? ' ' + tone : '') + '"><b>' + esc(value) + '</b><span>' + esc(label) + '</span></div>';
+}
+
+function cmpProfileCard(p, i, data, isSel){
+  const avg = p.avg != null ? p.avg.toFixed(1) : '—';
+  const bestPill = p.best == null
+    ? '<span class="rank-pill rp-none">none</span>'
+    : '<span class="rank-pill ' + (p.best <= 3 ? 'rp-good' : p.best <= 10 ? 'rp-mid' : 'rp-bad') + '">#' + p.best + '</span>';
+  return '<button type="button" class="cmp-card' + (isSel ? ' on' : '') + '" data-cmp-pick="' + esc(p.id) + '">' +
+    '<span class="cmp-card-top">' +
+      '<i class="cmp-swatch t' + (i % 6) + '"></i>' +
+      '<span class="cmp-card-name">' + esc(p.name) + (p.area ? '<small>' + esc(p.area) + '</small>' : '') + '</span>' +
+      bestPill +
+    '</span>' +
+    '<span class="cmp-verdict ' + p.verdict.tone + '">' + esc(p.verdict.text) + '</span>' +
+    '<span class="cmp-card-nums">' +
+      '<span><b>' + Math.round(p.coverage * 100) + '%</b>seen</span>' +
+      '<span><b>' + p.top3 + '</b>top 3</span>' +
+      '<span><b>' + avg + '</b>avg</span>' +
+      '<span><b>' + p.wins + '</b>held</span>' +
+    '</span>' +
+    cmpMixStrip(p.mix) +
+  '</button>';
+}
+
+function cmpFocusBlock(p, data, scan){
+  let body;
+  if (!p.hasCentre){
+    body = '<div class="cmp-note">This profile has no grid centre saved yet, so its results can\u2019t be measured against its own area. ' +
+      'Set one on the profile screen and run the comparison again.</div>';
+  } else {
+    const rings = p.bands.filter(b => b.total > 0);
+    body = '<div class="cmp-rings">' + rings.map(b => {
+      const cov = b.total ? b.found / b.total * 100 : 0;
+      const tone = cmpRankTone(b.avg);
+      return '<div class="cmp-ring">' +
+        '<div class="cmp-ring-h"><b>' + esc(b.label) + '</b><span>' + esc(b.note) + '</span></div>' +
+        '<div class="cmp-ring-bar">' + cmpBar(cov, 'tone-' + tone) + '</div>' +
+        '<div class="cmp-ring-nums">' +
+          '<span class="cmp-ring-avg tone-' + tone + '">' + (b.avg != null ? '#' + b.avg.toFixed(1) : '—') + '</span>' +
+          '<span>' + b.found + ' of ' + b.total + ' points</span>' +
+        '</div>' +
+      '</div>';
+    }).join('') + '</div>';
+    if (p.nearest != null && p.nearest > 10){
+      body += '<div class="cmp-note warn">The nearest grid point is ' + p.nearest.toFixed(1) +
+        ' km from this profile\u2019s centre, so this grid barely covers the area it serves. ' +
+        'Run a separate comparison centred on it for a fair reading.</div>';
+    }
+  }
+  return '<section class="cmp-block" id="cmpFocusBlock">' +
+    '<header class="cmp-block-h">' +
+      '<h4>' + esc(p.name) + ' — measured from its own centre</h4>' +
+      '<span class="cmp-block-note">Distance rings out from this profile\u2019s pin, not from the grid\u2019s</span>' +
+    '</header>' + body +
+    cmpMatrix(p, scan) +
+  '</section>';
+}
+
+/* The grid, flattened into a matrix. Same points, no basemap — north is up,
+   each cell is one reading, so a weak edge or a dead corner is obvious
+   without the geography getting in the way. */
+function cmpMatrix(p, scan){
+  const rows = scan.grid.rows;
+  const cell = {};
+  scan.points.forEach(pt => {
+    const r = pt.results ? pt.results[p.id] : null;
+    cell[pt.row + ':' + pt.col] = pt.results ? ((r && r.rank >= 1) ? r.rank : 0) : null;
+  });
+  let out = '<div class="cmp-matrix-wrap"><div class="cmp-matrix" style="grid-template-columns:repeat(' + rows + ',1fr)">';
+  for (let r = 0; r < rows; r++){
+    for (let cI = 0; cI < rows; cI++){
+      const v = cell[r + ':' + cI];
+      const cls = v == null ? 'none' : v === 0 ? 'lost' : v <= 3 ? 'good' : v <= 10 ? 'mid' : 'bad';
+      const label = v == null ? 'not read yet' : v === 0 ? 'not found here' : 'position ' + v;
+      out += '<i class="cmp-cell ' + cls + '" title="' + esc(label) + '">' + (v == null ? '' : (v === 0 ? '·' : v)) + '</i>';
+    }
+  }
+  out += '</div><div class="cmp-matrix-key">' +
+    '<span><i class="good"></i>1–3</span><span><i class="mid"></i>4–10</span>' +
+    '<span><i class="bad"></i>11+</span><span><i class="lost"></i>not found</span><span><i class="none"></i>not read</span>' +
+    '<em>north is up</em></div></div>';
+  return out;
+}
+
 function renderCompareTable(scan){
+  /* The report is driven from here on purpose: this function is already
+     called after every point during a live run, on history changes and on
+     manual retries, so the report stays in step without a second wiring. */
+  renderCompareReport(scan);
   const wrap = $('cmpResultsWrap'), body = $('cmpResultsBody'), c = activeClient();
   if (!scan || !c || !c.gbps.length){ wrap.style.display = 'none'; return; }
   const read = scan.points.filter(p => p.results);
@@ -7588,27 +8089,63 @@ async function seoScanOne(client, kw, loc){
 }
 
 let seoScanStop = false;
+/* Guards against a second run being started from the other tab's button while
+   one is already in flight — both write to the same locations. */
+let seoScanRunning = false;
+/* The keyword screen and the dashboard each have a progress strip, and a run
+   can be started from either one. Rather than teaching the scanner about two
+   sets of ids, it drives whichever strips are actually on the page. */
+function seoProgressWidgets(){
+  return [
+    {bar:$('seoScanProgress'), fill:$('seoScanBarFill'), label:$('seoScanProgressLabel'), stop:$('seoScanStopBtn')},
+    {bar:$('seoDashScanProgress'), fill:$('seoDashScanBarFill'), label:$('seoDashScanProgressLabel'), stop:$('seoDashScanStopBtn')}
+  ].filter(w => w.bar && w.fill && w.label);
+}
+function seoProgressShow(widgets, total){
+  widgets.forEach(w => {
+    w.bar.style.display = 'flex';
+    w.fill.style.width = '0%';
+    w.label.textContent = 'Scanning 0 / ' + total + '\u2026';
+    if (w.stop) w.stop.onclick = () => { seoScanStop = true; };
+  });
+}
+function seoProgressUpdate(widgets, done, total){
+  const pct = Math.round(done / total * 100) + '%';
+  widgets.forEach(w => { w.fill.style.width = pct; w.label.textContent = 'Scanning ' + done + ' / ' + total + '\u2026'; });
+}
+function seoProgressHide(widgets){
+  widgets.forEach(w => { w.bar.style.display = 'none'; });
+}
+
 async function seoScanAndRender(c, pairs){
   pairs = pairs.filter(p => p.loc.label && p.loc.label.trim());
   if (!pairs.length){ toast('Add at least one keyword with a location first', 'err'); return; }
   if (!c.website || !c.website.trim()){ toast('Add this client\u2019s website on the Dashboard tab first \u2014 rank checks need it.', 'err'); return; }
   if (!providerReady()){ toast('Configure a search provider first: GBP Locations \u2192 step 4', 'err'); return; }
+  if (seoScanRunning){ toast('A scan is already running for this client', 'err'); return; }
+  seoScanRunning = true;
   seoScanStop = false;
-  const bar = $('seoScanProgress'), fill = $('seoScanBarFill'), label = $('seoScanProgressLabel');
-  bar.style.display = 'flex'; fill.style.width = '0%'; label.textContent = 'Scanning 0 / ' + pairs.length + '\u2026';
-  $('seoScanStopBtn').onclick = () => { seoScanStop = true; };
+  const widgets = seoProgressWidgets();
+  seoProgressShow(widgets, pairs.length);
   let done = 0;
-  await runPool(pairs.length, state.settings.concurrency || 6, () => seoScanStop, async (i) => {
-    await seoScanOne(c, pairs[i].k, pairs[i].loc);
-    done++;
-    fill.style.width = Math.round(done / pairs.length * 100) + '%';
-    label.textContent = 'Scanning ' + done + ' / ' + pairs.length + '\u2026';
-    if (done % 3 === 0){ save(); renderSeoKeywords(); }
-  });
+  try{
+    await runPool(pairs.length, state.settings.concurrency || 6, () => seoScanStop, async (i) => {
+      await seoScanOne(c, pairs[i].k, pairs[i].loc);
+      done++;
+      seoProgressUpdate(widgets, done, pairs.length);
+      if (done % 3 === 0){ save(); renderSeoKeywords(); }
+    });
+  } finally {
+    seoScanRunning = false;
+    seoProgressHide(widgets);
+  }
   save(); renderSeoKeywords();
-  bar.style.display = 'none';
   toast(seoScanStop ? 'Scan stopped' : 'Scan complete \u2014 results saved');
   renderSeoTree();
+  /* Only the derived views — deliberately not seoLoadDashboard(), which would
+     overwrite whatever is half-typed in the edit form. */
+  renderSeoStats(c);
+  seoRenderAutoScanStatus(c);
 }
 
 /* ---------- rail ---------- */
@@ -8577,6 +9114,38 @@ $('seoScanAllBtn').addEventListener('click', () => {
   const pairs = [];
   c.keywords.forEach(k => k.locations.forEach(loc => pairs.push({k, loc})));
   seoScanAndRender(c, pairs);
+});
+
+/* The same run, reachable from the schedule panel — the natural place to ask
+   for it, since that's where you go to decide when scans happen. It works
+   whether or not the schedule is switched on: this is a manual run, not a
+   simulation of the scheduled one. */
+const seoRunNowBtn = $('seoRunNowBtn');
+if (seoRunNowBtn) seoRunNowBtn.addEventListener('click', async () => {
+  ensureSeoState();
+  const c = activeSeoClient(); if (!c) return;
+  const pairs = [];
+  c.keywords.forEach(k => k.locations.forEach(loc => { if (loc.label && loc.label.trim()) pairs.push({k, loc}); }));
+  if (!pairs.length){
+    toast('No keywords with a location yet \u2014 add one on the Keywords tab first.', 'err');
+    return;
+  }
+  seoRunNowBtn.disabled = true;
+  const hint = $('seoRunNowHint');
+  const restore = hint ? hint.textContent : '';
+  if (hint) hint.textContent = 'Rescanning ' + pairs.length + ' keyword location' + (pairs.length === 1 ? '' : 's') + '\u2026';
+  try{
+    await seoScanAndRender(c, pairs);
+    /* Recording it as a run keeps the schedule's "last run" line honest —
+       a manual sweep is still a sweep, and the scheduler reads the same
+       field to decide whether it has catching up to do. */
+    c.autoScan.lastRun = Date.now();
+    save();
+    seoRenderAutoScanStatus(c);
+  } finally {
+    seoRunNowBtn.disabled = false;
+    if (hint) hint.textContent = restore;
+  }
 });
 
 /* ---------- bulk import ---------- */
