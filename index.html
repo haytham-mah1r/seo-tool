@@ -1894,6 +1894,115 @@ body.report-mode{
 .seo-mix .mx-bad{background:linear-gradient(180deg,#d38055,var(--lost));}
 .seo-mix .mx-none{background:#cdd7df;}
 @media (max-width:900px){ .seo-mix{display:none;} .seo-spark, .seo-spark-pad{display:none;} }
+/* --------------------------------------------------------------------------
+   11 · SEO CLIENT DASHBOARD, REBUILT
+   The old version stacked full-width bands, each announced by its own heavy
+   heading — icon, brand tick, gradient rule — over content two lines tall.
+   Three headings and three cards for three short blocks is a lot of
+   furniture for very little furniture-worth of information.
+   Now there is one heading style (a panel header, inside the card it names),
+   and the page is two columns: what you read on the left, what you set on
+   the right. Nothing is full-bleed any more, so a six-field summary stops
+   stretching across 1600px of empty white.
+   -------------------------------------------------------------------------- */
+#seoDashboardView{max-width:1300px;}
+.seo-dash-cols{display:grid; grid-template-columns:minmax(0,1fr) 352px; gap:18px; align-items:start;}
+.seo-dash-main{min-width:0; display:flex; flex-direction:column; gap:16px;}
+/* Spacing inside the view/edit wrappers has to come from margins, not a flex
+   gap: the edit toggle sets display:block on these two inline, which would
+   overrule any display:flex declared here. */
+#seoDashView > .seo-panel, #seoDashEdit > .seo-panel{margin-bottom:16px;}
+#seoDashView > .seo-panel:last-child, #seoDashEdit > .seo-panel:last-child{margin-bottom:0;}
+.seo-dash-side{
+  min-width:0; display:flex; flex-direction:column; gap:16px;
+  position:sticky; top:calc(var(--topnav-h) + 84px);
+}
+
+/* One heading style for the whole dashboard: a quiet bar at the top of the
+   card it belongs to. No brand tick here — the section tick is for the wider
+   tools, and repeating it six times down one screen is what made this busy. */
+#seoDashboardView .card.seo-panel{padding:0; overflow:hidden;}
+#seoDashboardView .card.seo-panel:hover{transform:none; box-shadow:var(--sh-2), var(--hair); border-color:var(--line);}
+.seo-panel-h{
+  display:flex; align-items:center; gap:10px; padding:14px 20px;
+  border-bottom:1px solid var(--line-2);
+  background:linear-gradient(180deg,var(--card-2) 0%,#fff 100%);
+}
+.seo-panel-h svg{width:15px; height:15px; stroke:var(--ink-3); flex:none;}
+.seo-panel-h h3{
+  font-family:var(--display); font-size:13.5px; font-weight:600; margin:0;
+  letter-spacing:-.008em; color:var(--ink); flex:1; min-width:0;
+}
+.seo-panel-state{
+  font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:.1em;
+  padding:4px 10px; border-radius:20px; flex:none;
+  background:var(--line-2); color:var(--ink-3);
+}
+.seo-panel-state.on{background:var(--good-wash); color:var(--good); box-shadow:inset 0 0 0 1px rgba(13,113,80,.14);}
+.seo-panel-body{padding:18px 20px 20px;}
+
+/* Client details reads as a ledger rather than six floating labels: two
+   columns, hairline between rows, values doing the talking. */
+.seo-panel .seo-view-grid{grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 32px;}
+.seo-panel .seo-view-field{padding:13px 0; border-top:1px solid var(--line-2);}
+.seo-panel .seo-view-field:nth-child(1), .seo-panel .seo-view-field:nth-child(2){border-top:none; padding-top:0;}
+.seo-panel .seo-view-label{margin-bottom:4px;}
+.seo-panel .seo-view-value{font-size:14.5px;}
+.seo-panel .seo-view-notes{margin-top:18px; padding-top:16px;}
+
+/* The schedule panel is a setting, not an alarm. The orange wash and orange
+   left edge it used to wear made it the loudest thing on the page even when
+   switched off; the state now lives in the small tag in its header. */
+#seoDashboardView .seo-autoscan-card{border-left:none;}
+#seoDashboardView .seo-autoscan-card.seo-autoscan-on{
+  background:none; background-image:linear-gradient(180deg,#ffffff 0%,#fcfdfe 100%);
+  border-color:var(--line);
+}
+.seo-autoscan-toggle{align-items:center; gap:12px;}
+.seo-autoscan-toggle span{line-height:1.45;}
+.seo-autoscan-toggle b{display:block; color:var(--ink); font-size:12.5px;}
+.seo-autoscan-toggle small{display:block; font-size:11px; color:var(--ink-3); line-height:1.5; margin-top:2px;}
+#seoAutoScanBody{margin-top:16px; padding-top:16px; border-top:1px solid var(--line-2);}
+.seo-autoscan-note{margin-top:14px; padding-top:13px; border-top:1px dashed var(--line); font-size:11px;}
+
+/* In a 352px column the paired fields have to stack, and seven weekday chips
+   only fit if they share the width evenly — which also makes them read as
+   one control instead of seven loose buttons. */
+.seo-dash-side .g2{grid-template-columns:1fr; gap:14px;}
+.seo-dash-side .seo-weekday-chips{display:grid; grid-template-columns:repeat(7,1fr); gap:4px;}
+.seo-dash-side .seo-weekday-chip{padding:9px 0; text-align:center; font-size:11px; border-radius:8px;}
+.seo-weekday-chip.on{
+  background-image:linear-gradient(180deg,var(--brand-hi),var(--brand));
+  border-color:var(--brand-lo); color:#fff; box-shadow:0 5px 12px -6px var(--brand-glow);
+}
+.seo-dash-side .seo-autoscan-status{margin-top:14px; padding-top:12px; font-size:11px;}
+.seo-autoscan-status span{display:flex; justify-content:space-between; gap:10px; padding:3px 0;}
+.seo-autoscan-status span b{
+  color:var(--ink-3); font-weight:700; font-size:9.5px; letter-spacing:.09em;
+  text-transform:uppercase; flex:none; padding-top:1px;
+}
+
+/* Quick links stack full width in the sidebar, so they read as a short menu
+   rather than three buttons drifting under a heading. */
+.seo-dash-side .seo-ext-links{flex-direction:column; gap:8px; margin-bottom:0;}
+.seo-dash-side .seo-ext-btn{width:100%; justify-content:flex-start;}
+.seo-dash-side .seo-ext-btn .seo-ext-go{margin-left:auto;}
+
+/* The panel above it already carries a 16px margin, so the old 30px reads as
+   a gap twice the size of every other one on the page. */
+#seoDashboardView .seo-danger-zone{margin-top:8px;}
+
+@media (max-width:1180px){
+  .seo-dash-cols{grid-template-columns:1fr;}
+  .seo-dash-side{position:static;}
+  .seo-dash-side .g2{grid-template-columns:1fr 1fr;}
+  .seo-dash-side .seo-ext-links{flex-direction:row;}
+  .seo-dash-side .seo-ext-btn{width:auto;}
+}
+@media (max-width:640px){
+  .seo-panel .seo-view-grid{grid-template-columns:1fr;}
+  .seo-panel .seo-view-field:nth-child(2){border-top:1px solid var(--line-2); padding-top:13px;}
+}
 </style>
 </head>
 <body>
@@ -2817,139 +2926,189 @@ body.report-mode{
           </div>
           <div class="seo-stats-grid" id="seoStatsGrid"></div>
 
-          <div class="section-h seo-section-h"><h2><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>Automatic scans</h2><div class="rule"></div></div>
-          <div class="card seo-autoscan-card" id="seoAutoscanCard">
-            <label class="sw seo-autoscan-toggle"><input type="checkbox" id="seoAutoEnabled"/><i></i><span><b>Run scans automatically</b> — only keywords that already have a location assigned are scanned.</span></label>
-            <div id="seoAutoScanBody" style="display:none">
-              <div class="g2">
-                <div class="f">
-                  <label for="seoAutoFrequency">Frequency</label>
-                  <select id="seoAutoFrequency">
-                    <option value="daily">Every day</option>
-                    <option value="weekly">Specific days each week</option>
-                    <option value="monthly">Once a month</option>
-                  </select>
-                </div>
-                <div class="f">
-                  <label for="seoAutoTime">Time of day <span class="opt">your browser's local time</span></label>
-                  <input id="seoAutoTime" type="time" value="09:00"/>
-                </div>
-              </div>
-              <div class="f" id="seoAutoWeekdaysWrap">
-                <label>Days of the week <span class="opt">pick as many as you want — that sets how many times a week it runs</span></label>
-                <div class="seo-weekday-chips" id="seoAutoWeekdays">
-                  <button type="button" class="seo-weekday-chip" data-day="1">Mon</button>
-                  <button type="button" class="seo-weekday-chip" data-day="2">Tue</button>
-                  <button type="button" class="seo-weekday-chip" data-day="3">Wed</button>
-                  <button type="button" class="seo-weekday-chip" data-day="4">Thu</button>
-                  <button type="button" class="seo-weekday-chip" data-day="5">Fri</button>
-                  <button type="button" class="seo-weekday-chip" data-day="6">Sat</button>
-                  <button type="button" class="seo-weekday-chip" data-day="0">Sun</button>
-                </div>
-              </div>
-              <div class="f" id="seoAutoMonthlyWrap" style="display:none">
-                <label for="seoAutoDayOfMonth">Day of the month</label>
-                <input id="seoAutoDayOfMonth" type="text" inputmode="numeric" placeholder="1–28" style="max-width:110px"/>
-              </div>
-              <div class="seo-autoscan-status" id="seoAutoStatusLine"></div>
-            </div>
-            <div class="hint" style="margin-top:12px">This schedule only fires while GBP Reporter is open in a browser tab somewhere. It checks once a minute and catches up on the next visit if a run was missed.</div>
-          </div>
+          <!-- The dashboard is two columns: what you read on the left, what you
+               set on the right. Everything that used to be a full-width band
+               with its own heading is now a titled panel, so the page has one
+               heading style instead of a heading plus a card for every block. -->
+          <div class="seo-dash-cols">
+            <div class="seo-dash-main">
 
-          <!-- ============ VIEW MODE — external links + read-only summary ============ -->
-          <div id="seoDashView">
-            <div class="section-h seo-section-h"><h2><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>Quick links</h2><div class="rule"></div></div>
-            <div class="seo-ext-links" id="seoExtLinks"></div>
+              <!-- ============ VIEW MODE — read-only summary ============ -->
+              <div id="seoDashView">
+                <section class="card seo-panel">
+                  <header class="seo-panel-h">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg>
+                    <h3>Client details</h3>
+                  </header>
+                  <div class="seo-panel-body">
+                    <div class="seo-view-grid" id="seoViewGrid"></div>
+                    <div class="seo-view-notes" id="seoViewNotes"></div>
+                  </div>
+                </section>
+              </div>
 
-            <div class="section-h seo-section-h"><h2><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg>Client details</h2><div class="rule"></div></div>
-            <div class="card">
-              <div class="seo-view-grid" id="seoViewGrid"></div>
-              <div class="seo-view-notes" id="seoViewNotes"></div>
-            </div>
-          </div>
+              <!-- ============ EDIT MODE — the actual editable form ============ -->
+              <div id="seoDashEdit" style="display:none">
+                <section class="card seo-panel">
+                  <header class="seo-panel-h">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg>
+                    <h3>Client basics</h3>
+                  </header>
+                  <div class="seo-panel-body">
+                    <div class="g2">
+                      <div class="f">
+                        <label for="seoName">Client name</label>
+                        <input id="seoName" type="text" placeholder="Advance Construction" autocomplete="off"/>
+                      </div>
+                      <div class="f">
+                        <label for="seoStatus">Status</label>
+                        <select id="seoStatus">
+                          <option>Active</option><option>Paused</option><option>Onboarding</option>
+                          <option>At risk</option><option>Cancelled</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="g2">
+                      <div class="f">
+                        <label for="seoLead">Project lead</label>
+                        <input id="seoLead" type="text" placeholder="Robert" autocomplete="off"/>
+                      </div>
+                      <div class="f">
+                        <label for="seoCms">CMS</label>
+                        <input id="seoCms" type="text" placeholder="WordPress" autocomplete="off"/>
+                      </div>
+                    </div>
+                    <div class="f" style="margin-bottom:0">
+                      <label for="seoLogoUrl">Logo URL <span class="opt">optional — shown instead of the initials avatar</span></label>
+                      <input id="seoLogoUrl" type="text" placeholder="https://…/logo.png" autocomplete="off"/>
+                    </div>
+                  </div>
+                </section>
 
-          <!-- ============ EDIT MODE — the actual editable form ============ -->
-          <div id="seoDashEdit" style="display:none">
-            <div class="section-h seo-section-h"><h2><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg>Client basics</h2><div class="rule"></div></div>
-            <div class="card">
-              <div class="g2">
-                <div class="f">
-                  <label for="seoName">Client name</label>
-                  <input id="seoName" type="text" placeholder="Advance Construction" autocomplete="off"/>
-                </div>
-                <div class="f">
-                  <label for="seoStatus">Status</label>
-                  <select id="seoStatus">
-                    <option>Active</option><option>Paused</option><option>Onboarding</option>
-                    <option>At risk</option><option>Cancelled</option>
-                  </select>
-                </div>
-              </div>
-              <div class="g2">
-                <div class="f">
-                  <label for="seoLead">Project lead</label>
-                  <input id="seoLead" type="text" placeholder="Robert" autocomplete="off"/>
-                </div>
-                <div class="f">
-                  <label for="seoCms">CMS</label>
-                  <input id="seoCms" type="text" placeholder="WordPress" autocomplete="off"/>
-                </div>
-              </div>
-              <div class="f">
-                <label for="seoLogoUrl">Logo URL <span class="opt">optional — shown instead of the initials avatar</span></label>
-                <input id="seoLogoUrl" type="text" placeholder="https://…/logo.png" autocomplete="off"/>
-              </div>
-            </div>
+                <section class="card seo-panel">
+                  <header class="seo-panel-h">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>
+                    <h3>Tracking</h3>
+                  </header>
+                  <div class="seo-panel-body">
+                    <div class="g2">
+                      <div class="f">
+                        <label for="seoWebsite">Website <span class="opt">used to detect this client's rank in results</span></label>
+                        <input id="seoWebsite" type="text" placeholder="advanceconstruction.ca" autocomplete="off"/>
+                      </div>
+                      <div class="f">
+                        <label for="seoHours">Allocated hours</label>
+                        <input id="seoHours" type="text" placeholder="5 Hours" autocomplete="off"/>
+                      </div>
+                    </div>
+                    <div class="g2" style="margin-bottom:0">
+                      <div class="f" style="margin-bottom:0">
+                        <label for="seoProgress">Monthly progress</label>
+                        <input id="seoProgress" type="text" placeholder="On track" autocomplete="off"/>
+                      </div>
+                      <div class="f" style="margin-bottom:0">
+                        <label for="seoLastCall">Last monthly call</label>
+                        <input id="seoLastCall" type="date"/>
+                      </div>
+                    </div>
+                  </div>
+                </section>
 
-            <div class="section-h seo-section-h"><h2><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>Tracking</h2><div class="rule"></div></div>
-            <div class="card">
-              <div class="g2">
-                <div class="f">
-                  <label for="seoWebsite">Website <span class="opt">used to detect this client's rank in results</span></label>
-                  <input id="seoWebsite" type="text" placeholder="advanceconstruction.ca" autocomplete="off"/>
-                </div>
-                <div class="f">
-                  <label for="seoHours">Allocated hours</label>
-                  <input id="seoHours" type="text" placeholder="5 Hours" autocomplete="off"/>
-                </div>
-              </div>
-              <div class="g2">
-                <div class="f">
-                  <label for="seoProgress">Monthly progress</label>
-                  <input id="seoProgress" type="text" placeholder="On track" autocomplete="off"/>
-                </div>
-                <div class="f">
-                  <label for="seoLastCall">Last monthly call</label>
-                  <input id="seoLastCall" type="date"/>
-                </div>
-              </div>
-            </div>
+                <section class="card seo-panel">
+                  <header class="seo-panel-h">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11.5 4.5"/><path d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07l1.36-1.36"/></svg>
+                    <h3>Links &amp; notes</h3>
+                  </header>
+                  <div class="seo-panel-body">
+                    <div class="g2">
+                      <div class="f">
+                        <label for="seoBasecamp">Basecamp link</label>
+                        <input id="seoBasecamp" type="text" placeholder="https://3.basecamp.com/…" autocomplete="off"/>
+                      </div>
+                      <div class="f">
+                        <label for="seoReportLink">Report / rank-tracker link <span class="opt">e.g. Agency Analytics</span></label>
+                        <input id="seoReportLink" type="text" placeholder="https://…/rank-tracker/keywords" autocomplete="off"/>
+                      </div>
+                    </div>
+                    <div class="f" style="margin-bottom:0">
+                      <label for="seoNotes">Notes</label>
+                      <textarea id="seoNotes" rows="4" placeholder="Anything worth remembering about this client…"></textarea>
+                    </div>
+                  </div>
+                </section>
 
-            <div class="section-h seo-section-h"><h2><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11.5 4.5"/><path d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07l1.36-1.36"/></svg>Links &amp; notes</h2><div class="rule"></div></div>
-            <div class="card">
-              <div class="g2">
-                <div class="f">
-                  <label for="seoBasecamp">Basecamp link</label>
-                  <input id="seoBasecamp" type="text" placeholder="https://3.basecamp.com/…" autocomplete="off"/>
-                </div>
-                <div class="f">
-                  <label for="seoReportLink">Report / rank-tracker link <span class="opt">e.g. Agency Analytics</span></label>
-                  <input id="seoReportLink" type="text" placeholder="https://…/rank-tracker/keywords" autocomplete="off"/>
+                <div class="seo-danger-zone">
+                  <div>
+                    <div class="seo-danger-title">Delete this client</div>
+                    <div class="seo-danger-sub">Removes all of their keywords, locations and scan history. This can't be undone.</div>
+                  </div>
+                  <button class="btn" id="seoDeleteClientBtn" style="color:var(--alert)">Delete client</button>
                 </div>
               </div>
-              <div class="f">
-                <label for="seoNotes">Notes</label>
-                <textarea id="seoNotes" rows="4" placeholder="Anything worth remembering about this client…"></textarea>
-              </div>
+
             </div>
 
-            <div class="seo-danger-zone">
-              <div>
-                <div class="seo-danger-title">Delete this client</div>
-                <div class="seo-danger-sub">Removes all of their keywords, locations and scan history. This can't be undone.</div>
-              </div>
-              <button class="btn" id="seoDeleteClientBtn" style="color:var(--alert)">Delete client</button>
-            </div>
+            <!-- The settings column. Sticky, because the edit form beside it is
+                 long and the schedule is the thing you check while scrolling. -->
+            <aside class="seo-dash-side">
+
+              <section class="card seo-panel seo-autoscan-card" id="seoAutoscanCard">
+                <header class="seo-panel-h">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+                  <h3>Automatic scans</h3>
+                  <span class="seo-panel-state" id="seoAutoStateTag">Off</span>
+                </header>
+                <div class="seo-panel-body">
+                  <label class="sw seo-autoscan-toggle"><input type="checkbox" id="seoAutoEnabled"/><i></i><span><b>Run scans automatically</b><small>Only keywords that already have a location assigned are scanned.</small></span></label>
+                  <div id="seoAutoScanBody" style="display:none">
+                    <div class="g2">
+                      <div class="f">
+                        <label for="seoAutoFrequency">Frequency</label>
+                        <select id="seoAutoFrequency">
+                          <option value="daily">Every day</option>
+                          <option value="weekly">Specific days each week</option>
+                          <option value="monthly">Once a month</option>
+                        </select>
+                      </div>
+                      <div class="f">
+                        <label for="seoAutoTime">Time of day <span class="opt">your local time</span></label>
+                        <input id="seoAutoTime" type="time" value="09:00"/>
+                      </div>
+                    </div>
+                    <div class="f" id="seoAutoWeekdaysWrap">
+                      <label>Days of the week</label>
+                      <div class="seo-weekday-chips" id="seoAutoWeekdays">
+                        <button type="button" class="seo-weekday-chip" data-day="1">Mon</button>
+                        <button type="button" class="seo-weekday-chip" data-day="2">Tue</button>
+                        <button type="button" class="seo-weekday-chip" data-day="3">Wed</button>
+                        <button type="button" class="seo-weekday-chip" data-day="4">Thu</button>
+                        <button type="button" class="seo-weekday-chip" data-day="5">Fri</button>
+                        <button type="button" class="seo-weekday-chip" data-day="6">Sat</button>
+                        <button type="button" class="seo-weekday-chip" data-day="0">Sun</button>
+                      </div>
+                      <div class="hint" style="margin-top:7px">Pick as many as you want — that sets how many times a week it runs.</div>
+                    </div>
+                    <div class="f" id="seoAutoMonthlyWrap" style="display:none">
+                      <label for="seoAutoDayOfMonth">Day of the month</label>
+                      <input id="seoAutoDayOfMonth" type="text" inputmode="numeric" placeholder="1–28" style="max-width:110px"/>
+                    </div>
+                    <div class="seo-autoscan-status" id="seoAutoStatusLine"></div>
+                  </div>
+                  <div class="hint seo-autoscan-note">Runs only while GBP Reporter is open in a browser tab somewhere. It checks once a minute and catches up on the next visit if a run was missed.</div>
+                </div>
+              </section>
+
+              <section class="card seo-panel">
+                <header class="seo-panel-h">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+                  <h3>Quick links</h3>
+                </header>
+                <div class="seo-panel-body">
+                  <div class="seo-ext-links" id="seoExtLinks"></div>
+                </div>
+              </section>
+
+            </aside>
           </div>
         </div>
       </div>
@@ -7572,6 +7731,13 @@ function seoLoadAutoScan(c){
   $('seoAutoEnabled').checked = !!a.enabled;
   $('seoAutoScanBody').style.display = a.enabled ? 'block' : 'none';
   $('seoAutoscanCard').classList.toggle('seo-autoscan-on', !!a.enabled);
+  /* The card no longer shouts its state through a coloured wash, so the tag
+     in its header is now the only thing carrying it. */
+  const stateTag = $('seoAutoStateTag');
+  if (stateTag){
+    stateTag.textContent = a.enabled ? 'On' : 'Off';
+    stateTag.classList.toggle('on', !!a.enabled);
+  }
   $('seoAutoFrequency').value = a.frequency || 'weekly';
   $('seoAutoTime').value = a.time || '09:00';
   $('seoAutoDayOfMonth').value = a.dayOfMonth || 1;
@@ -7614,9 +7780,11 @@ function seoRenderAutoScanStatus(c){
   if (!a.enabled){ el.textContent = ''; return; }
   const parts = [];
   const next = seoNextRunEstimate(c);
-  if (next) parts.push('<b>Next run:</b> ' + esc(next.toLocaleString([], {weekday:'short', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'})));
-  parts.push('<b>Last run:</b> ' + (a.lastRun ? esc(fmtWhen(a.lastRun)) : 'never yet'));
-  el.innerHTML = parts.join(' &nbsp;\u00b7&nbsp; ');
+  if (next) parts.push('<span><b>Next run</b>' + esc(next.toLocaleString([], {weekday:'short', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'})) + '</span>');
+  parts.push('<span><b>Last run</b>' + (a.lastRun ? esc(fmtWhen(a.lastRun)) : 'never yet') + '</span>');
+  /* One line each rather than a run-on joined by dots — in the sidebar the
+     old single line wrapped mid-date and became unreadable. */
+  el.innerHTML = parts.join('');
 }
 $('seoAutoEnabled').addEventListener('change', () => {
   const c = activeSeoClient(); if (!c) return;
