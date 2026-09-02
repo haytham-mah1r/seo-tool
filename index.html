@@ -233,6 +233,30 @@ body{
 .save-pill.saved{color:var(--good);border-color:#c7e6da;background:var(--good-wash);}
 .save-pill.saved i{background:var(--good);}
 
+/* ---- manual save ----
+   Autosave still runs on every change; this is the button that lets you
+   confirm it rather than trust it. Shaped like the pill it sits beside so
+   the header still reads as one control group rather than two widgets. */
+.save-group{display:flex;align-items:center;gap:8px;flex:none;}
+.btn-save-now{
+  display:inline-flex;align-items:center;gap:6px;flex:none;
+  border:1px solid var(--line);background:var(--card);color:var(--ink);
+  font-family:var(--ui);font-size:11.5px;font-weight:650;letter-spacing:-.01em;
+  padding:6px 13px;border-radius:20px;cursor:pointer;
+  transition:all .18s var(--ease);
+}
+.btn-save-now svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.btn-save-now:hover:not(:disabled){border-color:#f3d9c1;background:var(--brand-wash);color:var(--brand-deep);}
+.btn-save-now:disabled{opacity:.55;cursor:default;}
+.btn-save-now.ok{border-color:#c7e6da;background:var(--good-wash);color:var(--good);}
+.seo-save-row{
+  display:flex;align-items:center;justify-content:flex-end;gap:14px;flex-wrap:wrap;
+  margin-top:16px;
+}
+.seo-save-row .hint{margin:0;text-align:right;}
+/* three buttons in the bulk-import footer, so let them wrap on a narrow modal */
+.modal .acts{flex-wrap:wrap;}
+
 .panels{padding:26px;max-width:1560px;width:100%;}
 .view{display:none;}
 .view.on{display:block;animation:rise .32s var(--ease);}
@@ -3048,7 +3072,13 @@ body.report-mode{
         <button class="seo-mode on" data-seoview="dashboard">Dashboard</button>
         <button class="seo-mode" data-seoview="keywords">Keywords</button>
       </nav>
-      <div class="save-pill" id="seoSavePill"><i></i><span>Autosave on</span></div>
+      <div class="save-group">
+        <button class="btn-save-now" id="seoSaveNowBtn" type="button" title="Write everything to this browser and the cloud right now (Ctrl+S)">
+          <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>
+          <span class="save-now-label">Save now</span>
+        </button>
+        <div class="save-pill" id="seoSavePill"><i></i><span>Autosave on</span></div>
+      </div>
     </header>
 
     <div class="panels">
@@ -3191,6 +3221,11 @@ body.report-mode{
                   </div>
                 </section>
 
+                <div class="seo-save-row">
+                  <span class="hint">Every field here saves itself as you type — press this if you’d rather not take that on faith.</span>
+                  <button class="btn btn-go" id="seoDashSaveBtn" type="button"><span class="save-now-label">Save changes</span></button>
+                </div>
+
                 <div class="seo-danger-zone">
                   <div>
                     <div class="seo-danger-title">Delete this client</div>
@@ -3309,6 +3344,7 @@ body.report-mode{
               <button class="btn" id="seoBulkImportBtn">Bulk import…</button>
               <button class="btn" id="seoShareReportBtn">Share / embed…</button>
               <button class="btn" id="seoExportClientBtn">Export .xlsx</button>
+              <button class="btn" id="seoKwSaveBtn" type="button" title="Write this client’s keywords to the browser and the cloud right now (Ctrl+S)"><span class="save-now-label">Save now</span></button>
             </div>
             <div class="seo-scan-progress" id="seoScanProgress" style="display:none">
               <div class="seo-scan-bar"><i id="seoScanBarFill"></i></div>
@@ -3353,7 +3389,7 @@ body.report-mode{
 <div class="backdrop" id="seoBulkBackdrop">
   <div class="modal modal-wide">
     <h3>Bulk import keywords</h3>
-    <p>One keyword per line. Add a location after a <code>|</code> — separate several locations with a <code>;</code>. Lines with no location use the default location below. Every keyword launches a live search automatically once imported.</p>
+    <p>One keyword per line. Add a location after a <code>|</code> — separate several locations with a <code>;</code>. Lines with no location use the default location below. <b>Import &amp; scan</b> runs a live search for every new keyword location straight away; <b>Import only</b> files them away untouched, so you can scan them whenever you choose.</p>
     <div class="g2">
       <div class="f">
         <label for="seoBulkDefaultLocation">Default location</label>
@@ -3377,6 +3413,7 @@ custom home builder | Red Deer, AB; Calgary, AB"></textarea>
     </div>
     <div class="acts">
       <button class="btn" id="seoBulkCancel">Cancel</button>
+      <button class="btn" id="seoBulkImportOnly" type="button" title="Add these keywords without running any searches">Import only</button>
       <button class="btn btn-go" id="seoBulkOk">Import &amp; scan</button>
     </div>
   </div>
@@ -3925,10 +3962,17 @@ let pillTimer = null;
 let cloudBusy = false, cloudDirty = false, cloudSaveFailed = false, localWriteFailed = false;
 
 function pill(mode){
-  const p = $('savePill');
-  if (!p) return;
-  p.className = 'save-pill' + (mode ? ' ' + mode : '');
-  p.querySelector('span').textContent = mode === 'saving' ? 'Saving' : (mode === 'saved' ? 'All changes saved' : 'Autosave on');
+  /* Two headers show this same state — the GBP one and the SEO one. The SEO
+     pill used to be a painted-on label that said "Autosave on" whatever was
+     happening, which is precisely the sort of thing that makes autosave hard
+     to believe. Both are driven from here now. */
+  ['savePill', 'seoSavePill'].forEach(id => {
+    const p = $(id);
+    if (!p) return;
+    p.className = 'save-pill' + (mode ? ' ' + mode : '');
+    const s = p.querySelector('span');
+    if (s) s.textContent = mode === 'saving' ? 'Saving' : (mode === 'saved' ? 'All changes saved' : 'Autosave on');
+  });
 }
 function save(){
   state.updatedAt = Date.now();
@@ -3964,6 +4008,59 @@ function flushCloud(){
 }
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushCloud(); });
 window.addEventListener('pagehide', flushCloud);
+
+/* ---------- manual save ----------
+   save() writes localStorage immediately and then debounces the Firestore
+   mirror by 900 ms, which is right for typing and wrong for reassurance:
+   there is no moment where the app says "that is on the server now".
+
+   This is that moment. Same two writes, except it skips the debounce and
+   waits for the cloud commit to land before reporting anything, so the
+   confirmation is a fact rather than an intention. If a chunked write is
+   already in flight it waits for that one to finish first — cloudSave()
+   returns early while busy, and an early return would otherwise be
+   announced as a successful save. */
+let saveNowBusy = false;
+async function saveNow(btn){
+  if (saveNowBusy) return;
+  saveNowBusy = true;
+  const label = btn ? btn.querySelector('.save-now-label') : null;
+  const original = label ? label.textContent : '';
+  if (btn) btn.disabled = true;
+  if (label) label.textContent = 'Saving\u2026';
+  try{
+    save();                                   /* local write, pill, queue cloud */
+    if (fbReady && fbDb && fbUid){
+      clearTimeout(fbTimer);                  /* don't wait out the debounce we just started */
+      for (let i = 0; i < 60 && cloudBusy; i++) await new Promise(r => setTimeout(r, 100));
+      await cloudSave();
+      /* cloudSave() handles its own errors and raises this flag instead, so
+         the flag — not the absence of a throw — is what decides the message. */
+      if (cloudSaveFailed) toast('Saved in this browser, but the cloud copy didn\u2019t go through \u2014 see the sync line in the sidebar.', 'err');
+      else toast('Saved \u2014 this browser and the cloud are both up to date.');
+    } else {
+      toast('Saved in this browser \u2014 cloud sync isn\u2019t connected right now.');
+    }
+    if (btn){ btn.classList.add('ok'); setTimeout(() => btn.classList.remove('ok'), 1600); }
+  }catch(err){
+    toast('Save failed: ' + ((err && err.message) ? err.message : 'unknown error'), 'err');
+  }finally{
+    if (label) label.textContent = original;
+    if (btn) btn.disabled = false;
+    saveNowBusy = false;
+  }
+}
+/* Ctrl/Cmd+S saves the workspace rather than offering to save the page. */
+document.addEventListener('keydown', e => {
+  if (!(e.ctrlKey || e.metaKey) || e.altKey) return;
+  if ((e.key || '').toLowerCase() !== 's') return;
+  if (document.body.classList.contains('embed-mode')) return;
+  const shell = $('appShell');
+  if (!shell || shell.classList.contains('hidden')) return;
+  e.preventDefault();
+  const btn = $('seoSaveNowBtn');
+  saveNow(btn && btn.offsetParent !== null ? btn : null);
+});
 
 function setSync(msg, kind){
   /* one status, echoed everywhere it is visible: the GBP rail and the hub */
@@ -9157,7 +9254,12 @@ $('seoBulkImportBtn').addEventListener('click', () => {
 });
 $('seoBulkCancel').addEventListener('click', () => $('seoBulkBackdrop').classList.remove('on'));
 $('seoBulkBackdrop').addEventListener('click', e => { if (e.target === $('seoBulkBackdrop')) $('seoBulkBackdrop').classList.remove('on'); });
-$('seoBulkOk').addEventListener('click', async () => {
+/* Two ways out of this modal. The parsing, de-duplicating and saving is
+   identical for both — only the last step differs — so one function does
+   the work and the flag decides whether anything gets searched. "Import
+   only" exists so a paste of fifty keywords doesn't fire fifty live
+   searches the moment it lands. */
+async function seoBulkImportRun(scanNow){
   ensureSeoState();
   const c = activeSeoClient(); if (!c) return;
   const defaultLoc = $('seoBulkDefaultLocation').value.trim();
@@ -9165,13 +9267,14 @@ $('seoBulkOk').addEventListener('click', async () => {
   const lines = $('seoBulkText').value.split('\n').map(s => s.trim()).filter(Boolean);
   if (!lines.length){ toast('Paste at least one keyword', 'err'); return; }
   const pairs = [];
+  let newKeywords = 0;
   lines.forEach(line => {
     let text = line, locPart = '';
     const pipeIdx = line.indexOf('|');
     if (pipeIdx >= 0){ text = line.slice(0, pipeIdx).trim(); locPart = line.slice(pipeIdx + 1).trim(); }
     if (!text) return;
     let k = c.keywords.find(x => x.text.toLowerCase() === text.toLowerCase());
-    if (!k){ k = {id:uid(), text, locations:[]}; c.keywords.push(k); }
+    if (!k){ k = {id:uid(), text, locations:[]}; c.keywords.push(k); newKeywords++; }
     const locLabels = locPart ? locPart.split(';').map(s => s.trim()).filter(Boolean) : (defaultLoc ? [defaultLoc] : []);
     locLabels.forEach(lbl => {
       if (!k.locations.some(l => l.label.toLowerCase() === lbl.toLowerCase())){
@@ -9183,8 +9286,28 @@ $('seoBulkOk').addEventListener('click', async () => {
   });
   $('seoBulkBackdrop').classList.remove('on');
   save(); renderSeoKeywords();
+  if (!scanNow){
+    /* Imported and stored, nothing queued. The new locations sit with no
+       rank until you ask for one — Scan all keywords, Rescan selected, or
+       the client's own schedule will pick them up. */
+    const kw = newKeywords + ' new keyword' + (newKeywords === 1 ? '' : 's');
+    const lc = pairs.length + ' location' + (pairs.length === 1 ? '' : 's');
+    toast(kw + ' and ' + lc + ' imported \u2014 nothing scanned yet.');
+    return;
+  }
   toast(pairs.length + ' new keyword location(s) queued \u2014 scanning now\u2026');
   if (pairs.length) await seoScanAndRender(c, pairs);
+}
+$('seoBulkOk').addEventListener('click', () => seoBulkImportRun(true));
+$('seoBulkImportOnly').addEventListener('click', () => seoBulkImportRun(false));
+
+/* ---------- manual save buttons ---------- */
+/* Three of them, one behaviour: the header pill's neighbour, the one under
+   the client edit form, and the one in the keywords toolbar — so wherever a
+   change was just made, the button is already on screen. */
+['seoSaveNowBtn', 'seoDashSaveBtn', 'seoKwSaveBtn'].forEach(id => {
+  const b = $(id);
+  if (b) b.addEventListener('click', () => saveNow(b));
 });
 
 /* ---------- export to Excel (SheetJS, actual .xlsx — not just CSV) ---------- */
