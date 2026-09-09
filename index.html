@@ -2480,6 +2480,22 @@ body.report-mode{background:var(--aa-bg);}
 .kwr-root .kwr-foot{color:var(--aa-ink-3); font-size:10.5px; margin-top:18px;}
 .kwr-root .kwr-foot a{color:var(--aa-t3);}
 
+/* ---- display scale ----------------------------------------------------
+   The report was drawn at 100% for a full page, which reads small once it is
+   sitting inside a report platform's iframe next to widgets whose type is
+   much larger. Rather than re-specifying forty font sizes, the whole report
+   is scaled: `zoom` reflows as it scales, so the shell still fills its
+   container and nothing overflows sideways.
+
+   Change the default here, or override it per embed by adding &zoom=1.5 to
+   the report URL — handy when one client's widget sits in a narrower column
+   than the rest. Only above 900px: on a phone the layout already fills the
+   screen, and scaling it there would only add sideways scrolling. Printing
+   resets to 1, so a PDF keeps its proper page size. */
+@media (min-width:900px){
+  body.report-mode .kwr-root{zoom:var(--kwr-zoom, 1.3);}
+}
+
 @media (max-width:900px){
   /* the tool hides its own mix bar and sparklines at this width — the
      report's mix bar is a different class, and the sparkline's wrapper keeps
@@ -2514,6 +2530,7 @@ body.report-mode{background:var(--aa-bg);}
    prints what's on screen. */
 @media print{
   body.report-mode{background:#fff;}
+  body.report-mode .kwr-root{zoom:1;}
   .kwr-root .kwr-head, .kwr-root .kwr-stat, .kwr-panel, .kwr-locbar, .kwr-root .seo-lg-card{box-shadow:none;}
   .kwr-toolbar, .kwr-panel-note, .kwr-stat-hint{display:none !important;}
   .kwr-band{opacity:1 !important;}
@@ -10452,7 +10469,10 @@ function seoReportUrlFor(shareId){
   return location.origin + location.pathname + '?report=' + encodeURIComponent(shareId);
 }
 function seoReportEmbedCode(url){
-  return '<iframe src="' + url + '" style="width:100%;height:900px;border:0" loading="lazy" title="Keyword rankings"></iframe>';
+  /* Taller than it used to be: the published report is displayed scaled up,
+     so the same keyword list needs more room before the widget starts
+     scrolling inside itself. */
+  return '<iframe src="' + url + '" style="width:100%;height:1200px;border:0" loading="lazy" title="Keyword rankings"></iframe>';
 }
 function seoReportDefaults(c){
   return {
@@ -11054,8 +11074,19 @@ function renderSeoReport(data){
   paint();
   document.title = data.title || 'Keyword rankings';
 }
+/* &zoom=1.5 on the report URL scales that one embed up or down without
+   touching the file. Anything outside 0.6–2.5 is ignored rather than
+   trusted — the value arrives from a query string. */
+function applySeoReportZoom(){
+  const raw = new URLSearchParams(location.search).get('zoom');
+  if (!raw) return;
+  const z = parseFloat(raw);
+  if (!isFinite(z) || z < 0.6 || z > 2.5) return;
+  document.documentElement.style.setProperty('--kwr-zoom', String(z));
+}
 async function bootSeoReportView(shareId){
   document.body.classList.add('embed-mode', 'report-mode');
+  applySeoReportZoom();
   setAppVisible(false);
   if ($('loginScreen')) $('loginScreen').classList.remove('on');
   const done = () => { if ($('loadingScreen')) $('loadingScreen').classList.remove('on'); };
