@@ -2173,6 +2173,352 @@ body.report-mode{
 .seo-runnow .hint{margin-top:8px; text-align:center;}
 .seo-runnow .seo-scan-progress{margin-top:12px;}
 .seo-runnow .seo-scan-progress span{font-variant-numeric:tabular-nums; white-space:nowrap;}
+
+/* ==========================================================================
+   ═══ PUBLISHED KEYWORD REPORT — ANALYTICS SKIN ═══
+   Loads last so it wins over both the base report rules and the premium
+   layer, and every selector is scoped to .kwr-root / body.report-mode: the
+   tool itself is untouched by everything below.
+
+   Two jobs. One, make the published widget sit inside an Agency Analytics
+   report without looking like a guest — white panels, hairline borders, a
+   small captioned panel head, muted uppercase micro-labels, and the same
+   green→red position bands their rank widgets use. Two, make it a control
+   surface rather than a printout: the summary cards, the position bands and
+   the location chips are all filters, and the rows redraw underneath them.
+
+   Position bands (validated for colour-blind separation, and never used
+   without their written label beside them):
+     1–3 deep green · 4–10 green · 11–20 amber · 21–50 orange · 51+ red
+     not ranking     neutral grey
+   ========================================================================== */
+.kwr-root{
+  --aa-bg:#f2f4f7;
+  --aa-surface:#ffffff;
+  --aa-surface-2:#f7f9fa;
+  --aa-line:#e2e7ec;
+  --aa-line-2:#edf1f4;
+  --aa-ink:#26313c;
+  --aa-ink-2:#56646f;
+  --aa-ink-3:#8795a1;
+
+  --aa-t3:#14663c;
+  --aa-t10:#4ca85a;
+  --aa-t20:#d9a412;
+  --aa-t50:#cf4f26;
+  --aa-t51:#8f2f2f;
+  --aa-none:#9aa7b2;
+
+  --aa-t3-wash:#e8f2ec;
+  --aa-t10-wash:#edf7ee;
+  --aa-t20-wash:#fdf5e2;
+  --aa-t50-wash:#fceee8;
+  --aa-t51-wash:#f8ebea;
+  --aa-none-wash:#f0f3f5;
+
+  --aa-focus:0 0 0 3px rgba(76,168,90,.18);
+}
+body.report-mode{background:var(--aa-bg);}
+.kwr-root .kwr-shell{max-width:1040px; padding:24px 18px 40px;}
+
+/* ---- header ------------------------------------------------------------ */
+.kwr-root .kwr-head{
+  background:var(--aa-surface); border:1px solid var(--aa-line); border-radius:10px;
+  box-shadow:0 1px 2px rgba(38,49,60,.05); padding:18px 20px; margin-bottom:12px; gap:14px;
+}
+.kwr-root .kwr-title{font-family:var(--display); font-size:20px; font-weight:600; color:var(--aa-ink); letter-spacing:-.02em;}
+.kwr-root .kwr-sub{font-size:12.5px; color:var(--aa-ink-2);}
+.kwr-root .kwr-logo{width:42px; height:42px; border-radius:8px; border-color:var(--aa-line); background:var(--aa-surface-2);}
+.kwr-root .kwr-stamp{
+  background:var(--aa-surface-2); border:1px solid var(--aa-line); color:var(--aa-ink-3);
+  border-radius:5px; box-shadow:none; font-size:10px; letter-spacing:.09em; padding:6px 10px;
+}
+
+/* ---- the three summary cards, now filters ------------------------------ */
+.kwr-root .kwr-stats{grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:12px;}
+.kwr-root .kwr-stat{
+  position:relative; background:var(--aa-surface); border:1px solid var(--aa-line);
+  border-radius:10px; box-shadow:0 1px 2px rgba(38,49,60,.05);
+  padding:15px 16px 15px 18px; overflow:hidden;
+  cursor:pointer; text-align:left; font-family:var(--ui); appearance:none;
+  transition:border-color .16s var(--ease), box-shadow .16s var(--ease), transform .16s var(--ease);
+}
+.kwr-root .kwr-stat::before{
+  content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
+  background:var(--aa-none); opacity:.55; transition:opacity .16s var(--ease);
+}
+.kwr-root .kwr-stat[data-filter="all"]::before{background:var(--aa-ink-3);}
+.kwr-root .kwr-stat[data-filter="loc"]::before{background:var(--aa-t20);}
+.kwr-root .kwr-stat[data-filter="t3"]::before{background:var(--aa-t3);}
+.kwr-root .kwr-stat:hover{transform:none; border-color:#cfd8e0; box-shadow:0 2px 6px rgba(38,49,60,.09);}
+.kwr-root .kwr-stat:focus-visible{outline:none; box-shadow:var(--aa-focus);}
+.kwr-root .kwr-stat.is-on{border-color:#c3ced8; background:var(--aa-surface-2); box-shadow:inset 0 0 0 1px rgba(38,49,60,.04);}
+.kwr-root .kwr-stat.is-on::before{opacity:1; width:4px;}
+.kwr-root .kwr-stat b{
+  display:block; font-family:var(--display); font-size:26px; font-weight:600;
+  letter-spacing:-.03em; color:var(--aa-ink); line-height:1.05;
+}
+.kwr-root .kwr-stat span{
+  display:block; font-size:9.5px; font-weight:700; letter-spacing:.11em; text-transform:uppercase;
+  color:var(--aa-ink-3); margin-top:6px;
+}
+.kwr-root .kwr-stat.good b{color:var(--aa-t3);}
+.kwr-root .kwr-stat span.kwr-stat-hint{
+  display:block; font-size:10.5px; font-weight:500; letter-spacing:0; text-transform:none;
+  color:var(--aa-ink-3); margin-top:5px; opacity:0; transition:opacity .16s var(--ease);
+}
+.kwr-root .kwr-stat:hover span.kwr-stat-hint{opacity:1;}
+
+/* ---- panels (the analytics-report chrome) ------------------------------ */
+.kwr-panel{
+  background:var(--aa-surface); border:1px solid var(--aa-line); border-radius:10px;
+  box-shadow:0 1px 2px rgba(38,49,60,.05); margin-bottom:12px; overflow:hidden;
+}
+.kwr-panel-head{
+  display:flex; align-items:center; gap:8px; padding:12px 16px;
+  border-bottom:1px solid var(--aa-line-2); background:var(--aa-surface);
+}
+.kwr-panel-head svg{width:14px; height:14px; flex:none; stroke:var(--aa-t10); stroke-width:2; fill:none;}
+.kwr-panel-head h2{
+  margin:0; font-family:var(--ui); font-size:12px; font-weight:700; letter-spacing:.02em;
+  color:var(--aa-ink); flex:1; min-width:0;
+}
+.kwr-panel-note{font-size:10.5px; color:var(--aa-ink-3); font-weight:500; flex:none;}
+
+/* ---- position breakdown ----------------------------------------------- */
+.kwr-dist-body{display:grid; grid-template-columns:172px 1fr; gap:0;}
+.kwr-hero{
+  padding:20px 16px; border-right:1px solid var(--aa-line-2); text-align:center;
+  display:flex; flex-direction:column; justify-content:center; background:var(--aa-surface-2);
+}
+.kwr-hero-num{
+  font-family:var(--display); font-size:46px; font-weight:600; letter-spacing:-.04em;
+  color:var(--aa-ink); line-height:1;
+}
+.kwr-hero-num sup{font-size:.42em; font-weight:600; letter-spacing:0; margin-left:1px; top:-.85em;}
+.kwr-hero-lbl{
+  font-size:9.5px; font-weight:700; letter-spacing:.11em; text-transform:uppercase;
+  color:var(--aa-ink-3); margin-top:9px;
+}
+.kwr-hero-sub{font-size:10.5px; color:var(--aa-ink-3); margin-top:5px; line-height:1.5;}
+
+.kwr-bands{padding:12px 16px 14px; display:flex; flex-direction:column; gap:2px;}
+.kwr-band{
+  display:grid; grid-template-columns:84px 1fr 58px; align-items:center; gap:11px;
+  padding:5px 7px; margin:0 -7px; border:none; background:none; width:calc(100% + 14px);
+  border-radius:7px; cursor:pointer; font-family:var(--ui); text-align:left;
+  transition:background .14s var(--ease);
+}
+.kwr-band:hover{background:var(--aa-surface-2);}
+.kwr-band:focus-visible{outline:none; box-shadow:var(--aa-focus);}
+.kwr-band.is-off{opacity:.42;}
+.kwr-band.is-on{background:var(--aa-surface-2);}
+.kwr-band-lbl{
+  display:flex; align-items:center; gap:7px; font-size:11px; font-weight:700;
+  color:var(--aa-ink-2); letter-spacing:.01em; white-space:nowrap;
+}
+.kwr-band-dot{width:9px; height:9px; border-radius:2px; flex:none;}
+.kwr-band-track{height:9px; border-radius:0 4px 4px 0; background:var(--aa-line-2); overflow:hidden; min-width:0;}
+.kwr-band-fill{display:block; height:100%; border-radius:0 4px 4px 0; min-width:2px; transition:width .35s var(--ease);}
+.kwr-band-n{
+  font-size:11.5px; font-weight:700; color:var(--aa-ink); text-align:right;
+  font-variant-numeric:tabular-nums; white-space:nowrap;
+}
+.kwr-band-n i{font-style:normal; font-weight:500; color:var(--aa-ink-3); font-size:10.5px; margin-left:3px;}
+.kwr-band.b-t3 .kwr-band-dot, .kwr-band.b-t3 .kwr-band-fill{background:var(--aa-t3);}
+.kwr-band.b-t10 .kwr-band-dot, .kwr-band.b-t10 .kwr-band-fill{background:var(--aa-t10);}
+.kwr-band.b-t20 .kwr-band-dot, .kwr-band.b-t20 .kwr-band-fill{background:var(--aa-t20);}
+.kwr-band.b-t50 .kwr-band-dot, .kwr-band.b-t50 .kwr-band-fill{background:var(--aa-t50);}
+.kwr-band.b-t51 .kwr-band-dot, .kwr-band.b-t51 .kwr-band-fill{background:var(--aa-t51);}
+.kwr-band.b-none .kwr-band-dot, .kwr-band.b-none .kwr-band-fill{background:var(--aa-none);}
+
+/* ---- location chips ---------------------------------------------------- */
+.kwr-locbar{
+  display:flex; align-items:center; gap:7px; flex-wrap:wrap;
+  background:var(--aa-surface); border:1px solid var(--aa-line); border-radius:10px;
+  box-shadow:0 1px 2px rgba(38,49,60,.05); padding:11px 13px; margin-bottom:12px;
+}
+.kwr-locbar[hidden]{display:none;}
+.kwr-locbar-lbl{
+  font-size:9.5px; font-weight:700; letter-spacing:.11em; text-transform:uppercase;
+  color:var(--aa-ink-3); margin-right:3px;
+}
+.kwr-chip{
+  display:inline-flex; align-items:center; gap:6px; padding:6px 11px; border-radius:20px;
+  border:1px solid var(--aa-line); background:var(--aa-surface); cursor:pointer;
+  font-family:var(--ui); font-size:11.5px; font-weight:600; color:var(--aa-ink-2);
+  transition:all .14s var(--ease);
+}
+.kwr-chip svg{width:11px; height:11px; stroke:currentColor; stroke-width:2; fill:none; opacity:.7;}
+.kwr-chip b{font-weight:700; color:var(--aa-ink-3); font-variant-numeric:tabular-nums;}
+.kwr-chip:hover{border-color:#c8d2da; background:var(--aa-surface-2); color:var(--aa-ink);}
+.kwr-chip:focus-visible{outline:none; box-shadow:var(--aa-focus);}
+.kwr-chip.is-on{background:var(--aa-t3); border-color:var(--aa-t3); color:#fff;}
+.kwr-chip.is-on b, .kwr-chip.is-on svg{color:rgba(255,255,255,.78); opacity:1;}
+
+/* ---- filter bar -------------------------------------------------------- */
+.kwr-toolbar{
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  padding:0 4px 11px; margin-bottom:2px;
+}
+.kwr-search{
+  position:relative; flex:1; min-width:180px; max-width:320px;
+}
+.kwr-search svg{
+  position:absolute; left:10px; top:50%; transform:translateY(-50%);
+  width:13px; height:13px; stroke:var(--aa-ink-3); stroke-width:2; fill:none; pointer-events:none;
+}
+.kwr-search input{
+  width:100%; padding:8px 11px 8px 30px; border:1px solid var(--aa-line); border-radius:7px;
+  background:var(--aa-surface); font-family:var(--ui); font-size:12.5px; color:var(--aa-ink);
+}
+.kwr-search input::placeholder{color:var(--aa-ink-3);}
+.kwr-search input:focus{outline:none; border-color:#b9c6d0; box-shadow:var(--aa-focus);}
+.kwr-count{font-size:11.5px; color:var(--aa-ink-3); font-weight:600; flex:1; min-width:120px;}
+.kwr-count b{color:var(--aa-ink); font-weight:700; font-variant-numeric:tabular-nums;}
+.kwr-clear{
+  border:1px solid var(--aa-line); background:var(--aa-surface); border-radius:7px;
+  padding:7px 12px; font-family:var(--ui); font-size:11.5px; font-weight:600;
+  color:var(--aa-ink-2); cursor:pointer; flex:none; transition:all .14s var(--ease);
+}
+.kwr-clear:hover{border-color:#c8d2da; color:var(--aa-ink); background:var(--aa-surface-2);}
+.kwr-clear:focus-visible{outline:none; box-shadow:var(--aa-focus);}
+.kwr-clear[hidden]{display:none;}
+
+/* ---- location cards, restyled to the analytics panel ------------------- */
+.kwr-root .seo-lg-card, .kwr-root .seo-lg-card.open{
+  background:var(--aa-surface); border:1px solid var(--aa-line); border-radius:10px;
+  box-shadow:0 1px 2px rgba(38,49,60,.05); margin-bottom:12px;
+}
+.kwr-root .seo-lg-head{padding:13px 16px; gap:10px; cursor:pointer;}
+.kwr-root .seo-lg-head:hover{background:var(--aa-surface-2);}
+.kwr-root .seo-lg-caret{stroke:var(--aa-ink-3);}
+.kwr-root .seo-lg-pin{stroke:var(--aa-t51); width:14px; height:14px;}
+.kwr-root .seo-lg-label{font-family:var(--ui); font-size:13px; font-weight:700; color:var(--aa-ink);}
+.kwr-root .seo-lg-count{
+  background:var(--aa-surface-2); border:1px solid var(--aa-line); color:var(--aa-ink-3);
+  border-radius:5px; font-size:10px; letter-spacing:.03em; padding:4px 8px;
+}
+.kwr-root .seo-lg-body{padding:0 16px 12px;}
+
+/* the per-location mix bar, rebuilt on the band palette with a hairline gap
+   between segments so touching colours never read as one block */
+.kwr-mix{
+  display:flex; align-items:stretch; gap:2px; width:120px; height:8px; flex:none;
+  border-radius:2px; overflow:hidden; background:var(--aa-line-2);
+}
+.kwr-mix i{display:block; min-width:0;}
+.kwr-mix .m-t3{background:var(--aa-t3);}
+.kwr-mix .m-t10{background:var(--aa-t10);}
+.kwr-mix .m-t20{background:var(--aa-t20);}
+.kwr-mix .m-t50{background:var(--aa-t50);}
+.kwr-mix .m-t51{background:var(--aa-t51);}
+.kwr-mix .m-none{background:var(--aa-none);}
+
+/* ---- a keyword row ----------------------------------------------------- */
+.kwr-root .seo-lg-row{
+  padding:11px 10px; margin:0 -10px; border-top:1px solid var(--aa-line-2);
+  border-radius:7px; gap:6px;
+}
+.kwr-root .seo-lg-row:hover{background:var(--aa-surface-2);}
+.kwr-root .seo-lg-top{gap:12px;}
+.kwr-root .seo-lg-text{
+  font-family:var(--ui); font-size:12.5px; font-weight:600; color:var(--aa-ink);
+  display:flex; align-items:center; gap:8px;
+}
+.kwr-kw-dot{width:8px; height:8px; border-radius:2px; flex:none;}
+.kwr-kw-name{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+
+/* The position track: one keyword's rank drawn on a 1→100 scale, compressed
+   so the top ten (the only stretch anyone negotiates over) gets half the
+   width. Colour repeats the band, and the number beside it carries the
+   actual value, so the drawing never has to be read precisely. */
+.kwr-track{
+  position:relative; width:104px; height:8px; flex:none; border-radius:2px;
+  background:linear-gradient(90deg, var(--aa-line-2), #e6ebef);
+  overflow:hidden;
+}
+.kwr-track i{position:absolute; top:0; bottom:0; left:0; border-radius:0 2px 2px 0; display:block;}
+.kwr-track.t-empty{background:repeating-linear-gradient(45deg,#eef1f4 0 4px,#e5eaee 4px 8px);}
+.kwr-track-pad{width:104px; flex:none;}
+
+.kwr-root .kwr-rank{gap:6px; min-width:62px; justify-content:flex-end;}
+.kwr-pos{
+  font-family:var(--mono); font-size:11.5px; font-weight:700; padding:3px 9px;
+  border-radius:5px; letter-spacing:-.01em; font-variant-numeric:tabular-nums;
+  box-shadow:inset 0 0 0 1px rgba(38,49,60,.05); white-space:nowrap;
+}
+.kwr-pos.p-t3{background:var(--aa-t3-wash); color:var(--aa-t3);}
+.kwr-pos.p-t10{background:var(--aa-t10-wash); color:#2f7c3d;}
+.kwr-pos.p-t20{background:var(--aa-t20-wash); color:#96690a;}
+.kwr-pos.p-t50{background:var(--aa-t50-wash); color:var(--aa-t50);}
+.kwr-pos.p-t51{background:var(--aa-t51-wash); color:var(--aa-t51);}
+.kwr-pos.p-none{background:var(--aa-none-wash); color:var(--aa-ink-3);}
+.kwr-root .seo-manual-tag{background:var(--aa-none-wash); color:var(--aa-ink-3);}
+.kwr-root .kwr-delta{font-family:var(--mono); font-size:11px; color:var(--aa-ink-3); width:52px;}
+.kwr-root .kwr-delta.up{color:var(--aa-t10); font-weight:700;}
+.kwr-root .kwr-delta.down{color:var(--aa-t50); font-weight:700;}
+.kwr-root .kwr-meta{font-size:10.5px; color:var(--aa-ink-3); padding-left:16px;}
+.kwr-root .kwr-meta a{color:var(--aa-ink-2); text-decoration-color:var(--aa-line);}
+.kwr-root .kwr-meta a:hover{color:var(--aa-t3); text-decoration-color:var(--aa-t10);}
+.kwr-root .seo-spark{color:var(--aa-ink-3);}
+.kwr-root .seo-spark.up{color:var(--aa-t10);}
+.kwr-root .seo-spark.down{color:var(--aa-t50);}
+
+/* ---- legend + empty state + footer ------------------------------------ */
+.kwr-legend{
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+  padding:9px 16px; border-top:1px solid var(--aa-line-2); background:var(--aa-surface-2);
+  font-size:10.5px; font-weight:600; color:var(--aa-ink-3);
+}
+.kwr-legend span{display:inline-flex; align-items:center; gap:6px;}
+.kwr-legend i{width:8px; height:8px; border-radius:2px; display:block;}
+.kwr-empty-filter{
+  background:var(--aa-surface); border:1px dashed var(--aa-line); border-radius:10px;
+  padding:34px 20px; text-align:center; font-size:12.5px; color:var(--aa-ink-3); line-height:1.7;
+}
+.kwr-root .kwr-foot{color:var(--aa-ink-3); font-size:10.5px; margin-top:18px;}
+.kwr-root .kwr-foot a{color:var(--aa-t3);}
+
+@media (max-width:900px){
+  /* the tool hides its own mix bar and sparklines at this width — the
+     report's mix bar is a different class, and the sparkline's wrapper keeps
+     its 64px even once the drawing inside it is gone, so both have to be
+     told explicitly or the keyword column pays for the empty space */
+  .kwr-mix{display:none;}
+  .kwr-root .seo-spark-wrap{display:none;}
+}
+@media (max-width:820px){
+  .kwr-root .kwr-stats{grid-template-columns:1fr;}
+  .kwr-root .kwr-stat{padding:13px 14px 13px 17px;}
+  .kwr-root .kwr-stat span.kwr-stat-hint{display:none;}
+  .kwr-dist-body{grid-template-columns:1fr;}
+  .kwr-hero{border-right:none; border-bottom:1px solid var(--aa-line-2); padding:16px;}
+  .kwr-hero-num{font-size:38px;}
+  .kwr-track, .kwr-track-pad{display:none;}
+  .kwr-band{grid-template-columns:78px 1fr 52px;}
+  .kwr-root .kwr-meta{padding-left:0;}
+}
+/* On a phone the keyword takes the whole first line and the pill sits under
+   it, rather than both fighting over 400px and the keyword losing. */
+@media (max-width:560px){
+  .kwr-root .seo-lg-text{flex-basis:100%; order:-1;}
+  .kwr-root .kwr-kw-name{white-space:normal;}
+  .kwr-root .kwr-rank{min-width:0; justify-content:flex-start;}
+  .kwr-root .kwr-delta{width:auto;}
+}
+
+/* Nothing interactive survives a print — the bands, chips and search box are
+   controls, and a PDF that shows a filter the reader can't move is a bug. The
+   filter state itself does carry through, so a report printed while filtered
+   prints what's on screen. */
+@media print{
+  body.report-mode{background:#fff;}
+  .kwr-root .kwr-head, .kwr-root .kwr-stat, .kwr-panel, .kwr-locbar, .kwr-root .seo-lg-card{box-shadow:none;}
+  .kwr-toolbar, .kwr-panel-note, .kwr-stat-hint{display:none !important;}
+  .kwr-band{opacity:1 !important;}
+  .kwr-chip{border-color:#d7dde3 !important;}
+}
 </style>
 </head>
 <body>
@@ -10296,6 +10642,91 @@ function kwrDeltaText(rank, prevRank){
   const d = prevRank - rank;
   return {text:(d > 0 ? '\u25b2 +' : '\u25bc ') + Math.abs(d), cls:(d > 0 ? 'up' : 'down')};
 }
+/* ==========================================================================
+   THE PUBLISHED REPORT
+   Same payload, same rows, same order as before — what changed is that the
+   summary cards, the position bands and the location chips are now the
+   filter controls, and the rows redraw under them without a reload. Nothing
+   here reads or writes state: `data` is the published snapshot, and every
+   filter is a view over it.
+   ========================================================================== */
+
+/* Six bands, in rank order. `hue` is only ever used alongthe band's written
+   label, never on its own, so the report still reads correctly in greyscale
+   and for a colour-blind reader. */
+const KWR_BANDS = [
+  {key:'t3',   label:'1 – 3',    short:'Top 3',       cls:'b-t3',   dot:'var(--aa-t3)'},
+  {key:'t10',  label:'4 – 10',   short:'4–10',    cls:'b-t10',  dot:'var(--aa-t10)'},
+  {key:'t20',  label:'11 – 20',  short:'11–20',   cls:'b-t20',  dot:'var(--aa-t20)'},
+  {key:'t50',  label:'21 – 50',  short:'21–50',   cls:'b-t50',  dot:'var(--aa-t50)'},
+  {key:'t51',  label:'51 +',          short:'51+',          cls:'b-t51',  dot:'var(--aa-t51)'},
+  {key:'none', label:'Not ranking',   short:'Not ranking',  cls:'b-none', dot:'var(--aa-none)'}
+];
+function kwrBandOf(rank){
+  if (rank == null || rank === 0) return 'none';
+  if (rank <= 3)  return 't3';
+  if (rank <= 10) return 't10';
+  if (rank <= 20) return 't20';
+  if (rank <= 50) return 't50';
+  return 't51';
+}
+function kwrBandMeta(key){
+  for (let i = 0; i < KWR_BANDS.length; i++) if (KWR_BANDS[i].key === key) return KWR_BANDS[i];
+  return KWR_BANDS[KWR_BANDS.length - 1];
+}
+function kwrOrdinal(n){
+  const s = ['th', 'st', 'nd', 'rd'], v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+
+/* Rank drawn as a bar. A linear 1–100 scale wastes nine tenths of the width
+   on positions nobody is fighting over, so this is log-scaled: #1 fills the
+   track, #10 fills half of it, #100 fills none. The number sits next to the
+   bar, so the bar only ever has to carry the shape of the thing. */
+function kwrTrack(rank){
+  if (rank == null || rank === 0){
+    return '<span class="kwr-track t-empty" title="Not ranking in the first 100 results"></span>';
+  }
+  const r = Math.min(rank, 100);
+  const strength = Math.max(0, 1 - (Math.log(r) / Math.log(100)));
+  const pct = Math.max(3, Math.round(strength * 100));
+  const band = kwrBandMeta(kwrBandOf(rank));
+  return '<span class="kwr-track" title="Position ' + rank + '">' +
+    '<i style="width:' + pct + '%;background:' + band.dot + '"></i></span>';
+}
+function kwrPosPill(rank){
+  if (rank == null) return '<span class="kwr-pos p-none">—</span>';
+  if (rank === 0)   return '<span class="kwr-pos p-none">100+</span>';
+  return '<span class="kwr-pos p-' + kwrBandOf(rank) + '">#' + rank + '</span>';
+}
+
+/* The per-location strip in each card head. Same idea as the tool's mix bar,
+   redrawn on the six bands with a 2px gap between segments so two touching
+   colours never read as one block. */
+function kwrMixBar(ranks){
+  if (!ranks.length) return '';
+  const counts = {};
+  KWR_BANDS.forEach(b => { counts[b.key] = 0; });
+  ranks.forEach(r => { counts[kwrBandOf(r)]++; });
+  const parts = [], label = [];
+  KWR_BANDS.forEach(b => {
+    if (!counts[b.key]) return;
+    parts.push('<i class="m-' + b.key + '" style="flex:' + counts[b.key] + '"></i>');
+    label.push(counts[b.key] + ' at ' + b.short);
+  });
+  return '<span class="kwr-mix" title="' + esc(label.join(' · ')) + '">' + parts.join('') + '</span>';
+}
+
+const KWR_ICON = {
+  bars:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  pin:'<path d="M12 21s-6-5.686-6-10a6 6 0 0 1 12 0c0 4.314-6 10-6 10z"/><circle cx="12" cy="11" r="2.2"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-4.2-4.2"/>'
+};
+function kwrSvg(path, cls){
+  return '<svg class="' + (cls || '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+    'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + path + '</svg>';
+}
+
 function renderSeoReport(data){
   const root = $('kwReportRoot');
   root.innerHTML = '';
@@ -10304,7 +10735,7 @@ function renderSeoReport(data){
   const shell = document.createElement('div');
   shell.className = 'kwr-shell';
 
-  /* ---- header ---- */
+  /* ---- header (unchanged) ---- */
   const head = document.createElement('div');
   head.className = 'kwr-head';
   if (data.logoUrl){
@@ -10317,7 +10748,7 @@ function renderSeoReport(data){
   headText.className = 'kwr-head-text';
   const h1 = document.createElement('h1');
   h1.className = 'kwr-title';
-  h1.textContent = data.title || ((data.clientName || 'Client') + ' \u2014 keyword rankings');
+  h1.textContent = data.title || ((data.clientName || 'Client') + ' — keyword rankings');
   headText.appendChild(h1);
   if (data.intro){
     const p = document.createElement('p');
@@ -10331,100 +10762,157 @@ function renderSeoReport(data){
   head.appendChild(stamp);
   shell.appendChild(head);
 
-  /* ---- summary numbers ---- */
+  /* ---- the numbers behind every control on the page ---- */
   const rows = groups.reduce((n, g) => n + g.keywords.length, 0);
-  let top3 = 0, best = null;
+  const bandCounts = {};
+  KWR_BANDS.forEach(b => { bandCounts[b.key] = 0; });
+  let ranked = 0, rankSum = 0;
   groups.forEach(g => g.keywords.forEach(k => {
-    if (k.rank != null && k.rank > 0){
-      if (k.rank <= 3) top3++;
-      if (best == null || k.rank < best) best = k.rank;
-    }
+    bandCounts[kwrBandOf(k.rank)]++;
+    if (k.rank != null && k.rank > 0){ ranked++; rankSum += k.rank; }
   }));
-  if (data.showStats !== false){
+  const top3 = bandCounts.t3;
+  const avg = ranked ? Math.round(rankSum / ranked) : null;
+  const bandMax = Math.max.apply(null, KWR_BANDS.map(b => bandCounts[b.key]).concat([1]));
+
+  /* Every filter lives in this one object, and paint() is the only thing
+     that reads it. `loc` is a group index so two locations sharing a label
+     can't collide. */
+  const filter = {band:null, loc:null, q:''};
+  const showStats = data.showStats !== false;
+
+  /* ---- three summary cards, each one a filter ---- */
+  const statEls = {};
+  if (showStats){
     const stats = document.createElement('div');
     stats.className = 'kwr-stats';
     [
-      {v: rows, l: 'Rankings tracked'},
-      {v: groups.length, l: 'Locations'},
-      {v: top3, l: 'In the top 3', good: top3 > 0},
-      {v: best == null ? '\u2014' : '#' + best, l: 'Best position', good: best != null && best <= 3}
+      {id:'all', v:rows,          l:'Rankings tracked', hint:'Show everything'},
+      {id:'loc', v:groups.length,  l:'Locations',        hint:'Pick a location'},
+      {id:'t3',  v:top3,           l:'In the top 3',     hint:'Only positions 1–3', good:top3 > 0}
     ].forEach(s => {
-      const card = document.createElement('div');
+      const card = document.createElement('button');
+      card.type = 'button';
       card.className = 'kwr-stat' + (s.good ? ' good' : '');
-      card.innerHTML = '<b></b><span></span>';
+      card.setAttribute('data-filter', s.id);
+      card.innerHTML = '<b></b><span></span><span class="kwr-stat-hint"></span>';
       card.querySelector('b').textContent = s.v;
-      card.querySelector('span').textContent = s.l;
+      card.querySelectorAll('span')[0].textContent = s.l;
+      card.querySelector('.kwr-stat-hint').textContent = s.hint;
+      card.addEventListener('click', () => {
+        if (s.id === 'all'){ filter.band = null; filter.loc = null; filter.q = ''; if (searchInput) searchInput.value = ''; }
+        else if (s.id === 'loc'){ locOpen = !locOpen; if (!locOpen) filter.loc = null; }
+        else { filter.band = filter.band === 't3' ? null : 't3'; }
+        paint();
+      });
+      statEls[s.id] = card;
       stats.appendChild(card);
     });
     shell.appendChild(stats);
   }
 
-  /* ---- the location cards, built the same way the live list builds them ---- */
-  groups.forEach(g => {
-    let gBest = null;
-    g.keywords.forEach(k => { if (k.rank != null && k.rank > 0 && (gBest == null || k.rank < gBest)) gBest = k.rank; });
-
-    const card = document.createElement('div');
-    card.className = 'seo-lg-card' + (data.openAll === false ? '' : ' open');
-
-    const cardHead = document.createElement('div');
-    cardHead.className = 'seo-lg-head';
-    cardHead.innerHTML =
-      '<svg class="seo-lg-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>' +
-      '<svg class="seo-lg-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6-5.686-6-10a6 6 0 0 1 12 0c0 4.314-6 10-6 10z"/><circle cx="12" cy="11" r="2.2"/></svg>' +
-      '<span class="seo-lg-label">' + esc(g.label || 'Location') + '</span>' +
-      seoRankMixBar(g.keywords.map(k => k.rank)) +
-      '<span class="seo-lg-count">' + g.keywords.length + ' keyword' + (g.keywords.length === 1 ? '' : 's') + '</span>' +
-      seoRankPill(gBest);
-    cardHead.addEventListener('click', () => card.classList.toggle('open'));
-    card.appendChild(cardHead);
-
-    const body = document.createElement('div');
-    body.className = 'seo-lg-body';
-    g.keywords.forEach(k => {
-      const row = document.createElement('div');
-      row.className = 'seo-lg-row';
-
-      const top = document.createElement('div');
-      top.className = 'seo-lg-top';
-
-      const text = document.createElement('span');
-      text.className = 'seo-lg-text';
-      text.textContent = k.text || '';
-
-      const sparkHtml = seoSparkline(k.history);
-      const spark = document.createElement('span');
-      spark.className = sparkHtml ? 'seo-spark-wrap' : 'seo-spark-pad';
-      spark.innerHTML = sparkHtml;
-
-      const rank = document.createElement('div');
-      rank.className = 'kwr-rank';
-      rank.innerHTML = seoRankPill(k.rank == null ? null : k.rank) + (k.manual ? '<span class="seo-manual-tag">manual</span>' : '');
-
-      const d = kwrDeltaText(k.rank, k.prevRank);
-      const delta = document.createElement('div');
-      delta.className = 'kwr-delta' + (d.cls ? ' ' + d.cls : '');
-      delta.textContent = d.text;
-
-      top.appendChild(text); top.appendChild(spark); top.appendChild(rank); top.appendChild(delta);
-      row.appendChild(top);
-
-      if (k.checkedAt || k.sourceUrl){
-        const meta = document.createElement('div');
-        meta.className = 'kwr-meta';
-        let html = k.checkedAt ? esc(fmtWhen(k.checkedAt)) : '';
-        if (k.sourceUrl){
-          html += (html ? ' \u00b7 ' : '') +
-            '<a href="' + esc(k.sourceUrl) + '" target="_blank" rel="noopener">view the search</a>';
-        }
-        meta.innerHTML = html;
-        row.appendChild(meta);
-      }
-      body.appendChild(row);
+  /* ---- position breakdown: the hero average plus six clickable bands ---- */
+  const bandEls = {};
+  if (showStats){
+    const panel = document.createElement('div');
+    panel.className = 'kwr-panel';
+    panel.innerHTML =
+      '<div class="kwr-panel-head">' + kwrSvg(KWR_ICON.bars) +
+        '<h2>Position breakdown</h2>' +
+        '<span class="kwr-panel-note">Click a band to filter the list</span>' +
+      '</div>' +
+      '<div class="kwr-dist-body">' +
+        '<div class="kwr-hero">' +
+          '<div class="kwr-hero-num">' + (avg == null ? '—' :
+              String(avg) + '<sup>' + kwrOrdinal(avg).replace(String(avg), '') + '</sup>') + '</div>' +
+          '<div class="kwr-hero-lbl">Average position</div>' +
+          '<div class="kwr-hero-sub">' + (ranked
+              ? 'across ' + ranked + ' ranking keyword' + (ranked === 1 ? '' : 's')
+              : 'nothing ranking yet') + '</div>' +
+        '</div>' +
+        '<div class="kwr-bands"></div>' +
+      '</div>';
+    const bandWrap = panel.querySelector('.kwr-bands');
+    KWR_BANDS.forEach(b => {
+      const n = bandCounts[b.key];
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'kwr-band ' + b.cls;
+      btn.setAttribute('data-band', b.key);
+      btn.setAttribute('aria-pressed', 'false');
+      btn.title = n + ' of ' + rows + ' at ' + b.short;
+      btn.innerHTML =
+        '<span class="kwr-band-lbl"><i class="kwr-band-dot"></i>' + b.label + '</span>' +
+        '<span class="kwr-band-track"><i class="kwr-band-fill" style="width:' +
+          Math.round((n / bandMax) * 100) + '%"></i></span>' +
+        '<span class="kwr-band-n">' + n + '<i>' + (rows ? Math.round((n / rows) * 100) + '%' : '0%') + '</i></span>';
+      btn.addEventListener('click', () => {
+        filter.band = filter.band === b.key ? null : b.key;
+        paint();
+      });
+      bandEls[b.key] = btn;
+      bandWrap.appendChild(btn);
     });
-    card.appendChild(body);
-    shell.appendChild(card);
+    shell.appendChild(panel);
+  } else {
+    /* No summary panel published, so the row dots need their own key. */
+    const legend = document.createElement('div');
+    legend.className = 'kwr-panel';
+    legend.innerHTML = '<div class="kwr-legend">' + KWR_BANDS.map(b =>
+      '<span><i style="background:' + b.dot + '"></i>' + b.short + '</span>').join('') + '</div>';
+    shell.appendChild(legend);
+  }
+
+  /* ---- location chips ---- */
+  let locOpen = groups.length > 1;
+  const locBar = document.createElement('div');
+  locBar.className = 'kwr-locbar';
+  const locLbl = document.createElement('span');
+  locLbl.className = 'kwr-locbar-lbl';
+  locLbl.textContent = 'Location';
+  locBar.appendChild(locLbl);
+  const chipEls = [];
+  const allChip = document.createElement('button');
+  allChip.type = 'button';
+  allChip.className = 'kwr-chip';
+  allChip.innerHTML = 'All locations <b>' + rows + '</b>';
+  allChip.addEventListener('click', () => { filter.loc = null; paint(); });
+  locBar.appendChild(allChip);
+  groups.forEach((g, i) => {
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'kwr-chip';
+    chip.innerHTML = kwrSvg(KWR_ICON.pin) + '<span></span> <b>' + g.keywords.length + '</b>';
+    chip.querySelector('span').textContent = g.label || 'Location';
+    chip.addEventListener('click', () => { filter.loc = filter.loc === i ? null : i; paint(); });
+    chipEls.push(chip);
+    locBar.appendChild(chip);
   });
+  shell.appendChild(locBar);
+
+  /* ---- search + result count + clear ---- */
+  const toolbar = document.createElement('div');
+  toolbar.className = 'kwr-toolbar';
+  toolbar.innerHTML =
+    '<span class="kwr-search">' + kwrSvg(KWR_ICON.search) +
+      '<input type="search" placeholder="Search these keywords…" aria-label="Search keywords"/></span>' +
+    '<span class="kwr-count"></span>' +
+    '<button class="kwr-clear" type="button" hidden>Clear filters</button>';
+  const searchInput = toolbar.querySelector('input');
+  const countEl = toolbar.querySelector('.kwr-count');
+  const clearBtn = toolbar.querySelector('.kwr-clear');
+  searchInput.addEventListener('input', () => { filter.q = searchInput.value.trim().toLowerCase(); paint(); });
+  clearBtn.addEventListener('click', () => {
+    filter.band = null; filter.loc = null; filter.q = '';
+    searchInput.value = '';
+    paint();
+  });
+  shell.appendChild(toolbar);
+
+  /* ---- the location cards ---- */
+  const list = document.createElement('div');
+  list.className = 'kwr-list';
+  shell.appendChild(list);
 
   if (!groups.length){
     const empty = document.createElement('div');
@@ -10439,7 +10927,134 @@ function renderSeoReport(data){
   foot.innerHTML = 'Positions are recorded from a real search run at each location listed above.<br/>Prepared by <a href="https://www.edgemarketing.ca/" target="_blank" rel="noopener">EDGE Marketing &amp; Design Inc.</a>';
   shell.appendChild(foot);
 
+  /* One row. Built once per paint, because a filtered list is short and
+     rebuilding it is cheaper than tracking which rows moved. */
+  function buildRow(k){
+    const bandKey = kwrBandOf(k.rank);
+    const band = kwrBandMeta(bandKey);
+
+    const row = document.createElement('div');
+    row.className = 'seo-lg-row';
+
+    const top = document.createElement('div');
+    top.className = 'seo-lg-top';
+
+    const text = document.createElement('span');
+    text.className = 'seo-lg-text';
+    text.innerHTML = '<i class="kwr-kw-dot" style="background:' + band.dot + '" title="' +
+      esc(band.short) + '"></i><span class="kwr-kw-name"></span>';
+    text.querySelector('.kwr-kw-name').textContent = k.text || '';
+
+    const track = document.createElement('span');
+    track.className = 'kwr-track-holder';
+    track.innerHTML = kwrTrack(k.rank);
+
+    const sparkHtml = seoSparkline(k.history);
+    const spark = document.createElement('span');
+    spark.className = sparkHtml ? 'seo-spark-wrap' : 'seo-spark-pad';
+    spark.innerHTML = sparkHtml;
+
+    const rank = document.createElement('div');
+    rank.className = 'kwr-rank';
+    rank.innerHTML = kwrPosPill(k.rank == null ? null : k.rank) +
+      (k.manual ? '<span class="seo-manual-tag">manual</span>' : '');
+
+    const d = kwrDeltaText(k.rank, k.prevRank);
+    const delta = document.createElement('div');
+    delta.className = 'kwr-delta' + (d.cls ? ' ' + d.cls : '');
+    delta.textContent = d.text;
+
+    top.appendChild(text);
+    top.appendChild(track.firstChild);
+    top.appendChild(spark);
+    top.appendChild(rank);
+    top.appendChild(delta);
+    row.appendChild(top);
+
+    if (k.checkedAt || k.sourceUrl){
+      const meta = document.createElement('div');
+      meta.className = 'kwr-meta';
+      let html = k.checkedAt ? esc(fmtWhen(k.checkedAt)) : '';
+      if (k.sourceUrl){
+        html += (html ? ' · ' : '') +
+          '<a href="' + esc(k.sourceUrl) + '" target="_blank" rel="noopener">view the search</a>';
+      }
+      meta.innerHTML = html;
+      row.appendChild(meta);
+    }
+    return row;
+  }
+
+  /* The one function that turns filter state into what's on screen. */
+  function paint(){
+    const active = !!(filter.band || filter.loc != null || filter.q);
+    list.innerHTML = '';
+    let shown = 0;
+
+    groups.forEach((g, gi) => {
+      if (filter.loc != null && filter.loc !== gi) return;
+      const keep = g.keywords.filter(k =>
+        (!filter.band || kwrBandOf(k.rank) === filter.band) &&
+        (!filter.q || (k.text || '').toLowerCase().indexOf(filter.q) !== -1));
+      if (!keep.length) return;
+      shown += keep.length;
+
+      const card = document.createElement('div');
+      /* A filtered view always opens what survived — a collapsed card after a
+         click would look like the filter had eaten the keywords. */
+      card.className = 'seo-lg-card' + ((data.openAll === false && !active) ? '' : ' open');
+
+      const cardHead = document.createElement('div');
+      cardHead.className = 'seo-lg-head';
+      cardHead.innerHTML =
+        '<svg class="seo-lg-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>' +
+        '<svg class="seo-lg-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6-5.686-6-10a6 6 0 0 1 12 0c0 4.314-6 10-6 10z"/><circle cx="12" cy="11" r="2.2"/></svg>' +
+        '<span class="seo-lg-label">' + esc(g.label || 'Location') + '</span>' +
+        kwrMixBar(keep.map(k => k.rank)) +
+        '<span class="seo-lg-count">' + keep.length + ' keyword' + (keep.length === 1 ? '' : 's') + '</span>';
+      cardHead.addEventListener('click', () => card.classList.toggle('open'));
+      card.appendChild(cardHead);
+
+      const body = document.createElement('div');
+      body.className = 'seo-lg-body';
+      keep.forEach(k => body.appendChild(buildRow(k)));
+      card.appendChild(body);
+      list.appendChild(card);
+    });
+
+    if (groups.length && !shown){
+      const none = document.createElement('div');
+      none.className = 'kwr-empty-filter';
+      none.textContent = 'No keywords match this filter.';
+      list.appendChild(none);
+    }
+
+    /* control states */
+    KWR_BANDS.forEach(b => {
+      const el = bandEls[b.key];
+      if (!el) return;
+      el.classList.toggle('is-on', filter.band === b.key);
+      el.classList.toggle('is-off', !!filter.band && filter.band !== b.key);
+      el.setAttribute('aria-pressed', filter.band === b.key ? 'true' : 'false');
+    });
+    if (statEls.all) statEls.all.classList.toggle('is-on', !active);
+    if (statEls.t3)  statEls.t3.classList.toggle('is-on', filter.band === 't3');
+    if (statEls.loc) statEls.loc.classList.toggle('is-on', locOpen || filter.loc != null);
+    locBar.hidden = !locOpen && filter.loc == null;
+    allChip.classList.toggle('is-on', filter.loc == null);
+    chipEls.forEach((c, i) => c.classList.toggle('is-on', filter.loc === i));
+
+    const bits = [];
+    if (filter.band) bits.push('positions ' + kwrBandMeta(filter.band).label.toLowerCase());
+    if (filter.loc != null) bits.push(groups[filter.loc].label || 'one location');
+    if (filter.q) bits.push('“' + filter.q + '”');
+    countEl.innerHTML = 'Showing <b>' + shown + '</b> of <b>' + rows + '</b> ranking' + (rows === 1 ? '' : 's') +
+      (bits.length ? ' · ' + esc(bits.join(' · ')) : '');
+    clearBtn.hidden = !active;
+  }
+
   root.appendChild(shell);
+  paint();
   document.title = data.title || 'Keyword rankings';
 }
 async function bootSeoReportView(shareId){
