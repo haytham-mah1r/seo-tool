@@ -9731,6 +9731,11 @@ $('seoImportFile').addEventListener('change', e => {
         let c = state.seoClients.find(x => (x.name || '').trim().toLowerCase() === name.toLowerCase());
         if (!c){
           c = blankSeoClient(name);
+          /* blankSeoClient() stamps every new client Active, so the status in
+             the file has to be applied here — the fill-if-blank rule below
+             would find the field already populated and skip it, quietly turning
+             a paused client back on. */
+          if (rec.status) c.status = rec.status;
           state.seoClients.push(c);
           added++;
         } else {
