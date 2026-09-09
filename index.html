@@ -10756,10 +10756,10 @@ function renderSeoReport(data){
     headText.appendChild(p);
   }
   head.appendChild(headText);
-  const stamp = document.createElement('span');
-  stamp.className = 'kwr-stamp';
-  stamp.textContent = data.updatedAt ? 'Updated ' + new Date(data.updatedAt).toLocaleDateString() : 'Published';
-  head.appendChild(stamp);
+  /* No "updated" stamp and no per-row timestamps: the report is a snapshot
+     that gets republished, and a date on the page only ever raises the
+     question of whether it's the freshest one. The publish date still lives
+     on the record (data.updatedAt) — it just isn't printed. */
   shell.appendChild(head);
 
   /* ---- the numbers behind every control on the page ---- */
@@ -10971,15 +10971,12 @@ function renderSeoReport(data){
     top.appendChild(delta);
     row.appendChild(top);
 
-    if (k.checkedAt || k.sourceUrl){
+    /* The link only — the date each rank was checked is deliberately not
+       printed here (see the header note). */
+    if (k.sourceUrl){
       const meta = document.createElement('div');
       meta.className = 'kwr-meta';
-      let html = k.checkedAt ? esc(fmtWhen(k.checkedAt)) : '';
-      if (k.sourceUrl){
-        html += (html ? ' · ' : '') +
-          '<a href="' + esc(k.sourceUrl) + '" target="_blank" rel="noopener">view the search</a>';
-      }
-      meta.innerHTML = html;
+      meta.innerHTML = '<a href="' + esc(k.sourceUrl) + '" target="_blank" rel="noopener">view the search</a>';
       row.appendChild(meta);
     }
     return row;
