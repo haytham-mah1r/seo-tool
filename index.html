@@ -631,9 +631,11 @@ table.tbl tr.you{background:var(--brand-wash);}
 table.tbl tr.you:hover{background:#fbe7d6;}
 table.tbl tr.you td:first-child::after{content:" — this profile";color:var(--brand-deep);font-size:10.5px;font-weight:700;}
 .rank-pill{font-family:var(--mono);font-weight:700;padding:2px 8px;border-radius:20px;font-size:11px;}
-.rp-good{background:var(--good-wash);color:var(--good);}
-.rp-mid{background:var(--brand-wash);color:var(--brand-deep);}
-.rp-bad{background:#fbe6df;color:var(--lost);}
+.rp-good{background:var(--rank-1-wash);color:var(--rank-1-ink);}
+.rp-mid{background:var(--rank-2-wash);color:var(--rank-2-ink);}
+.rp-warn{background:var(--rank-3-wash);color:var(--rank-3-ink);}
+.rp-bad{background:var(--rank-4-wash);color:var(--rank-4-ink);}
+.rp-lost{background:var(--rank-5-wash);color:var(--rank-5-ink);}
 .rp-none{background:var(--line-2);color:var(--ink-3);}
 
 /* GBP overview cards */
@@ -674,11 +676,12 @@ kbd{font-family:var(--mono);font-size:10.5px;background:#fff;border:1px solid va
   transition:transform .16s var(--ease),box-shadow .16s var(--ease);
 }
 .rank-dot:hover{transform:scale(1.16);box-shadow:0 8px 20px rgba(20,28,36,.5);z-index:1200;}
-.rank-dot.good{background:var(--good);}
-.rank-dot.mid{background:var(--mid);}
-.rank-dot.bad{background:var(--bad);}
-.rank-dot.lost{background:var(--lost);}
-.rank-dot.none{background:var(--none);}
+.rank-dot.good{background:var(--rank-1);}
+.rank-dot.mid{background:var(--rank-2);}
+.rank-dot.warn{background:var(--rank-3);}
+.rank-dot.bad{background:var(--rank-4);}
+.rank-dot.lost{background:var(--rank-5);}
+.rank-dot.none{background:var(--rank-none);}
 .rank-dot.now{outline:3px solid var(--brand);outline-offset:2px;animation:pulseRing 1.9s infinite;}
 .rank-dot.unsure{border-style:dashed;}
 .rank-dot.thin{border-style:dotted;border-width:3px;}
@@ -1175,7 +1178,7 @@ body.embed-mode .hub{display:none !important;}
 .seo-stat:hover{box-shadow:var(--sh-2); transform:translateY(-1px);}
 .seo-stat-label{font-size:10px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-3); font-weight:700; margin-bottom:7px;}
 .seo-stat-value{font-family:var(--display); font-size:21px; font-weight:600; color:var(--ink); letter-spacing:-.01em;}
-.seo-stat-value.good{color:var(--good);}
+.seo-stat-value.good{color:var(--rank-1);}
 .seo-stat-value.bad{color:var(--lost);}
 .seo-stat-sub{font-size:11px; color:var(--ink-3); margin-top:3px;}
 
@@ -1604,6 +1607,28 @@ body.report-mode .kwr-root{display:block; font-family:var(--ui); color:var(--ink
   --cool:#3d7ea6;
   --cool-wash:#e8f1f7;
 
+  /* ---- the rank scale ----
+     One set of five colours for every position this tool ever prints, so a
+     #12 reads the same on the map, in a keyword row, on a comparison card
+     and in a published client report. Everything that colours a rank reads
+     these and nothing else.
+
+        1 – 3    dark green
+        4 – 10   green
+       11 – 25   orange
+       26 – 50   light red
+       51 +      dark red        (and anything not ranking at all)
+       not read  grey
+
+     The -ink variants are the text colour for a pill sitting on the matching
+     wash, where the solid colour would be too light to read. */
+  --rank-1:#0a5836;  --rank-1-ink:#0a5836;  --rank-1-wash:#e3f0ea;
+  --rank-2:#35a35f;  --rank-2-ink:#227a44;  --rank-2-wash:#e8f6ec;
+  --rank-3:#e58a1b;  --rank-3-ink:#96590a;  --rank-3-wash:#fdf2e1;
+  --rank-4:#e8705c;  --rank-4-ink:#b13f2a;  --rank-4-wash:#fceae6;
+  --rank-5:#8c2318;  --rank-5-ink:#8c2318;  --rank-5-wash:#f5e5e3;
+  --rank-none:#a7b2bb;
+
   --r-2xl:26px;
   --r-xl:20px;
   --r-lg:15px;
@@ -1868,9 +1893,11 @@ input[type=text]:focus,input[type=password]:focus,select:focus,textarea:focus{
   padding:3px 10px; font-size:11.5px; letter-spacing:-.01em; font-variant-numeric:tabular-nums;
   box-shadow:inset 0 0 0 1px rgba(20,26,33,.05);
 }
-.rp-good{background:linear-gradient(180deg,#e9f7f1,var(--good-wash)); color:var(--good); box-shadow:inset 0 0 0 1px rgba(13,113,80,.16);}
-.rp-mid{background:linear-gradient(180deg,#fef5eb,var(--brand-wash)); color:var(--brand-deep); box-shadow:inset 0 0 0 1px rgba(165,76,7,.16);}
-.rp-bad{background:linear-gradient(180deg,#fcece6,#f9e2da); color:var(--lost); box-shadow:inset 0 0 0 1px rgba(142,51,37,.14);}
+.rp-good{background:var(--rank-1-wash); color:var(--rank-1-ink); box-shadow:inset 0 0 0 1px rgba(10,88,54,.18);}
+.rp-mid{background:var(--rank-2-wash); color:var(--rank-2-ink); box-shadow:inset 0 0 0 1px rgba(34,122,68,.16);}
+.rp-warn{background:var(--rank-3-wash); color:var(--rank-3-ink); box-shadow:inset 0 0 0 1px rgba(150,89,10,.16);}
+.rp-bad{background:var(--rank-4-wash); color:var(--rank-4-ink); box-shadow:inset 0 0 0 1px rgba(177,63,42,.16);}
+.rp-lost{background:var(--rank-5-wash); color:var(--rank-5-ink); box-shadow:inset 0 0 0 1px rgba(140,35,24,.16);}
 .rp-none{background:var(--line-2); color:var(--ink-3);}
 
 .tbl-card > h4{
@@ -2049,9 +2076,11 @@ body.report-mode{
   background:var(--line-2); flex:none; box-shadow:inset 0 0 0 1px rgba(20,26,33,.05);
 }
 .seo-mix i{display:block; height:100%; min-width:0;}
-.seo-mix .mx-good{background:linear-gradient(180deg,var(--good-hi),var(--good));}
-.seo-mix .mx-mid{background:linear-gradient(180deg,var(--brand-hi),var(--brand));}
-.seo-mix .mx-bad{background:linear-gradient(180deg,#d38055,var(--lost));}
+.seo-mix .mx-good{background:var(--rank-1);}
+.seo-mix .mx-mid{background:var(--rank-2);}
+.seo-mix .mx-warn{background:var(--rank-3);}
+.seo-mix .mx-bad{background:var(--rank-4);}
+.seo-mix .mx-lost{background:var(--rank-5);}
 .seo-mix .mx-none{background:#cdd7df;}
 @media (max-width:900px){ .seo-mix{display:none;} .seo-spark, .seo-spark-pad{display:none;} }
 /* --------------------------------------------------------------------------
@@ -2246,9 +2275,9 @@ body.report-mode{
 .cmp-card-name{flex:1; min-width:0; font-size:13.5px; font-weight:650; color:var(--ink); letter-spacing:-.01em; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 .cmp-card-name small{display:block; font-size:10.5px; font-weight:500; color:var(--ink-3); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 .cmp-verdict{font-size:11.5px; line-height:1.5; color:var(--ink-2); padding-left:10px; border-left:2px solid var(--line);}
-.cmp-verdict.good{border-left-color:var(--good); color:var(--good);}
-.cmp-verdict.mid{border-left-color:var(--brand); color:var(--brand-deep);}
-.cmp-verdict.bad{border-left-color:var(--lost); color:var(--lost);}
+.cmp-verdict.good{border-left-color:var(--rank-1); color:var(--rank-1-ink);}
+.cmp-verdict.mid{border-left-color:var(--rank-2); color:var(--rank-2-ink);}
+.cmp-verdict.bad{border-left-color:var(--rank-5); color:var(--rank-5-ink);}
 .cmp-verdict.none{border-left-color:#cdd7df; color:var(--ink-3); font-style:italic;}
 .cmp-card-nums{display:grid; grid-template-columns:repeat(4,1fr); gap:6px;}
 .cmp-card-nums span{font-size:9.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3);}
@@ -2260,15 +2289,19 @@ body.report-mode{
 .cmp-ring-h span{display:block; font-size:10.5px; color:var(--ink-3);}
 .cmp-bar{display:block; height:10px; border-radius:20px; background:var(--line-2); overflow:hidden; box-shadow:inset 0 0 0 1px rgba(20,26,33,.05);}
 .cmp-bar i{display:block; height:100%; border-radius:20px; transition:width .45s var(--ease);}
-.tone-good{background:linear-gradient(90deg,var(--good-hi),var(--good));}
-.tone-mid{background:linear-gradient(90deg,var(--brand-hi),var(--brand));}
-.tone-bad{background:linear-gradient(90deg,#d38055,var(--lost));}
+.tone-good{background:var(--rank-1);}
+.tone-mid{background:var(--rank-2);}
+.tone-warn{background:var(--rank-3);}
+.tone-bad{background:var(--rank-4);}
+.tone-lost{background:var(--rank-5);}
 .tone-none{background:#cdd7df;}
 .cmp-ring-nums{display:flex; align-items:baseline; gap:9px; justify-content:flex-end;}
 .cmp-ring-avg{font-family:var(--mono); font-size:15px; font-weight:700; letter-spacing:-.02em;}
-.cmp-ring-avg.tone-good{background:none; color:var(--good);}
-.cmp-ring-avg.tone-mid{background:none; color:var(--brand-deep);}
-.cmp-ring-avg.tone-bad{background:none; color:var(--lost);}
+.cmp-ring-avg.tone-good{background:none; color:var(--rank-1-ink);}
+.cmp-ring-avg.tone-mid{background:none; color:var(--rank-2-ink);}
+.cmp-ring-avg.tone-warn{background:none; color:var(--rank-3-ink);}
+.cmp-ring-avg.tone-bad{background:none; color:var(--rank-4-ink);}
+.cmp-ring-avg.tone-lost{background:none; color:var(--rank-5-ink);}
 .cmp-ring-avg.tone-none{background:none; color:var(--ink-3);}
 .cmp-ring-nums span:last-child{font-size:11px; color:var(--ink-3); white-space:nowrap;}
 
@@ -2283,17 +2316,18 @@ body.report-mode{
   transition:transform .14s var(--ease);
 }
 .cmp-cell:hover{transform:scale(1.16); position:relative; z-index:1;}
-.cmp-cell.good{background:linear-gradient(180deg,var(--good-hi),var(--good));}
-.cmp-cell.mid{background:linear-gradient(180deg,var(--brand-hi),var(--brand));}
-.cmp-cell.bad{background:linear-gradient(180deg,#d38055,var(--bad));}
-.cmp-cell.lost{background:#e9dcd7; color:var(--lost);}
+.cmp-cell.good{background:var(--rank-1);}
+.cmp-cell.mid{background:var(--rank-2);}
+.cmp-cell.warn{background:var(--rank-3);}
+.cmp-cell.bad{background:var(--rank-4);}
+.cmp-cell.lost{background:var(--rank-5);}
 .cmp-cell.none{background:var(--line-2);}
 .cmp-matrix-key{display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin-top:11px; font-size:10.5px; color:var(--ink-3);}
 .cmp-matrix-key span{display:inline-flex; align-items:center; gap:5px;}
 .cmp-matrix-key i{width:10px; height:10px; border-radius:3px; display:block;}
-.cmp-matrix-key i.good{background:var(--good);} .cmp-matrix-key i.mid{background:var(--brand);}
-.cmp-matrix-key i.bad{background:var(--bad);} .cmp-matrix-key i.lost{background:#e9dcd7;}
-.cmp-matrix-key i.none{background:var(--line-2);}
+.cmp-matrix-key i.good{background:var(--rank-1);} .cmp-matrix-key i.mid{background:var(--rank-2);}
+.cmp-matrix-key i.warn{background:var(--rank-3);} .cmp-matrix-key i.bad{background:var(--rank-4);}
+.cmp-matrix-key i.lost{background:var(--rank-5);} .cmp-matrix-key i.none{background:var(--line-2);}
 .cmp-matrix-key em{font-style:normal; margin-left:auto; letter-spacing:.08em; text-transform:uppercase; font-weight:700; font-size:9.5px;}
 
 @media (max-width:820px){
@@ -2338,18 +2372,21 @@ body.report-mode{
   --aa-ink-2:#56646f;
   --aa-ink-3:#8795a1;
 
-  --aa-t3:#14663c;
-  --aa-t10:#4ca85a;
-  --aa-t20:#d9a412;
-  --aa-t50:#cf4f26;
-  --aa-t51:#8f2f2f;
+  /* The published report draws from the same five-band scale as the tool,
+     so a client comparing the report against a screenshot sees one colour
+     language, not two. */
+  --aa-t3:var(--rank-1);
+  --aa-t10:var(--rank-2);
+  --aa-t20:var(--rank-3);
+  --aa-t50:var(--rank-4);
+  --aa-t51:var(--rank-5);
   --aa-none:#9aa7b2;
 
-  --aa-t3-wash:#e8f2ec;
-  --aa-t10-wash:#edf7ee;
-  --aa-t20-wash:#fdf5e2;
-  --aa-t50-wash:#fceee8;
-  --aa-t51-wash:#f8ebea;
+  --aa-t3-wash:var(--rank-1-wash);
+  --aa-t10-wash:var(--rank-2-wash);
+  --aa-t20-wash:var(--rank-3-wash);
+  --aa-t50-wash:var(--rank-4-wash);
+  --aa-t51-wash:var(--rank-5-wash);
   --aa-none-wash:#f0f3f5;
 
   --aa-focus:0 0 0 3px rgba(76,168,90,.18);
@@ -2584,11 +2621,11 @@ body.report-mode{background:var(--aa-bg);}
   border-radius:5px; letter-spacing:-.01em; font-variant-numeric:tabular-nums;
   box-shadow:inset 0 0 0 1px rgba(38,49,60,.05); white-space:nowrap;
 }
-.kwr-pos.p-t3{background:var(--aa-t3-wash); color:var(--aa-t3);}
-.kwr-pos.p-t10{background:var(--aa-t10-wash); color:#2f7c3d;}
-.kwr-pos.p-t20{background:var(--aa-t20-wash); color:#96690a;}
-.kwr-pos.p-t50{background:var(--aa-t50-wash); color:var(--aa-t50);}
-.kwr-pos.p-t51{background:var(--aa-t51-wash); color:var(--aa-t51);}
+.kwr-pos.p-t3{background:var(--aa-t3-wash); color:var(--rank-1-ink);}
+.kwr-pos.p-t10{background:var(--aa-t10-wash); color:var(--rank-2-ink);}
+.kwr-pos.p-t20{background:var(--aa-t20-wash); color:var(--rank-3-ink);}
+.kwr-pos.p-t50{background:var(--aa-t50-wash); color:var(--rank-4-ink);}
+.kwr-pos.p-t51{background:var(--aa-t51-wash); color:var(--rank-5-ink);}
 .kwr-pos.p-none{background:var(--aa-none-wash); color:var(--aa-ink-3);}
 .kwr-root .seo-manual-tag{background:var(--aa-none-wash); color:var(--aa-ink-3);}
 .kwr-root .kwr-delta{font-family:var(--mono); font-size:11px; color:var(--aa-ink-3); width:52px;}
@@ -3145,13 +3182,14 @@ body.report-mode{background:var(--aa-bg);}
                 </div>
                 <div id="map"></div>
                 <div class="legend">
-                  <span><i style="background:var(--good)"></i>1–3</span>
-                  <span><i style="background:var(--mid)"></i>4–10</span>
-                  <span><i style="background:var(--bad)"></i>11–20</span>
-                  <span><i style="background:var(--lost)"></i>21+ or absent</span>
-                  <span><i style="background:var(--none)"></i>not read yet</span>
-                  <span><i style="background:var(--mid);border:2px dashed #fff"></i>name match only</span>
-                  <span><i style="background:var(--good);box-shadow:0 0 0 2px rgba(0,0,0,.15)"></i>found only on a wider view</span>
+                  <span><i style="background:var(--rank-1)"></i>1–3</span>
+                  <span><i style="background:var(--rank-2)"></i>4–10</span>
+                  <span><i style="background:var(--rank-3)"></i>11–25</span>
+                  <span><i style="background:var(--rank-4)"></i>26–50</span>
+                  <span><i style="background:var(--rank-5)"></i>51+ or absent</span>
+                  <span><i style="background:var(--rank-none)"></i>not read yet</span>
+                  <span><i style="background:var(--rank-2);border:2px dashed #fff"></i>name match only</span>
+                  <span><i style="background:var(--rank-1);box-shadow:0 0 0 2px rgba(0,0,0,.15)"></i>found only on a wider view</span>
                   <span><i style="background:repeating-linear-gradient(45deg,#9aa4ac,#9aa4ac 3px,#77828b 3px,#77828b 6px)"></i>read failed</span>
                 </div>
                 <div class="status" id="mapStatus" style="padding:0 16px 12px"></div>
@@ -3289,11 +3327,12 @@ body.report-mode{background:var(--aa-bg);}
                 </div>
                 <div id="cmpMap"></div>
                 <div class="legend">
-                  <span><i style="background:var(--good)"></i>best profile 1–3</span>
-                  <span><i style="background:var(--mid)"></i>4–10</span>
-                  <span><i style="background:var(--bad)"></i>11–20</span>
-                  <span><i style="background:var(--lost)"></i>none found</span>
-                  <span><i style="background:var(--none)"></i>not read yet</span>
+                  <span><i style="background:var(--rank-1)"></i>best profile 1–3</span>
+                  <span><i style="background:var(--rank-2)"></i>4–10</span>
+                  <span><i style="background:var(--rank-3)"></i>11–25</span>
+                  <span><i style="background:var(--rank-4)"></i>26–50</span>
+                  <span><i style="background:var(--rank-5)"></i>51+ or none found</span>
+                  <span><i style="background:var(--rank-none)"></i>not read yet</span>
                 </div>
                 <div class="status" id="cmpMapStatus" style="padding:0 16px 12px"></div>
               </div>
@@ -5860,14 +5899,21 @@ function flushProgress(scan){
   updateSummary(scan); renderVerdict(scan); save();
 }
 
+/* The one place a position turns into a colour. Everything that paints a
+   rank - map dots, pills, mix bars, comparison cells, the PDF - routes
+   through this, so the bands can never drift apart between two screens.
+   A rank of 0 means "not in the results we read", which is the same news as
+   ranking past 50, so it shares the bottom band. */
 function rankClass(rank){
   if (rank == null) return 'none';
   if (rank === 0) return 'lost';
-  if (rank <= 3) return 'good';
-  if (rank <= 10) return 'mid';
-  if (rank <= 20) return 'bad';
-  return 'lost';
+  if (rank <= 3) return 'good';    /* dark green */
+  if (rank <= 10) return 'mid';    /* green */
+  if (rank <= 25) return 'warn';   /* orange */
+  if (rank <= 50) return 'bad';    /* light red */
+  return 'lost';                   /* dark red */
 }
+const RANK_VARS = {good:'var(--rank-1)', mid:'var(--rank-2)', warn:'var(--rank-3)', bad:'var(--rank-4)', lost:'var(--rank-5)', none:'var(--ink-3)'};
 const rankLabel = rank => rank == null ? '·' : (rank === 0 ? '—' : String(rank));
 const CONF_TEXT = {
   cid:'CID — exact', place:'Place ID — exact', phone:'Phone — exact',
@@ -5927,8 +5973,7 @@ function refreshHighlight(prev){
   if (currentIdx != null) refreshDot(currentIdx);
 }
 function rankColorVar(rank){
-  const cls = rankClass(rank);
-  return cls === 'good' ? 'var(--good)' : cls === 'mid' ? 'var(--mid)' : cls === 'bad' ? 'var(--bad)' : cls === 'lost' ? 'var(--lost)' : 'var(--ink-3)';
+  return RANK_VARS[rankClass(rank)] || 'var(--ink-3)';
 }
 function dotPopup(p, idx, scan){
   const g = activeGbp();
@@ -7318,7 +7363,7 @@ function computeCompareInsights(scan, gbps){
       area: (g.center && g.center.label) || '',
       hasCentre,
       found:0, top3:0, sum:0, n:0, best:null, wins:0,
-      mix:{good:0, mid:0, bad:0, none:0},
+      mix:{good:0, mid:0, warn:0, bad:0, lost:0, none:0},
       bands: CMP_BANDS.map(b => ({label:b.label, note:b.note, max:b.max, found:0, total:0, sum:0, n:0})),
       nearest:null
     };
@@ -7332,9 +7377,8 @@ function computeCompareInsights(scan, gbps){
       const rank = (r && r.rank >= 1) ? r.rank : null;
       if (rank != null){
         pr.found++; pr.sum += rank; pr.n++;
-        if (rank <= 3){ pr.top3++; pr.mix.good++; }
-        else if (rank <= 10) pr.mix.mid++;
-        else pr.mix.bad++;
+        if (rank <= 3) pr.top3++;
+        pr.mix[rankClass(rank)]++;
         if (pr.best == null || rank < pr.best) pr.best = rank;
       } else {
         pr.mix.none++;
@@ -7411,15 +7455,15 @@ function cmpBar(pct, cls){
 }
 function cmpMixStrip(mix){
   const seg = (cls, v) => v ? '<i class="' + cls + '" style="flex:' + v + '"></i>' : '';
-  const label = mix.good + ' top 3 · ' + mix.mid + ' on page one · ' + mix.bad + ' below · ' + mix.none + ' absent';
+  const label = mix.good + ' at 1\u20133 \u00b7 ' + mix.mid + ' at 4\u201310 \u00b7 ' + mix.warn + ' at 11\u201325 \u00b7 ' +
+    mix.bad + ' at 26\u201350 \u00b7 ' + mix.lost + ' at 51+ \u00b7 ' + mix.none + ' absent';
   return '<span class="seo-mix" title="' + esc(label) + '">' +
-    seg('mx-good', mix.good) + seg('mx-mid', mix.mid) + seg('mx-bad', mix.bad) + seg('mx-none', mix.none) + '</span>';
+    seg('mx-good', mix.good) + seg('mx-mid', mix.mid) + seg('mx-warn', mix.warn) +
+    seg('mx-bad', mix.bad) + seg('mx-lost', mix.lost) + seg('mx-none', mix.none) + '</span>';
 }
 function cmpRankTone(avg){
   if (avg == null) return 'none';
-  if (avg <= 3) return 'good';
-  if (avg <= 10) return 'mid';
-  return 'bad';
+  return rankClass(Math.round(avg));
 }
 
 function renderCompareReport(scan){
@@ -7532,7 +7576,7 @@ function cmpProfileCard(p, i, data, isSel){
   const avg = p.avg != null ? p.avg.toFixed(1) : '—';
   const bestPill = p.best == null
     ? '<span class="rank-pill rp-none">none</span>'
-    : '<span class="rank-pill ' + (p.best <= 3 ? 'rp-good' : p.best <= 10 ? 'rp-mid' : 'rp-bad') + '">#' + p.best + '</span>';
+    : '<span class="rank-pill rp-' + rankClass(p.best) + '">#' + p.best + '</span>';
   return '<button type="button" class="cmp-card' + (isSel ? ' on' : '') + '" data-cmp-pick="' + esc(p.id) + '">' +
     '<span class="cmp-card-top">' +
       '<i class="cmp-swatch t' + (i % 6) + '"></i>' +
@@ -7598,14 +7642,15 @@ function cmpMatrix(p, scan){
   for (let r = 0; r < rows; r++){
     for (let cI = 0; cI < rows; cI++){
       const v = cell[r + ':' + cI];
-      const cls = v == null ? 'none' : v === 0 ? 'lost' : v <= 3 ? 'good' : v <= 10 ? 'mid' : 'bad';
+      const cls = rankClass(v);
       const label = v == null ? 'not read yet' : v === 0 ? 'not found here' : 'position ' + v;
       out += '<i class="cmp-cell ' + cls + '" title="' + esc(label) + '">' + (v == null ? '' : (v === 0 ? '·' : v)) + '</i>';
     }
   }
   out += '</div><div class="cmp-matrix-key">' +
     '<span><i class="good"></i>1–3</span><span><i class="mid"></i>4–10</span>' +
-    '<span><i class="bad"></i>11+</span><span><i class="lost"></i>not found</span><span><i class="none"></i>not read</span>' +
+    '<span><i class="warn"></i>11–25</span><span><i class="bad"></i>26–50</span>' +
+    '<span><i class="lost"></i>51+ or not found</span><span><i class="none"></i>not read</span>' +
     '<em>north is up</em></div></div>';
   return out;
 }
@@ -7635,7 +7680,7 @@ function renderCompareTable(scan){
   rows.forEach(r => {
     const tr = document.createElement('tr');
     const pill = r.best == null ? '<span class="rank-pill rp-none">none</span>'
-      : '<span class="rank-pill ' + (r.best <= 3 ? 'rp-good' : r.best <= 10 ? 'rp-mid' : 'rp-bad') + '">#' + r.best + '</span>';
+      : '<span class="rank-pill rp-' + rankClass(r.best) + '">#' + r.best + '</span>';
     tr.innerHTML = '<td>' + esc(r.name) + '</td><td class="num">' + r.found + '/' + r.total + '</td>' +
       '<td class="num">' + r.top3 + '</td><td class="num">' + (r.avg != null ? r.avg.toFixed(1) : '—') + '</td>' +
       '<td class="num">' + pill + '</td>';
@@ -7972,13 +8017,14 @@ function runComparePaste(fromGesture){
    PDF REPORTS
    ========================================================================== */
 const PDF_INK = [27,34,42], PDF_BRAND = [232,119,34], PDF_SOFT = [110,124,136];
+/* The same five bands in print. jsPDF can't read a CSS variable, so these
+   are the hex values from the rank scale written out. */
+const PDF_RANK_RGB = {
+  good:[10,88,54], mid:[53,163,95], warn:[229,138,27],
+  bad:[232,112,92], lost:[140,35,24], none:[167,178,187]
+};
 function rgbFor(rank){
-  if (rank == null) return [169,179,187];
-  if (rank === 0) return [138,50,38];
-  if (rank <= 3) return [15,122,88];
-  if (rank <= 10) return [232,119,34];
-  if (rank <= 20) return [194,98,26];
-  return [138,50,38];
+  return PDF_RANK_RGB[rankClass(rank)] || PDF_RANK_RGB.none;
 }
 async function captureMap(el){
   if (!window.html2canvas) return null;
@@ -9441,25 +9487,21 @@ function seoSparkline(history){
 function seoRankMixBar(ranks){
   const n = ranks.length;
   if (!n) return '';
-  let good = 0, mid = 0, bad = 0, none = 0;
-  ranks.forEach(r => {
-    if (r == null || r === 0) none++;
-    else if (r <= 3) good++;
-    else if (r <= 10) mid++;
-    else bad++;
-  });
+  const c = {good:0, mid:0, warn:0, bad:0, lost:0, none:0};
+  ranks.forEach(r => { c[rankClass(r)]++; });
   const seg = (cls, count) => count ? '<i class="' + cls + '" style="flex:' + count + '"></i>' : '';
-  const label = [good + ' in the top 3', mid + ' on page one', bad + ' beyond page one', none + ' not ranking'].join(' \u00b7 ');
+  const label = [c.good + ' at 1\u20133', c.mid + ' at 4\u201310', c.warn + ' at 11\u201325',
+    c.bad + ' at 26\u201350', c.lost + ' at 51+ or not ranking', c.none + ' not checked'].join(' \u00b7 ');
   return '<span class="seo-mix" title="' + esc(label) + '">' +
-    seg('mx-good', good) + seg('mx-mid', mid) + seg('mx-bad', bad) + seg('mx-none', none) +
+    seg('mx-good', c.good) + seg('mx-mid', c.mid) + seg('mx-warn', c.warn) +
+    seg('mx-bad', c.bad) + seg('mx-lost', c.lost) + seg('mx-none', c.none) +
     '</span>';
 }
 
 function seoRankPill(rank){
   if (rank == null) return '<span class="rank-pill rp-none">—</span>';
-  if (rank === 0) return '<span class="rank-pill rp-bad">100+</span>';
-  const cls = rank <= 3 ? 'rp-good' : rank <= 10 ? 'rp-mid' : 'rp-bad';
-  return '<span class="rank-pill ' + cls + '">#' + rank + '</span>';
+  if (rank === 0) return '<span class="rank-pill rp-lost">100+</span>';
+  return '<span class="rank-pill rp-' + rankClass(rank) + '">#' + rank + '</span>';
 }
 function fmtWhen(ts){
   if (!ts) return 'never checked';
@@ -12121,10 +12163,10 @@ function kwrDeltaText(rank, prevRank){
    label, never on its own, so the report still reads correctly in greyscale
    and for a colour-blind reader. */
 const KWR_BANDS = [
-  {key:'t3',   label:'1 – 3',    short:'Top 3',       cls:'b-t3',   dot:'var(--aa-t3)'},
-  {key:'t10',  label:'4 – 10',   short:'4–10',    cls:'b-t10',  dot:'var(--aa-t10)'},
-  {key:'t20',  label:'11 – 20',  short:'11–20',   cls:'b-t20',  dot:'var(--aa-t20)'},
-  {key:'t50',  label:'21 – 50',  short:'21–50',   cls:'b-t50',  dot:'var(--aa-t50)'},
+  {key:'t3',   label:'1 – 3',         short:'1–3',          cls:'b-t3',   dot:'var(--aa-t3)'},
+  {key:'t10',  label:'4 – 10',        short:'4–10',         cls:'b-t10',  dot:'var(--aa-t10)'},
+  {key:'t20',  label:'11 – 25',       short:'11–25',        cls:'b-t20',  dot:'var(--aa-t20)'},
+  {key:'t50',  label:'26 – 50',       short:'26–50',        cls:'b-t50',  dot:'var(--aa-t50)'},
   {key:'t51',  label:'51 +',          short:'51+',          cls:'b-t51',  dot:'var(--aa-t51)'},
   {key:'none', label:'Not ranking',   short:'Not ranking',  cls:'b-none', dot:'var(--aa-none)'}
 ];
@@ -12132,7 +12174,7 @@ function kwrBandOf(rank){
   if (rank == null || rank === 0) return 'none';
   if (rank <= 3)  return 't3';
   if (rank <= 10) return 't10';
-  if (rank <= 20) return 't20';
+  if (rank <= 25) return 't20';
   if (rank <= 50) return 't50';
   return 't51';
 }
