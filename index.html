@@ -189,6 +189,65 @@ body{
 .rail-empty{padding:26px 18px;text-align:center;color:#7d8b98;font-size:12.5px;line-height:1.7;}
 .rail-empty b{display:block;color:#dfe7ed;font-size:13px;margin-bottom:5px;font-weight:600;}
 
+/* ---------- client folders (SEO rail) ----------
+   Folders are a way of arranging the rail and nothing more. A client that
+   isn't in one sits exactly where it always sat, so the list reads the same
+   on day one as it did before folders existed. */
+.rail-head-acts{display:flex;align-items:center;gap:6px;}
+.rail-add svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.rail-folder{margin-bottom:4px;animation:rise .3s var(--ease);}
+.folder-row{
+  display:flex;align-items:center;gap:7px;padding:7px 9px;border-radius:var(--r-md);
+  cursor:pointer;color:var(--console-ink-2);transition:background .15s var(--ease);
+}
+.folder-row:hover{background:#232b34;}
+.folder-caret{width:12px;height:12px;flex:none;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s var(--ease);}
+.rail-folder.open .folder-caret{transform:rotate(90deg);}
+.folder-ico{width:14px;height:14px;flex:none;stroke:var(--brand-hi);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+.folder-name{
+  flex:1;min-width:0;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;
+  color:#c3cfda;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.folder-n{font-family:var(--mono);font-size:10px;color:var(--console-ink-2);flex:none;}
+.folder-act{
+  opacity:0;background:none;border:none;color:#7d8b98;cursor:pointer;font-size:12px;line-height:1;
+  padding:2px 4px;border-radius:5px;transition:all .15s var(--ease);
+}
+.folder-row:hover .folder-act{opacity:1;}
+.folder-act:hover{color:var(--console-ink);background:#2e3742;}
+.folder-act.kill:hover{color:#ff8a7a;background:#33262a;}
+.folder-kids{display:none;padding:2px 0 5px 12px;margin-left:10px;border-left:1px solid var(--console-line);}
+.rail-folder.open .folder-kids{display:block;}
+.folder-empty{padding:7px 10px;font-size:11.5px;color:#6d7b89;font-style:italic;}
+.tree-row.dragging{opacity:.45;}
+.folder-row.drop-on,.rail-root-drop.drop-on{background:rgba(232,119,34,.2);box-shadow:inset 0 0 0 1px var(--brand);color:#fff;}
+.rail-root-drop{
+  display:none;margin:8px 2px 0;padding:11px;border:1px dashed var(--console-line);border-radius:var(--r-md);
+  text-align:center;font-size:11.5px;color:#7d8b98;
+}
+body.seo-dragging .rail-root-drop{display:block;}
+.tree-move{
+  opacity:0;background:none;border:none;color:#7d8b98;cursor:pointer;padding:2px 4px;border-radius:5px;
+  display:grid;place-items:center;transition:all .15s var(--ease);
+}
+.tree-move svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+.tree-row:hover .tree-move{opacity:1;}
+.tree-move:hover{color:var(--brand-hi);background:#2e3742;}
+.rail-menu{
+  position:fixed;z-index:400;min-width:198px;max-height:330px;overflow:auto;
+  background:var(--console-2);border:1px solid var(--console-line);border-radius:var(--r-md);
+  box-shadow:0 18px 40px rgba(0,0,0,.5);padding:6px;
+}
+.rail-menu-h{padding:6px 9px 7px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--console-ink-2);font-weight:700;}
+.rail-menu button{
+  display:flex;align-items:center;gap:8px;width:100%;text-align:left;background:none;border:none;
+  color:#dbe3ea;font:inherit;font-size:12.5px;padding:7px 9px;border-radius:8px;cursor:pointer;
+}
+.rail-menu button:hover{background:#2e3742;}
+.rail-menu button.on{color:var(--brand-hi);font-weight:600;}
+.rail-menu .sep{height:1px;background:var(--console-line);margin:5px 4px;}
+.tree-folder-hint{font-size:10px;color:#6d7b89;flex:none;letter-spacing:.04em;}
+
 .rail-foot{border-top:1px solid var(--console-line);padding:12px 16px 14px;}
 .sync{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--console-ink-2);margin-bottom:10px;line-height:1.45;}
 .sync i{width:7px;height:7px;border-radius:50%;background:#6d7b89;flex:none;box-shadow:0 0 0 3px rgba(109,123,137,.18);}
@@ -268,6 +327,69 @@ body{
 .seo-mode.on{background:var(--card);color:var(--brand-deep);box-shadow:var(--sh-1);}
 .seo-view{display:none;}
 .seo-view.on{display:block;animation:rise .32s var(--ease);}
+
+/* ---------- personalised dashboards ----------
+   Any page a client already has - a GA4 report on GitHub Pages, a Looker
+   Studio board, a status page - pinned to that client as its own tab. The
+   tab strip sits beside Dashboard and Keywords because that is where you
+   already go to switch what this client is showing you. */
+.seo-mode-add{
+  border:1px dashed var(--line); background:none; color:var(--ink-3);
+  border-radius:10px; padding:7px 11px; cursor:pointer; font-family:var(--ui);
+  font-size:12.5px; font-weight:700; line-height:1; transition:all .16s var(--ease);
+}
+.seo-mode-add:hover{border-color:var(--brand); color:var(--brand-deep); background:var(--brand-wash);}
+.modes{flex-wrap:wrap;}
+
+.seo-embed-wrap{display:flex; flex-direction:column; gap:0;}
+.seo-embed-bar{
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  background:var(--card); border:1px solid var(--line); border-bottom:none;
+  border-radius:var(--r-xl) var(--r-xl) 0 0; padding:13px 18px; box-shadow:var(--hair);
+}
+.seo-embed-name{font-family:var(--display); font-size:15px; font-weight:600; letter-spacing:-.012em; color:var(--ink); flex:none;}
+.seo-embed-url{
+  flex:1; min-width:120px; font-family:var(--mono); font-size:11px; color:var(--ink-3);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.seo-embed-acts{display:flex; gap:7px; flex-wrap:wrap; flex:none;}
+.seo-embed-frame{
+  position:relative; background:var(--card); border:1px solid var(--line);
+  border-radius:0 0 var(--r-xl) var(--r-xl); overflow:hidden; box-shadow:var(--sh-2);
+}
+.seo-embed-frame iframe{
+  display:block; width:100%; height:calc(100vh - 290px); min-height:520px; border:0; background:#fff;
+}
+.seo-embed-note{
+  display:none; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  max-width:min(420px, 84%); text-align:center; background:var(--card);
+  border:1px solid var(--line); border-radius:var(--r-lg); padding:20px 22px;
+  box-shadow:var(--sh-3); font-size:12.5px; color:var(--ink-2); line-height:1.65;
+}
+.seo-embed-note.on{display:block;}
+.seo-embed-note b{display:block; color:var(--ink); font-size:13.5px; margin-bottom:6px; font-weight:600;}
+.seo-embed-note .btn{margin-top:12px;}
+
+/* Full screen is the point of most of these boards, so it gets a real one
+   rather than a slightly taller box. */
+.seo-embed-wrap.fullscreen{
+  position:fixed; inset:0; z-index:3900; background:var(--paper);
+  border-radius:0; padding:0; display:flex; flex-direction:column;
+}
+.seo-embed-wrap.fullscreen .seo-embed-bar{border-radius:0; border-left:none; border-right:none; border-top:none;}
+.seo-embed-wrap.fullscreen .seo-embed-frame{flex:1; border:none; border-radius:0; box-shadow:none;}
+.seo-embed-wrap.fullscreen .seo-embed-frame iframe{height:100%; min-height:0;}
+
+.seo-embed-empty{
+  background:var(--card); border:1px dashed #d5dee5; border-radius:var(--r-2xl);
+  padding:46px 26px; text-align:center;
+}
+.seo-embed-empty h3{font-family:var(--display); font-size:18px; font-weight:600; margin:0 0 7px; letter-spacing:-.015em;}
+.seo-embed-empty p{margin:0 auto 18px; font-size:13px; color:var(--ink-2); max-width:52ch; line-height:1.7;}
+@media (max-width:900px){
+  .seo-embed-frame iframe{height:calc(100vh - 340px); min-height:420px;}
+  .seo-embed-url{display:none;}
+}
 
 /* ---------------- primitives ---------------- */
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-xl);box-shadow:var(--sh-2);}
@@ -1351,6 +1473,20 @@ body.report-mode .kwr-root{display:block; font-family:var(--ui); color:var(--ink
   color:var(--ink-3); background:var(--card-2); border:1px solid var(--line);
   border-radius:20px; padding:6px 12px; white-space:nowrap; flex:none;
 }
+
+/* ---------- keyword gap scan ---------- */
+.gap-tag{
+  display:inline-block; font-family:var(--mono); font-size:9.5px; font-weight:700; letter-spacing:.08em;
+  text-transform:uppercase; padding:2px 7px; border-radius:20px; white-space:nowrap;
+}
+.gap-tag.miss{background:var(--brand-wash); color:var(--brand-deep); border:1px solid #f2d2b4;}
+.gap-tag.weak{background:#eef2f5; color:var(--ink-2); border:1px solid var(--line);}
+.gap-page{font-size:12px; color:var(--ink); display:block; word-break:break-word;}
+.gap-page.new{color:var(--brand-deep); font-weight:600;}
+.gap-why{display:block; font-size:11px; color:var(--ink-3); margin-top:2px; line-height:1.45;}
+.gap-src{font-size:11px; color:var(--ink-3);}
+.gap-bar{display:flex; gap:7px; align-items:center; flex-wrap:wrap; padding:11px 16px; border-bottom:1px solid var(--line-2);}
+.gap-bar select{width:auto; min-width:150px;}
 
 .kwr-stats{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:16px;}
 .kwr-stat{background:var(--card); border:1px solid var(--line); border-radius:var(--r-md); padding:14px 16px; box-shadow:var(--sh-1);}
@@ -3378,6 +3514,76 @@ body.report-mode{background:var(--aa-bg);}
               <div class="hint">Creates or reuses the client and profile, adds the keywords, and sets the grid centre to the area above.</div>
             </div>
           </div>
+
+          <!-- ============ GAP SCAN ============ -->
+          <div class="section-h" style="margin-top:30px"><h2>Find the keywords you&rsquo;re missing</h2><div class="rule"></div></div>
+          <div class="card" style="padding:22px">
+            <div class="hint" style="margin-bottom:14px">
+              Works off the website and area filled in above. It reads what the site already ranks for, reads what its
+              competitors rank for, and reports the difference &mdash; every query worth having that this site isn&rsquo;t
+              getting, with its monthly search volume and the page on the site it belongs on.
+            </div>
+            <div class="g2">
+              <div class="f">
+                <label for="gapCompetitors">Competitors <span class="opt">optional &mdash; found automatically if left blank</span></label>
+                <input id="gapCompetitors" type="text" placeholder="rivalone.ca, rivaltwo.ca" autocomplete="off"/>
+              </div>
+              <div class="f">
+                <label for="gapMinVolume">Minimum monthly volume</label>
+                <input id="gapMinVolume" type="text" inputmode="numeric" placeholder="10" autocomplete="off"/>
+              </div>
+            </div>
+            <div class="f">
+              <label for="gapSeeds">Extra seed phrases <span class="opt">optional</span></label>
+              <input id="gapSeeds" type="text" placeholder="concrete driveway, exposed aggregate" autocomplete="off"/>
+            </div>
+            <div class="kwr-opt-list" style="margin-bottom:14px">
+              <label><input type="checkbox" id="gapUseIdeas" checked/> Also pull related ideas, not just competitor gaps</label>
+              <label><input type="checkbox" id="gapIncludeWeak" checked/> Include queries the site ranks for but badly</label>
+            </div>
+            <button class="btn btn-go btn-full" id="gapFindBtn">Run the gap scan</button>
+            <div class="status" id="gapStatus"></div>
+            <div class="hint" style="margin-top:10px">
+              Each competitor and each idea pull is one DataForSEO Labs call, so a scan with three competitors costs four
+              or five lookups. Nothing is written to any client until you add the keywords yourself.
+            </div>
+          </div>
+
+          <div class="tbl-card" id="gapResultsWrap" style="display:none;margin-top:16px">
+            <h4 id="gapResultsHeading">Missing keywords</h4>
+            <div class="gap-bar">
+              <button class="btn btn-sm" id="gapSelectAllBtn">Select all</button>
+              <button class="btn btn-sm" id="gapSelectNoneBtn">Clear</button>
+              <select id="gapSort">
+                <option value="volume">Sort by volume</option>
+                <option value="page">Sort by target page</option>
+                <option value="rivals">Sort by how many rivals rank</option>
+                <option value="keyword">Sort A&ndash;Z</option>
+              </select>
+              <select id="gapShow">
+                <option value="all">Everything</option>
+                <option value="missing">Not ranking at all</option>
+                <option value="weak">Ranking, but badly</option>
+                <option value="new">Needs a new page</option>
+              </select>
+            </div>
+            <table class="tbl">
+              <thead><tr>
+                <th style="width:34px"></th>
+                <th>Keyword</th>
+                <th class="num">Volume</th>
+                <th class="num">You</th>
+                <th class="num">Rivals</th>
+                <th>Where it should live</th>
+              </tr></thead>
+              <tbody id="gapResultsBody"></tbody>
+            </table>
+            <div style="padding:14px 16px">
+              <button class="btn btn-go btn-full" id="gapAddBtn">Add selected to the keyword list above</button>
+              <div class="hint">They join the list at the top of this screen, so they can be sent to a client along with everything else.</div>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -3412,7 +3618,12 @@ body.report-mode{background:var(--aa-bg);}
 
     <div class="rail-head">
       <span>Clients</span>
-      <button class="rail-add" id="seoAddClientBtn" title="Add a client">+</button>
+      <div class="rail-head-acts">
+        <button class="rail-add" id="seoAddFolderBtn" type="button" title="New folder">
+          <svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M12 11.5v5"/><path d="M9.5 14h5"/></svg>
+        </button>
+        <button class="rail-add" id="seoAddClientBtn" title="Add a client">+</button>
+      </div>
     </div>
 
     <div class="rail-tree" id="seoClientTree"></div>
@@ -3431,7 +3642,7 @@ body.report-mode{background:var(--aa-bg);}
   <main class="stage" id="seoStage" style="display:none">
     <header class="topbar">
       <div class="crumbs" id="seoCrumbs"><span class="c-main">No client selected</span></div>
-      <nav class="modes">
+      <nav class="modes" id="seoModes">
         <button class="seo-mode on" data-seoview="dashboard">Dashboard</button>
         <button class="seo-mode" data-seoview="keywords">Keywords</button>
       </nav>
@@ -3743,9 +3954,55 @@ body.report-mode{background:var(--aa-bg);}
         </div>
       </div>
 
+      <!-- ============ PERSONALISED DASHBOARD ============ -->
+      <div class="seo-view" id="seoview-embed">
+        <div class="seo-embed-wrap" id="seoEmbedWrap">
+          <div class="seo-embed-bar">
+            <span class="seo-embed-name" id="seoEmbedName">Dashboard</span>
+            <span class="seo-embed-url" id="seoEmbedUrl"></span>
+            <div class="seo-embed-acts">
+              <button class="btn btn-sm" id="seoEmbedReload" type="button">Reload</button>
+              <button class="btn btn-sm" id="seoEmbedFull" type="button">Full screen</button>
+              <button class="btn btn-sm" id="seoEmbedOpen" type="button">Open in a new tab</button>
+              <button class="btn btn-sm" id="seoEmbedEdit" type="button">Rename / change link</button>
+              <button class="btn btn-sm" id="seoEmbedRemove" type="button" style="color:var(--alert)">Remove tab</button>
+            </div>
+          </div>
+          <div class="seo-embed-frame">
+            <iframe id="seoEmbedFrame" title="Client dashboard" referrerpolicy="no-referrer" allowfullscreen></iframe>
+            <div class="seo-embed-note" id="seoEmbedNote">
+              <b>This page isn&rsquo;t loading inside the tool</b>
+              Some sites refuse to be shown inside another page. GitHub Pages, Looker Studio and most
+              static dashboards are fine; Google Analytics itself and a few others are not.
+              <button class="btn btn-sm" id="seoEmbedNoteOpen" type="button">Open it in a new tab instead</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
     </div>
   </main>
+</div>
+
+<!-- ==================== SEO DASHBOARD (EMBED) MODAL ==================== -->
+<div class="backdrop" id="seoDashBackdrop">
+  <div class="modal">
+    <h3 id="seoDashModalTitle">Add a dashboard</h3>
+    <p>Pins any page to this client as its own tab &mdash; a GA4 report on GitHub Pages, a Looker Studio board, anything with a link. It opens inside the tool, and it only ever appears under this client.</p>
+    <div class="f">
+      <label for="seoDashName">Tab name</label>
+      <input id="seoDashName" type="text" placeholder="GA4 overview" autocomplete="off"/>
+    </div>
+    <div class="f">
+      <label for="seoDashUrl">Link</label>
+      <input id="seoDashUrl" type="text" placeholder="https://username.github.io/client-ga4/" autocomplete="off"/>
+    </div>
+    <div class="status" id="seoDashStatus"></div>
+    <div class="acts">
+      <button class="btn" id="seoDashCancel">Cancel</button>
+      <button class="btn btn-go" id="seoDashOk">Add dashboard</button>
+    </div>
+  </div>
 </div>
 
 <!-- ==================== SEO BULK IMPORT MODAL ==================== -->
@@ -3845,6 +4102,11 @@ custom home builder | Red Deer, AB; Calgary, AB"></textarea>
       <input id="seoShareIntro" type="text" placeholder="Positions checked from each location listed below." autocomplete="off"/>
     </div>
     <div class="f">
+      <label for="seoShareVersion">Which scan this link shows</label>
+      <select id="seoShareVersion"></select>
+      <div class="hint" id="seoShareVersionHint">Pick a scan to pin the link to that month's positions, or leave it on the most recent so every publish moves it forward.</div>
+    </div>
+    <div class="f">
       <span class="lbl">Locations to include</span>
       <div class="kwr-loc-picker" id="seoShareLocs"></div>
     </div>
@@ -3857,7 +4119,15 @@ custom home builder | Red Deer, AB; Calgary, AB"></textarea>
         <label><input type="checkbox" id="seoShareShowStats" checked/> Summary numbers at the top</label>
         <label><input type="checkbox" id="seoShareShowUnranked" checked/> Keywords not ranking yet</label>
         <label><input type="checkbox" id="seoShareOpenAll" checked/> Every location expanded</label>
+        <label><input type="checkbox" id="seoShareShowSnapshot"/> Which scan this is, on the report</label>
       </div>
+    </div>
+    <div class="f">
+      <span class="lbl">When a new scan finishes</span>
+      <div class="kwr-opt-list">
+        <label><input type="checkbox" id="seoShareAutoPublish"/> Refresh this link with the new positions automatically</label>
+      </div>
+      <div class="hint">Leave it off and a scan changes nothing the client can see until you publish again. It only applies while the link is set to the most recent scan — a pinned version never moves on its own.</div>
     </div>
     <div class="status" id="seoShareStatus"></div>
     <div class="kwr-out" id="seoShareOut">
@@ -4480,9 +4750,15 @@ function mergeSeoKeyword(l, r, reg, preferRemote){
   out.locations = mergeList(l.locations, r.locations, 'seoLoc', reg, mergeSeoLocation, preferRemote);
   return out;
 }
+function mergeFlatRec(l, r, reg, preferRemote){
+  return Object.assign({}, preferRemote ? l : r, preferRemote ? r : l);
+}
 function mergeSeoClientRec(l, r, reg, preferRemote){
   const out = Object.assign({}, preferRemote ? l : r, preferRemote ? r : l);
   out.keywords = mergeList(l.keywords, r.keywords, 'seoKw', reg, mergeSeoKeyword, preferRemote);
+  /* A dashboard pinned on one computer shouldn't vanish because the other
+     one saved a moment later. */
+  out.dashboards = mergeList(l.dashboards, r.dashboards, 'seoDash', reg, mergeFlatRec, preferRemote);
   out.locationCache = Object.assign({}, l.locationCache || {}, r.locationCache || {});
   return out;
 }
@@ -4514,6 +4790,9 @@ function mergeStates(localState, remoteState){
   merged.deleted     = reg;
   merged.clients     = mergeList(localState.clients, remoteState.clients, 'client', reg, mergeClientRec, preferRemote);
   merged.seoClients  = mergeList(localState.seoClients, remoteState.seoClients, 'seoClient', reg, mergeSeoClientRec, preferRemote);
+  /* Rail folders are flat records, so the union of both sides is the whole
+     merge - a folder made on the laptop survives a sync from the desktop. */
+  merged.seoFolders  = mergeList(localState.seoFolders, remoteState.seoFolders, 'seoFolder', reg, mergeFlatRec, preferRemote);
   merged.serpRecents = mergeRecents(localState.serpRecents, remoteState.serpRecents);
   merged.updatedAt   = Math.max(localState.updatedAt || 0, remoteState.updatedAt || 0);
   return merged;
@@ -5421,17 +5700,64 @@ const mapsUrl = (kw, lat, lng, hl, zoom) =>
 /* ==========================================================================
    MAPS
    ========================================================================== */
-const TILE = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
-const TILE_OPTS = { maxZoom:19, crossOrigin:true, attribution:'&copy; OpenStreetMap' };
+/* ---------- base tiles ----------
+   OpenStreetMap's volunteer servers now answer this app with
+   403 "Access blocked - app is not following the tile usage policy".
+   That policy exists for exactly this shape of tool: an unattended
+   instrument pulling grids of tiles from a page that deliberately sends no
+   referrer. Rather than argue with it, the maps are moved onto providers
+   that are built for application use.
+
+   Carto's basemap CDN is the primary. Esri's world basemap sits behind it,
+   and if a provider ever starts refusing us the next one in the list takes
+   over on its own, so a map never goes blank. Attribution travels with each
+   layer, which is the other half of using someone else's tiles properly. */
+const TILE_PROVIDERS = [
+  { name:'carto',
+    url:'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+    opts:{ maxZoom:19, subdomains:'abcd', crossOrigin:true,
+           attribution:'&copy; OpenStreetMap contributors &copy; CARTO' } },
+  { name:'esri',
+    url:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+    opts:{ maxZoom:19, crossOrigin:true, attribution:'Tiles &copy; Esri' } }
+];
+/* Kept under the old names so nothing that referenced them has to change. */
+const TILE = TILE_PROVIDERS[0].url;
+const TILE_OPTS = TILE_PROVIDERS[0].opts;
+
+const tileLayers = [];
+function addBaseTiles(m){
+  const rec = { map:m, idx:0, layer:null, errors:0 };
+  const mount = () => {
+    const p = TILE_PROVIDERS[rec.idx];
+    rec.errors = 0;
+    rec.layer = L.tileLayer(p.url, p.opts);
+    /* A handful of misses is normal - a tile past the edge of the world, a
+       flaky connection. A wall of them means the provider is turning us
+       away, and that is the only case worth failing over for. */
+    rec.layer.on('tileerror', () => {
+      rec.errors++;
+      if (rec.errors >= 6 && rec.idx < TILE_PROVIDERS.length - 1){
+        rec.idx++;
+        try{ rec.layer.remove(); }catch(e){}
+        mount();
+      }
+    });
+    rec.layer.addTo(m);
+  };
+  mount();
+  tileLayers.push(rec);
+  return rec;
+}
 
 const map = L.map('map', {zoomControl:true}).setView([52.2690628,-113.8141464], 12);
-L.tileLayer(TILE, TILE_OPTS).addTo(map);
+addBaseTiles(map);
 let dotLayer = L.layerGroup().addTo(map);
 let sonarLayer = L.layerGroup().addTo(map);
 let centerMarker = null, liveMarkers = [];
 
 const cmpMap = L.map('cmpMap', {zoomControl:true}).setView([52.2690628,-113.8141464], 12);
-L.tileLayer(TILE, TILE_OPTS).addTo(cmpMap);
+addBaseTiles(cmpMap);
 let cmpDotLayer = L.layerGroup().addTo(cmpMap);
 let cmpSonarLayer = L.layerGroup().addTo(cmpMap);
 let cmpCenterMarker = null, cmpLiveMarkers = [];
@@ -8190,6 +8516,471 @@ $('kwPasteBtn').addEventListener('click', () => {
   $('kwPasteArea').value = '';
   setStatus('kwStatus', 'Added ' + items.length + ' keywords.', 'ok');
 });
+/* ==========================================================================
+   TOOL: KEYWORD GAP SCAN
+
+   The finder above answers "what does this site rank for". This answers the
+   more useful question: what is it NOT ranking for that it should be, what is
+   each of those worth per month, and which page on the site should be the one
+   to go after it.
+
+   Three sources feed it, all from DataForSEO Labs:
+
+     - the site's own ranked keywords, which double as the map of its pages;
+     - every competitor's ranked keywords, either the ones typed in or the
+       ones Labs names as closest;
+     - optionally a pull of related ideas seeded from the site's own best
+       queries, which catches demand no competitor happens to hold either.
+
+   Subtract what the site already has, and what's left is the gap. Each
+   surviving keyword is then matched against the pages the site is already
+   known to have, by comparing the words in the keyword with the words that
+   page already ranks for and the words in its own URL. A confident match
+   names the page. A weak one says so and proposes a new page with a slug,
+   which is the honest answer far more often than pretending an existing page
+   will do.
+
+   Nothing here writes to a client. Results land in the list above only when
+   the Add button is pressed.
+   ========================================================================== */
+let gapResults = [];
+let gapPagesIndex = [];
+let gapPageWeights = new Map();
+
+const GAP_STOP = new Set([
+  'the','and','for','with','your','you','are','that','this','from','near','best','top',
+  'cheap','what','how','who','why','when','where','can','get','our','their','they','its',
+  'was','has','have','into','out','all','any','more','most','than','then','over','under',
+  'www','com','net','org','html','htm','php','index','page','pages','http','https'
+]);
+function gapTokens(str){
+  return (str || '').toLowerCase().normalize('NFKD')
+    .replace(/[^a-z0-9]+/g, ' ').trim().split(' ')
+    .filter(t => t.length > 2 && !GAP_STOP.has(t));
+}
+/* The words in a URL are a strong signal about what a page is for, so they're
+   weighted more heavily than a single keyword the page happens to rank for. */
+function gapPathTokens(url){
+  let path = '';
+  try{ path = new URL(url).pathname; }
+  catch(e){ path = String(url || '').replace(/^https?:\/\/[^\/]+/i, ''); }
+  return gapTokens(path.replace(/\.(html?|php|aspx?)$/i, ''));
+}
+function gapPageLabel(url){
+  let path = '';
+  try{
+    const u = new URL(url);
+    path = u.pathname + (u.search || '');
+  }catch(e){ path = String(url || ''); }
+  if (!path || path === '/') return 'Home page';
+  return path.length > 46 ? path.slice(0, 43) + '\u2026' : path;
+}
+function gapSuggestSlug(keyword){
+  const t = gapTokens(keyword).slice(0, 4);
+  return t.length ? '/' + t.join('-') + '/' : '/new-page/';
+}
+
+/* One record per page the site is known to have, built entirely out of the
+   ranked-keyword response - no crawling, no extra calls. */
+function gapBuildPages(owned){
+  const pages = new Map();
+  owned.forEach(r => {
+    if (!r.url) return;
+    let key = r.url.split('#')[0];
+    const p = pages.get(key) || {url:key, kws:[], tokens:new Map(), volume:0, best:null};
+    p.kws.push(r.keyword);
+    p.volume += r.volume || 0;
+    if (r.position != null && (p.best == null || r.position < p.best)) p.best = r.position;
+    gapTokens(r.keyword).forEach(t => p.tokens.set(t, (p.tokens.get(t) || 0) + 1));
+    pages.set(key, p);
+  });
+  pages.forEach(p => {
+    gapPathTokens(p.url).forEach(t => p.tokens.set(t, (p.tokens.get(t) || 0) + 3));
+  });
+  return Array.from(pages.values());
+}
+
+/* ---- what actually distinguishes one page from another ----
+   A word that appears on nearly every page of a site tells you nothing about
+   which page a query belongs on. For a local business that word is almost
+   always the city: "red deer" is in the keyword list of the driveways page,
+   the patio page and the home page alike, so matching on it alone would send
+   every query in the account to whichever page happened to score first.
+   Words are therefore weighted by how rare they are across the site - the
+   city and the trade name fade into the background, and the one or two words
+   that name the actual service decide the match. */
+function gapBuildWeights(pages){
+  const df = new Map();
+  pages.forEach(p => {
+    Array.from(p.tokens.keys()).forEach(t => df.set(t, (df.get(t) || 0) + 1));
+  });
+  const weights = new Map();
+  const n = Math.max(pages.length, 1);
+  df.forEach((count, t) => {
+    const ratio = count / n;
+    weights.set(t, ratio >= 0.6 ? 0.2 : (ratio >= 0.35 ? 0.6 : 1));
+  });
+  return weights;
+}
+function gapWeightOf(weights, token){
+  const w = weights ? weights.get(token) : undefined;
+  /* A word the site has never used anywhere still counts in full when it
+     comes to judging whether a page covers the query - it's the part the
+     page is missing. */
+  return w === undefined ? 1 : w;
+}
+
+/* Coverage first, depth second: a page that already speaks to every
+   distinguishing word in the query beats one that mentions a single word
+   fifty times. Below half coverage nothing is claimed at all, and the
+   keyword is reported as needing a page of its own. */
+function gapBestPage(keyword, pages, weights){
+  const kt = gapTokens(keyword);
+  if (!kt.length || !pages.length) return null;
+  const total = kt.reduce((n, t) => n + gapWeightOf(weights, t), 0);
+  if (!total) return null;
+  let best = null;
+  pages.forEach(p => {
+    let depth = 0, hits = 0, got = 0;
+    kt.forEach(t => {
+      const n = p.tokens.get(t);
+      if (n){ hits++; depth += Math.min(n, 4); got += gapWeightOf(weights, t); }
+    });
+    if (!hits) return;
+    const cover = got / total;
+    const score = cover * 1000 + depth;
+    if (!best || score > best.score) best = {page:p, score, cover, hits};
+  });
+  if (!best || best.cover < 0.5) return null;
+  return best;
+}
+
+/* ---------- Labs calls this scan needs ---------- */
+function gapCreds(){
+  const login = (state.settings.dfsLogin || '').trim();
+  const pass = (state.settings.dfsPassword || '').trim();
+  if (!login || !pass){
+    const e = new Error('add your DataForSEO login and API password on the profile screen, step four');
+    e.fatal = true; throw e;
+  }
+  return {login, pass};
+}
+/* Same market ladder the ranked-keywords lookup uses, kept separate so that
+   call is left exactly as it was. */
+function gapWheres(market, languageCode){
+  const m = (market && typeof market === 'object') ? market : {name: market};
+  const lang = labsLanguageCode(languageCode);
+  const out = [];
+  const push = w => { if (!out.some(x => JSON.stringify(x) === JSON.stringify(w))) out.push(w); };
+  if (m.code) push({location_code: m.code, language_code: lang});
+  if (m.name) push({location_name: m.name, language_code: lang});
+  if (m.code) push({location_code: m.code, language_code: 'en'});
+  if (m.name) push({location_name: m.name, language_code: 'en'});
+  return out;
+}
+async function gapLabsCall(endpoint, base, market, languageCode){
+  const {login, pass} = gapCreds();
+  const url = (state.settings.proxyPrefix || '').trim() +
+    'https://api.dataforseo.com/v3/dataforseo_labs/google/' + endpoint + '/live';
+  const wheres = gapWheres(market, languageCode);
+  if (!wheres.length) throw new Error('that area didn\u2019t resolve to a country \u2014 try just the city and country');
+  let lastMsg = '';
+  for (let i = 0; i < wheres.length; i++){
+    const task = Object.assign({}, base, wheres[i]);
+    let res;
+    try{
+      res = await fetch(url, {
+        method:'POST',
+        headers:{'Authorization':'Basic ' + btoa(login + ':' + pass), 'Content-Type':'application/json'},
+        body: JSON.stringify([task])
+      });
+    }catch(e){
+      const err = new Error('the request was blocked by the browser \u2014 set a CORS proxy prefix on step four');
+      err.fatal = true; throw err;
+    }
+    if (res.status === 401 || res.status === 403){
+      const err = new Error('DataForSEO rejected those credentials');
+      err.fatal = true; throw err;
+    }
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (data.status_code && data.status_code !== 20000) throw new Error('DataForSEO said: ' + (data.status_message || data.status_code));
+    const t = (data.tasks || [])[0] || {};
+    if (!t.status_code || t.status_code === 20000) return ((t.result || [])[0] || {}).items || [];
+    lastMsg = t.status_message || String(t.status_code);
+  }
+  throw new Error('DataForSEO wouldn\u2019t accept that market (' + lastMsg + ')');
+}
+async function gapCompetitors(domain, market, languageCode, want){
+  const items = await gapLabsCall('competitors_domain', {
+    target: domain, limit: Math.max(want * 3, 12),
+    order_by: ['sum_position,asc']
+  }, market, languageCode);
+  const self = cleanDomain(domain);
+  const out = [];
+  items.forEach(it => {
+    const d = cleanDomain(it.domain || '');
+    if (!d || d === self || out.indexOf(d) !== -1) return;
+    /* Directories and marketplaces outrank everyone for everything and share
+       no strategy with a local business, so they are not useful rivals. */
+    if (/^(?:[a-z-]+\.)?(yelp|yellowpages|facebook|instagram|linkedin|indeed|amazon|ebay|wikipedia|tripadvisor|houzz|homestars|kijiji|reddit|pinterest|youtube|bbb|mapquest|glassdoor)\./i.test(d + '.')) return;
+    out.push(d);
+  });
+  return out.slice(0, want);
+}
+async function gapKeywordIdeas(seeds, market, languageCode, limit){
+  const items = await gapLabsCall('keyword_ideas', {
+    keywords: seeds.slice(0, 20),
+    limit: limit || 500,
+    order_by: ['keyword_info.search_volume,desc']
+  }, market, languageCode);
+  return items.map(it => {
+    const info = it.keyword_info || {};
+    return {
+      keyword: it.keyword || '',
+      volume: info.search_volume != null ? info.search_volume : null,
+      competition: info.competition_level || null
+    };
+  }).filter(x => x.keyword);
+}
+
+/* ---------- the scan ---------- */
+const GAP_WEAK_FROM = 11;   /* anything past page one is a gap in practice */
+
+$('gapFindBtn').addEventListener('click', async () => {
+  const domain = cleanDomain($('kwSiteUrl').value);
+  const loc = $('kwLocationName').value.trim();
+  const region = REGIONS[$('kwRegion').value] || REGIONS[0];
+  if (!domain){ setStatus('gapStatus', 'Type the website at the top of this screen first.', 'err'); return; }
+  if (!loc){ setStatus('gapStatus', 'Type the area at the top of this screen \u2014 it decides which market to compare in.', 'err'); return; }
+
+  const btn = $('gapFindBtn');
+  btn.disabled = true;
+  const minVol = parseInt($('gapMinVolume').value, 10) || 0;
+  const includeWeak = $('gapIncludeWeak').checked;
+  const useIdeas = $('gapUseIdeas').checked;
+  const typedRivals = ($('gapCompetitors').value || '').split(/[,\n]/).map(cleanDomain).filter(Boolean);
+  const typedSeeds = ($('gapSeeds').value || '').split(/[,\n]/).map(x => x.trim()).filter(Boolean);
+
+  try{
+    setStatus('gapStatus', 'Working out which market ' + loc + ' belongs to\u2026', 'busy');
+    const market = await kwResolveMarket(loc);
+    const marketLabel = market.name || market.iso || loc;
+
+    setStatus('gapStatus', 'Reading what ' + domain + ' already ranks for\u2026', 'busy');
+    const owned = await dfsRankedKeywords(domain, market, region.hl);
+    if (!owned.length){
+      setStatus('gapStatus', 'Nothing came back for ' + domain + ' in ' + marketLabel + ', so there is nothing to compare against. Check the spelling of the domain.', 'err');
+      btn.disabled = false; return;
+    }
+    /* The site's own positions, so a keyword a competitor holds can be
+       reported as "you're at 34" rather than simply "missing". */
+    const ownedMap = new Map();
+    owned.forEach(r => {
+      const key = r.keyword.trim().toLowerCase();
+      const cur = ownedMap.get(key);
+      if (!cur || (r.position != null && (cur.position == null || r.position < cur.position))) ownedMap.set(key, r);
+    });
+    gapPagesIndex = gapBuildPages(owned);
+    gapPageWeights = gapBuildWeights(gapPagesIndex);
+
+    let rivals = typedRivals.slice(0, 4);
+    if (!rivals.length){
+      setStatus('gapStatus', 'Finding the closest competitors to ' + domain + '\u2026', 'busy');
+      try{ rivals = await gapCompetitors(domain, market, region.hl, 3); }
+      catch(e){ rivals = []; }
+    }
+
+    /* keyword -> {volume, rivals:Set, sources:Set} */
+    const pool = new Map();
+    const addCandidate = (keyword, volume, source, rival) => {
+      const key = (keyword || '').trim().toLowerCase();
+      if (!key) return;
+      const rec = pool.get(key) || {keyword: keyword.trim(), volume: null, rivals: new Set(), sources: new Set()};
+      if (volume != null && (rec.volume == null || volume > rec.volume)) rec.volume = volume;
+      rec.sources.add(source);
+      if (rival) rec.rivals.add(rival);
+      pool.set(key, rec);
+    };
+
+    for (let i = 0; i < rivals.length; i++){
+      setStatus('gapStatus', 'Reading ' + rivals[i] + ' (' + (i + 1) + ' of ' + rivals.length + ')\u2026', 'busy');
+      try{
+        const theirs = await dfsRankedKeywords(rivals[i], market, region.hl);
+        theirs.forEach(r => {
+          /* Only what they actually hold well is worth chasing. */
+          if (r.position != null && r.position > 30) return;
+          addCandidate(r.keyword, r.volume, 'rival', rivals[i]);
+        });
+      }catch(e){ /* one rival failing shouldn't sink the scan */ }
+    }
+
+    if (useIdeas){
+      setStatus('gapStatus', 'Pulling related ideas\u2026', 'busy');
+      const seeds = typedSeeds.concat(
+        owned.slice().sort((a, b) => (b.volume || 0) - (a.volume || 0)).slice(0, 12).map(r => r.keyword)
+      ).filter(Boolean);
+      if (seeds.length){
+        try{
+          const ideas = await gapKeywordIdeas(seeds, market, region.hl, 700);
+          ideas.forEach(r => addCandidate(r.keyword, r.volume, 'idea', null));
+        }catch(e){ /* ideas are a bonus, not the scan */ }
+      }
+    }
+
+    if (!pool.size){
+      setStatus('gapStatus', 'No competitor data came back for ' + marketLabel + '. Type a competitor domain or two above and run it again.', 'err');
+      btn.disabled = false; return;
+    }
+
+    /* ---- subtract what the site already has, and place what's left ---- */
+    gapResults = [];
+    pool.forEach((rec, key) => {
+      const mine = ownedMap.get(key) || null;
+      const myPos = mine && mine.position != null ? mine.position : null;
+      if (myPos != null && myPos < GAP_WEAK_FROM) return;          // already covered
+      if (myPos != null && !includeWeak) return;                    // ranking, just not well
+      if (rec.volume != null && rec.volume < minVol) return;
+      const fit = gapBestPage(rec.keyword, gapPagesIndex, gapPageWeights);
+      gapResults.push({
+        keyword: rec.keyword,
+        volume: rec.volume,
+        myPosition: myPos,
+        rivals: Array.from(rec.rivals),
+        sources: Array.from(rec.sources),
+        pageUrl: fit ? fit.page.url : null,
+        pageLabel: fit ? gapPageLabel(fit.page.url) : gapSuggestSlug(rec.keyword),
+        pageIsNew: !fit,
+        pageWhy: fit
+          ? ('already ranks for ' + fit.page.kws.length + ' close ' + (fit.page.kws.length === 1 ? 'query' : 'queries') +
+             ', including \u201c' + fit.page.kws[0] + '\u201d')
+          : 'nothing on the site covers this \u2014 it needs a page of its own',
+        selected: false
+      });
+    });
+
+    if (!gapResults.length){
+      $('gapResultsWrap').style.display = 'none';
+      setStatus('gapStatus', 'No gaps found above that volume \u2014 this site already covers what its rivals rank for. Try lowering the minimum volume.', 'ok');
+      btn.disabled = false; return;
+    }
+
+    renderGapResults();
+    const withVol = gapResults.filter(r => r.volume).reduce((n, r) => n + r.volume, 0);
+    setStatus('gapStatus',
+      gapResults.length + ' keywords worth roughly ' + withVol.toLocaleString() + ' searches a month that ' + domain +
+      ' isn\u2019t getting' + (rivals.length ? ', compared against ' + rivals.join(', ') : '') + '.', 'ok');
+  }catch(err){
+    setStatus('gapStatus', 'Gap scan failed: ' + err.message, 'err');
+  }finally{ btn.disabled = false; }
+});
+
+function gapVisible(){
+  const show = $('gapShow').value;
+  return gapResults.filter(r => {
+    if (show === 'missing') return r.myPosition == null;
+    if (show === 'weak') return r.myPosition != null;
+    if (show === 'new') return r.pageIsNew;
+    return true;
+  });
+}
+function renderGapResults(){
+  const wrap = $('gapResultsWrap'), body = $('gapResultsBody');
+  if (!gapResults.length){ wrap.style.display = 'none'; return; }
+  const sort = $('gapSort').value;
+  const rows = gapVisible().slice();
+  rows.sort((a, b) => {
+    if (sort === 'keyword') return a.keyword.localeCompare(b.keyword);
+    if (sort === 'rivals') return (b.rivals.length - a.rivals.length) || ((b.volume || 0) - (a.volume || 0));
+    if (sort === 'page'){
+      const pa = a.pageLabel || '', pb = b.pageLabel || '';
+      return pa.localeCompare(pb) || ((b.volume || 0) - (a.volume || 0));
+    }
+    return (b.volume || 0) - (a.volume || 0);
+  });
+
+  $('gapResultsHeading').textContent = 'Missing keywords \u2014 showing ' + rows.length + ' of ' + gapResults.length;
+  body.innerHTML = '';
+  rows.forEach(r => {
+    const tr = document.createElement('tr');
+
+    const tdC = document.createElement('td');
+    const cb = document.createElement('input');
+    cb.type = 'checkbox'; cb.checked = !!r.selected; cb.style.width = 'auto';
+    cb.addEventListener('change', () => { r.selected = cb.checked; });
+    tdC.appendChild(cb); tr.appendChild(tdC);
+
+    const tdK = document.createElement('td');
+    tdK.appendChild(document.createTextNode(r.keyword));
+    if (r.sources.indexOf('rival') === -1 && r.sources.indexOf('idea') !== -1){
+      const src = document.createElement('span');
+      src.className = 'gap-src';
+      src.textContent = ' \u00b7 idea';
+      tdK.appendChild(src);
+    }
+    tr.appendChild(tdK);
+
+    const tdV = document.createElement('td'); tdV.className = 'num';
+    tdV.textContent = r.volume != null ? r.volume.toLocaleString() : '\u2014';
+    tr.appendChild(tdV);
+
+    const tdMe = document.createElement('td'); tdMe.className = 'num';
+    if (r.myPosition == null){
+      const tag = document.createElement('span');
+      tag.className = 'gap-tag miss'; tag.textContent = 'none';
+      tdMe.appendChild(tag);
+    } else {
+      const tag = document.createElement('span');
+      tag.className = 'gap-tag weak'; tag.textContent = '#' + r.myPosition;
+      tdMe.appendChild(tag);
+    }
+    tr.appendChild(tdMe);
+
+    const tdR = document.createElement('td'); tdR.className = 'num';
+    tdR.textContent = r.rivals.length ? String(r.rivals.length) : '\u2014';
+    if (r.rivals.length) tdR.title = r.rivals.join(', ');
+    tr.appendChild(tdR);
+
+    const tdP = document.createElement('td');
+    if (r.pageIsNew){
+      const b = document.createElement('span');
+      b.className = 'gap-page new';
+      b.textContent = 'New page: ' + r.pageLabel;
+      tdP.appendChild(b);
+    } else {
+      const a = document.createElement('a');
+      a.className = 'gap-page';
+      a.href = r.pageUrl; a.target = '_blank'; a.rel = 'noopener';
+      a.textContent = r.pageLabel;
+      a.style.color = 'var(--brand-deep)';
+      tdP.appendChild(a);
+    }
+    const why = document.createElement('span');
+    why.className = 'gap-why';
+    why.textContent = r.pageWhy;
+    tdP.appendChild(why);
+    tr.appendChild(tdP);
+
+    body.appendChild(tr);
+  });
+  wrap.style.display = 'block';
+}
+$('gapSort').addEventListener('change', renderGapResults);
+$('gapShow').addEventListener('change', renderGapResults);
+$('gapSelectAllBtn').addEventListener('click', () => { gapVisible().forEach(r => r.selected = true); renderGapResults(); });
+$('gapSelectNoneBtn').addEventListener('click', () => { gapResults.forEach(r => r.selected = false); renderGapResults(); });
+$('gapAddBtn').addEventListener('click', () => {
+  const picked = gapResults.filter(r => r.selected);
+  if (!picked.length){ setStatus('gapStatus', 'Tick at least one keyword to add.', 'err'); return; }
+  /* Position is deliberately left null: these are queries the site doesn't
+     hold, and a rank only appears once it's been scanned for real. */
+  mergeKw(picked.map(r => ({keyword: r.keyword, position: null, volume: r.volume, url: ''})), 'gap');
+  renderKwResults();
+  setStatus('gapStatus', 'Added ' + picked.length + ' keywords to the list above \u2014 scroll up to send them to a client.', 'ok');
+  const wrap = $('kwResultsWrap');
+  if (wrap) wrap.scrollIntoView({behavior:'smooth', block:'start'});
+});
+
 $('kwSelectAllBtn').addEventListener('click', () => { kwResults.forEach(r => r.selected = true); renderKwResults(); });
 $('kwSelectNoneBtn').addEventListener('click', () => { kwResults.forEach(r => r.selected = false); renderKwResults(); });
 $('kwGbpLink').addEventListener('input', () => {
@@ -8533,7 +9324,8 @@ function blankSeoClient(name){
   return {
     id: uid(), name: name || 'New client', projectLead:'', cms:'', status:'Active',
     allocatedHours:'', monthlyProgress:'', lastMonthlyCall:'', website:'', basecampLink:'',
-    reportLink:'', notes:'', logoUrl:'', activeKeywordId:null, locationCache:{}, keywords:[], autoScan: blankAutoScan()
+    reportLink:'', notes:'', logoUrl:'', activeKeywordId:null, locationCache:{}, keywords:[], autoScan: blankAutoScan(),
+    folderId: null, dashboards: [], activeDashboardId: null
   };
 }
 function blankSeoLocation(label, regionIdx){
@@ -8559,6 +9351,19 @@ function migrateSeoClient(c){
   ['projectLead','cms','allocatedHours','monthlyProgress','lastMonthlyCall','website','basecampLink','reportLink','notes','logoUrl'].forEach(k => {
     if (typeof c[k] !== 'string') c[k] = c[k] || '';
   });
+  /* Which rail folder this client sits in. null means the top level, which
+     is where every client that existed before folders stays. */
+  if (typeof c.folderId !== 'string') c.folderId = null;
+  /* Pinned pages shown as extra tabs for this client. A client that has
+     none simply gets the two tabs it always had. */
+  if (!Array.isArray(c.dashboards)) c.dashboards = [];
+  c.dashboards = c.dashboards.filter(d => d && typeof d === 'object' && d.url);
+  c.dashboards.forEach(d => {
+    if (!d.id) d.id = uid();
+    if (typeof d.name !== 'string' || !d.name.trim()) d.name = 'Dashboard';
+    d.url = String(d.url || '').trim();
+  });
+  if (c.activeDashboardId && !c.dashboards.some(d => d.id === c.activeDashboardId)) c.activeDashboardId = null;
   if (!c.autoScan || typeof c.autoScan !== 'object') c.autoScan = blankAutoScan();
   else {
     const d = blankAutoScan();
@@ -8570,7 +9375,20 @@ function migrateSeoClient(c){
 }
 function ensureSeoState(){
   if (!Array.isArray(state.seoClients)) state.seoClients = [];
+  if (!Array.isArray(state.seoFolders)) state.seoFolders = [];
+  /* Folders hold nothing but a name, so repairing them is cheap: give each
+     one an id and a usable name, then drop any folder reference on a client
+     whose folder has since been deleted, so no client can go missing from
+     the rail because it points at something that isn't there. */
+  state.seoFolders = state.seoFolders.filter(f => f && typeof f === 'object');
+  state.seoFolders.forEach(f => {
+    if (!f.id) f.id = uid();
+    if (typeof f.name !== 'string' || !f.name.trim()) f.name = 'Folder';
+    if (typeof f.collapsed !== 'boolean') f.collapsed = false;
+  });
+  const folderIds = new Set(state.seoFolders.map(f => f.id));
   state.seoClients.forEach(migrateSeoClient);
+  state.seoClients.forEach(c => { if (c.folderId && !folderIds.has(c.folderId)) c.folderId = null; });
   if (state.activeSeoClientId === undefined) state.activeSeoClientId = null;
   /* Written as a literal list on purpose: ensureSeoState() runs at the top of
      this script, long before the MODULES map further down has been
@@ -8876,6 +9694,10 @@ async function seoScanAndRender(c, pairs){
   }
   save(); renderSeoKeywords();
   toast(seoScanStop ? 'Scan stopped' : 'Scan complete \u2014 results saved');
+  /* A finished scan never touches a published link by itself unless it was
+     asked to. The new positions are saved either way - what's in question is
+     only what the client sees. */
+  await seoAfterScanReport(c, pairs.length);
   renderSeoTree();
   /* Only the derived views — deliberately not seoLoadDashboard(), which would
      overwrite whatever is half-typed in the edit form. */
@@ -8883,49 +9705,306 @@ async function seoScanAndRender(c, pairs){
   seoRenderAutoScanStatus(c);
 }
 
-/* ---------- rail ---------- */
+/* Called at the end of every scan, whether it was one keyword or the whole
+   client, and whether it was started by hand or by the schedule. */
+async function seoAfterScanReport(c, scanned){
+  if (!c || !c.reportPublished) return;
+  const opts = c.reportOpts;
+  if (!opts) return;
+  const chatty = (scanned || 0) > 1;
+  if (opts.asOf){
+    if (chatty) toast('Client link untouched \u2014 it\u2019s pinned to an earlier scan.');
+    return;
+  }
+  if (!opts.autoPublish){
+    if (chatty) toast('New positions saved. The client link still shows the last published scan \u2014 Share / embed to move it.');
+    return;
+  }
+  const res = await publishSeoReport(c, opts);
+  toast(res.ok
+    ? 'Client link refreshed with this scan'
+    : 'Couldn\u2019t refresh the client link \u2014 open Share / embed and publish again', res.ok ? '' : 'err');
+}
+
+/* ---------- rail ----------
+   FOLDERS. Everything below the search box is now optionally grouped. A
+   folder is a name and an id, held in state.seoFolders; a client remembers
+   which one it sits in through a single new field, c.folderId. Nothing else
+   in the app reads either of them - scanning, reporting, exporting and the
+   published links all work off the same client records they always did, so
+   a client can be dragged between folders mid-month without touching a
+   single rank. A client with no folder sits at the top level exactly as it
+   did before, which is where every existing client starts.
+
+   Two ways to move one: drag it onto a folder (or onto the drop strip at
+   the bottom to take it back out), or use the small folder button on the
+   row, which is the reliable path on a touchscreen. */
+let seoDragClientId = null;
+
+function seoFolderList(){
+  if (!Array.isArray(state.seoFolders)) state.seoFolders = [];
+  return state.seoFolders;
+}
+function seoFolderById(id){ return seoFolderList().find(f => f.id === id) || null; }
+function seoSortedFolders(){
+  return seoFolderList().slice().sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+}
+function seoClientsInFolder(folderId, list){
+  return (list || state.seoClients).filter(c => (c.folderId || null) === (folderId || null));
+}
+
+const SEO_ICON_MOVE = '<svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>';
+const SEO_ICON_CARET = '<svg class="folder-caret" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>';
+const SEO_ICON_FOLDER = '<svg class="folder-ico" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>';
+
+/* ---- the little move menu ---- */
+function seoCloseRailMenu(){
+  const open = document.querySelector('.rail-menu');
+  if (open) open.remove();
+  document.removeEventListener('mousedown', seoRailMenuOutside, true);
+  document.removeEventListener('keydown', seoRailMenuEsc, true);
+}
+function seoRailMenuOutside(e){ if (!e.target.closest('.rail-menu')) seoCloseRailMenu(); }
+function seoRailMenuEsc(e){ if (e.key === 'Escape') seoCloseRailMenu(); }
+function seoOpenMoveMenu(anchor, c){
+  seoCloseRailMenu();
+  const menu = document.createElement('div');
+  menu.className = 'rail-menu';
+  const head = document.createElement('div');
+  head.className = 'rail-menu-h';
+  head.textContent = 'Move ' + (c.name || 'client') + ' to';
+  menu.appendChild(head);
+
+  const addOpt = (label, folderId, isNew) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = label;
+    if (!isNew && (c.folderId || null) === (folderId || null)) b.className = 'on';
+    b.addEventListener('click', async () => {
+      seoCloseRailMenu();
+      if (isNew){
+        const name = await ask('New folder', 'What should this folder be called?', 'Folder name');
+        if (!name) return;
+        ensureSeoState();
+        const f = {id: uid(), name: name.trim(), collapsed: false};
+        seoFolderList().push(f);
+        seoMoveClientToFolder(c.id, f.id);
+        return;
+      }
+      seoMoveClientToFolder(c.id, folderId);
+    });
+    menu.appendChild(b);
+  };
+
+  addOpt('No folder \u2014 top level', null, false);
+  const folders = seoSortedFolders();
+  if (folders.length){
+    const sep = document.createElement('div'); sep.className = 'sep'; menu.appendChild(sep);
+    folders.forEach(f => addOpt(f.name, f.id, false));
+  }
+  const sep2 = document.createElement('div'); sep2.className = 'sep'; menu.appendChild(sep2);
+  addOpt('New folder\u2026', null, true);
+
+  document.body.appendChild(menu);
+  const r = anchor.getBoundingClientRect();
+  const h = menu.offsetHeight;
+  menu.style.left = Math.min(r.left, window.innerWidth - menu.offsetWidth - 12) + 'px';
+  menu.style.top = (r.bottom + h + 12 > window.innerHeight ? Math.max(8, r.top - h - 6) : r.bottom + 6) + 'px';
+  setTimeout(() => {
+    document.addEventListener('mousedown', seoRailMenuOutside, true);
+    document.addEventListener('keydown', seoRailMenuEsc, true);
+  }, 0);
+}
+
+/* ---- moving, and the folders themselves ---- */
+function seoMoveClientToFolder(clientId, folderId){
+  const c = state.seoClients.find(x => x.id === clientId);
+  if (!c) return;
+  if ((c.folderId || null) === (folderId || null)) return;
+  c.folderId = folderId || null;
+  const f = folderId ? seoFolderById(folderId) : null;
+  if (f) f.collapsed = false;
+  save(); renderSeoTree();
+  toast(f ? 'Moved to ' + f.name : 'Moved out of the folder');
+}
+async function seoAddFolder(){
+  const name = await ask('New folder', 'What should this folder be called?', 'Folder name');
+  if (!name) return;
+  ensureSeoState();
+  seoFolderList().push({id: uid(), name: name.trim(), collapsed: false});
+  save(); renderSeoTree();
+  toast('Folder added');
+}
+async function seoRenameFolder(f){
+  const name = await ask('Rename folder', 'What should this folder be called?', 'Folder name', f.name);
+  if (!name) return;
+  const target = seoFolderById(f.id);
+  if (!target) return;
+  target.name = name.trim();
+  save(); renderSeoTree();
+}
+function seoDeleteFolder(f){
+  const inside = seoClientsInFolder(f.id).length;
+  const msg = inside
+    ? 'Delete the folder \u201c' + f.name + '\u201d? Its ' + inside + ' client' + (inside === 1 ? '' : 's') + ' will move back to the top level \u2014 nothing is deleted.'
+    : 'Delete the folder \u201c' + f.name + '\u201d?';
+  if (!confirm(msg)) return;
+  state.seoClients.forEach(c => { if (c.folderId === f.id) c.folderId = null; });
+  tombstone('seoFolder', f.id);
+  state.seoFolders = seoFolderList().filter(x => x.id !== f.id);
+  save(); renderSeoTree();
+  toast('Folder deleted \u2014 clients kept');
+}
+
+/* ---- drop targets ---- */
+function seoWireDropTarget(el, folderId){
+  el.addEventListener('dragover', e => {
+    if (!seoDragClientId) return;
+    e.preventDefault();
+    try{ e.dataTransfer.dropEffect = 'move'; }catch(err){}
+    el.classList.add('drop-on');
+  });
+  el.addEventListener('dragleave', () => el.classList.remove('drop-on'));
+  el.addEventListener('drop', e => {
+    e.preventDefault(); e.stopPropagation();
+    el.classList.remove('drop-on');
+    let id = seoDragClientId;
+    if (!id){ try{ id = e.dataTransfer.getData('text/plain'); }catch(err){} }
+    if (id) seoMoveClientToFolder(id, folderId);
+  });
+}
+
+/* ---- one client row ---- */
+function seoClientRowEl(c, folderHint){
+  const row = document.createElement('div');
+  row.className = 'tree-row' + (c.id === state.activeSeoClientId ? ' on' : '');
+  row.draggable = true;
+  const kwCount = c.keywords.length;
+  const best = seoClientBestRank(c);
+  const bestHtml = best != null ? '<span class="seo-tree-rank">#' + best + '</span>' : '';
+  const healthHtml = seoHealthPillHtml(seoClientHealth(c), 'seo-health-pill-sm');
+  const hintHtml = folderHint ? '<span class="tree-folder-hint">' + esc(folderHint) + '</span>' : '';
+  row.innerHTML = '<span class="seo-status-dot ' + seoStatusDotClass(c.status) + '" title="' + esc(c.status || 'Active') + '"></span>' +
+    '<span class="tree-name">' + esc(c.name || 'Untitled') + '</span>' +
+    hintHtml +
+    healthHtml +
+    bestHtml +
+    '<span class="tree-count">' + kwCount + '</span>' +
+    '<button class="tree-move" type="button" title="Move to a folder">' + SEO_ICON_MOVE + '</button>' +
+    '<button class="tree-kill" title="Delete client">\u00d7</button>';
+
+  row.addEventListener('click', e => {
+    if (e.target.closest('.tree-kill') || e.target.closest('.tree-move')) return;
+    state.activeSeoClientId = c.id; save(); renderSeoAll();
+  });
+  row.querySelector('.tree-move').addEventListener('click', e => {
+    e.stopPropagation();
+    seoOpenMoveMenu(e.currentTarget, c);
+  });
+  row.querySelector('.tree-kill').addEventListener('click', e => {
+    e.stopPropagation();
+    if (!confirm('Delete \u201c' + (c.name || 'this client') + '\u201d and all of its keywords?')) return;
+    tombstone('seoClient', c.id);
+    (c.keywords || []).forEach(dk => { tombstone('seoKw', dk.id); (dk.locations || []).forEach(dl => tombstone('seoLoc', dl.id)); });
+    state.seoClients = state.seoClients.filter(x => x.id !== c.id);
+    if (state.activeSeoClientId === c.id) state.activeSeoClientId = state.seoClients.length ? state.seoClients[0].id : null;
+    save(); renderSeoTree(); renderSeoAll();
+    toast('Client deleted');
+  });
+
+  row.addEventListener('dragstart', e => {
+    seoDragClientId = c.id;
+    row.classList.add('dragging');
+    document.body.classList.add('seo-dragging');
+    try{ e.dataTransfer.setData('text/plain', c.id); e.dataTransfer.effectAllowed = 'move'; }catch(err){}
+  });
+  row.addEventListener('dragend', () => {
+    seoDragClientId = null;
+    row.classList.remove('dragging');
+    document.body.classList.remove('seo-dragging');
+    Array.prototype.forEach.call(document.querySelectorAll('.drop-on'), el => el.classList.remove('drop-on'));
+  });
+  return row;
+}
+
 function renderSeoTree(){
   ensureSeoState();
   const tree = $('seoClientTree');
   const filter = ($('seoClientSearch').value || '').toLowerCase().trim();
   tree.innerHTML = '';
-  const list = state.seoClients.filter(c => !filter || (c.name || '').toLowerCase().includes(filter));
-  if (!list.length){
+
+  /* Searching flattens everything on purpose: when you're hunting for one
+     client you want the answer, not the shape of the filing cabinet. The
+     folder each hit lives in is shown on the row instead. */
+  if (filter){
+    const hits = state.seoClients.filter(c => (c.name || '').toLowerCase().includes(filter));
+    if (!hits.length){
+      const empty = document.createElement('div');
+      empty.className = 'rail-empty';
+      empty.textContent = 'No clients match your search.';
+      tree.appendChild(empty);
+      return;
+    }
+    hits.forEach(c => {
+      const f = c.folderId ? seoFolderById(c.folderId) : null;
+      tree.appendChild(seoClientRowEl(c, f ? f.name : ''));
+    });
+    return;
+  }
+
+  if (!state.seoClients.length && !seoFolderList().length){
     const empty = document.createElement('div');
     empty.className = 'rail-empty';
-    empty.textContent = state.seoClients.length ? 'No clients match your search.' : 'No SEO clients yet \u2014 add your first one.';
+    empty.textContent = 'No SEO clients yet \u2014 add your first one.';
     tree.appendChild(empty);
     return;
   }
-  list.forEach(c => {
+
+  seoSortedFolders().forEach(f => {
+    const wrap = document.createElement('div');
+    wrap.className = 'rail-folder' + (f.collapsed ? '' : ' open');
+
     const row = document.createElement('div');
-    row.className = 'tree-row' + (c.id === state.activeSeoClientId ? ' on' : '');
-    const kwCount = c.keywords.length;
-    const best = seoClientBestRank(c);
-    const bestHtml = best != null ? '<span class="seo-tree-rank">#' + best + '</span>' : '';
-    const healthHtml = seoHealthPillHtml(seoClientHealth(c), 'seo-health-pill-sm');
-    row.innerHTML = '<span class="seo-status-dot ' + seoStatusDotClass(c.status) + '" title="' + esc(c.status || 'Active') + '"></span>' +
-      '<span class="tree-name">' + esc(c.name || 'Untitled') + '</span>' +
-      healthHtml +
-      bestHtml +
-      '<span class="tree-count">' + kwCount + '</span>' +
-      '<button class="tree-kill" title="Delete client">\u00d7</button>';
+    row.className = 'folder-row';
+    const kids = seoClientsInFolder(f.id);
+    row.innerHTML = SEO_ICON_CARET + SEO_ICON_FOLDER +
+      '<span class="folder-name">' + esc(f.name) + '</span>' +
+      '<span class="folder-n">' + kids.length + '</span>' +
+      '<button class="folder-act rename" type="button" title="Rename folder">\u270e</button>' +
+      '<button class="folder-act kill" type="button" title="Delete folder">\u00d7</button>';
     row.addEventListener('click', e => {
-      if (e.target.closest('.tree-kill')) return;
-      state.activeSeoClientId = c.id; save(); renderSeoAll();
+      if (e.target.closest('.folder-act')) return;
+      f.collapsed = !f.collapsed;
+      save(); renderSeoTree();
     });
-    row.querySelector('.tree-kill').addEventListener('click', e => {
-      e.stopPropagation();
-      if (!confirm('Delete \u201c' + (c.name || 'this client') + '\u201d and all of its keywords?')) return;
-      tombstone('seoClient', c.id);
-      (c.keywords || []).forEach(dk => { tombstone('seoKw', dk.id); (dk.locations || []).forEach(dl => tombstone('seoLoc', dl.id)); });
-      state.seoClients = state.seoClients.filter(x => x.id !== c.id);
-      if (state.activeSeoClientId === c.id) state.activeSeoClientId = state.seoClients.length ? state.seoClients[0].id : null;
-      save(); renderSeoTree(); renderSeoAll();
-      toast('Client deleted');
-    });
-    tree.appendChild(row);
+    row.querySelector('.rename').addEventListener('click', e => { e.stopPropagation(); seoRenameFolder(f); });
+    row.querySelector('.kill').addEventListener('click', e => { e.stopPropagation(); seoDeleteFolder(f); });
+    seoWireDropTarget(row, f.id);
+    wrap.appendChild(row);
+
+    const kidWrap = document.createElement('div');
+    kidWrap.className = 'folder-kids';
+    if (!kids.length){
+      const e0 = document.createElement('div');
+      e0.className = 'folder-empty';
+      e0.textContent = 'Empty \u2014 drag a client here.';
+      kidWrap.appendChild(e0);
+    } else kids.forEach(c => kidWrap.appendChild(seoClientRowEl(c, '')));
+    seoWireDropTarget(kidWrap, f.id);
+    wrap.appendChild(kidWrap);
+
+    tree.appendChild(wrap);
   });
+
+  seoClientsInFolder(null).forEach(c => tree.appendChild(seoClientRowEl(c, '')));
+
+  /* Only visible while something is being dragged, so it never takes up
+     room in the list the rest of the time. */
+  const rootDrop = document.createElement('div');
+  rootDrop.className = 'rail-root-drop';
+  rootDrop.textContent = 'Drop here to take a client out of its folder';
+  seoWireDropTarget(rootDrop, null);
+  tree.appendChild(rootDrop);
 }
 
 async function seoAddClient(){
@@ -8940,6 +10019,8 @@ async function seoAddClient(){
 }
 $('seoAddClientBtn').addEventListener('click', seoAddClient);
 $('seoEmptyAddBtn').addEventListener('click', seoAddClient);
+const seoAddFolderBtn = $('seoAddFolderBtn');
+if (seoAddFolderBtn) seoAddFolderBtn.addEventListener('click', seoAddFolder);
 $('seoClientSearch').addEventListener('input', renderSeoTree);
 
 /* ---------- dashboard ---------- */
@@ -10134,14 +11215,223 @@ $('seoImportFile').addEventListener('change', e => {
   e.target.value = '';
 });
 
-/* ---------- dashboard / keywords tab switch ---------- */
-function seoShowTab(v){
-  document.querySelectorAll('#seoStage .seo-mode').forEach(b => b.classList.toggle('on', b.dataset.seoview === v));
-  $('seoview-dashboard').classList.toggle('on', v === 'dashboard');
-  $('seoview-keywords').classList.toggle('on', v === 'keywords');
+/* ==========================================================================
+   PERSONALISED DASHBOARDS
+
+   A client often already has a page that says something this tool doesn't -
+   a GA4 report published to GitHub Pages, a Looker Studio board, a live
+   status page. Rather than keeping that link in a spreadsheet somewhere,
+   it becomes a tab on the client itself, beside Dashboard and Keywords.
+
+   Each one is three fields on the client record: an id, a name and a URL.
+   Nothing else in the app reads them, so a client with no dashboards gets
+   exactly the two tabs it has always had, and adding one changes nothing
+   about scanning, reporting or the published client link.
+
+   The page is shown in an iframe. Most static dashboards are happy to be
+   framed; a few sites refuse, and there is no way to ask them in advance
+   from another origin, so the frame is given a few seconds and then says so
+   plainly with a way out rather than sitting there blank.
+   ========================================================================== */
+function seoDashboards(c){
+  if (!c) return [];
+  if (!Array.isArray(c.dashboards)) c.dashboards = [];
+  return c.dashboards;
 }
-document.querySelectorAll('#seoStage .seo-mode').forEach(btn => {
-  btn.addEventListener('click', () => seoShowTab(btn.dataset.seoview));
+function seoDashById(c, id){ return seoDashboards(c).find(d => d.id === id) || null; }
+
+/* Typing "example.com/board" should work; typing something that isn't a web
+   address at all should not silently become one. */
+function seoNormalizeDashUrl(raw){
+  let v = (raw || '').trim();
+  if (!v) return null;
+  if (!/^[a-z][a-z0-9+.-]*:/i.test(v)) v = 'https://' + v;
+  let u;
+  try{ u = new URL(v); }catch(e){ return null; }
+  if (u.protocol !== 'http:' && u.protocol !== 'https:') return null;
+  if (!u.hostname || u.hostname.indexOf('.') === -1) return null;
+  return u.href;
+}
+
+let seoActiveTab = 'dashboard';          /* 'dashboard' | 'keywords' | 'dash:<id>' */
+let seoEmbedLoadTimer = null;
+
+function renderSeoTabs(){
+  const nav = $('seoModes');
+  if (!nav) return;
+  const c = activeSeoClient();
+  nav.innerHTML = '';
+
+  const tab = (view, label, title) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'seo-mode' + (seoActiveTab === view ? ' on' : '');
+    b.dataset.seoview = view;
+    b.textContent = label;
+    if (title) b.title = title;
+    nav.appendChild(b);
+  };
+
+  tab('dashboard', 'Dashboard');
+  tab('keywords', 'Keywords');
+  if (!c) return;
+
+  seoDashboards(c).forEach(d => tab('dash:' + d.id, d.name, d.url));
+
+  const add = document.createElement('button');
+  add.type = 'button';
+  add.className = 'seo-mode-add';
+  add.textContent = '+';
+  add.title = 'Pin a page to this client as a new tab';
+  add.addEventListener('click', () => openSeoDashModal(null));
+  nav.appendChild(add);
+}
+
+function seoShowTab(v){
+  const c = activeSeoClient();
+  /* A tab belonging to a client you have since navigated away from can't be
+     shown, so fall back rather than leaving an empty frame on screen. */
+  if (v && v.indexOf('dash:') === 0 && !seoDashById(c, v.slice(5))) v = 'dashboard';
+  seoActiveTab = v || 'dashboard';
+  const isEmbed = seoActiveTab.indexOf('dash:') === 0;
+  $('seoview-dashboard').classList.toggle('on', seoActiveTab === 'dashboard');
+  $('seoview-keywords').classList.toggle('on', seoActiveTab === 'keywords');
+  $('seoview-embed').classList.toggle('on', isEmbed);
+  if (isEmbed && c){
+    const d = seoDashById(c, seoActiveTab.slice(5));
+    c.activeDashboardId = d ? d.id : null;
+    save();
+    seoLoadEmbed(d);
+  } else {
+    /* Leaving the tab stops whatever the framed page was doing - some of
+       these boards poll continuously. */
+    seoClearEmbed();
+  }
+  renderSeoTabs();
+}
+
+function seoClearEmbed(){
+  clearTimeout(seoEmbedLoadTimer);
+  const frame = $('seoEmbedFrame');
+  if (frame && frame.getAttribute('src')) frame.removeAttribute('src');
+  seoExitEmbedFullscreen();
+}
+function seoLoadEmbed(d){
+  const frame = $('seoEmbedFrame'), note = $('seoEmbedNote');
+  if (!frame) return;
+  clearTimeout(seoEmbedLoadTimer);
+  note.classList.remove('on');
+  $('seoEmbedName').textContent = d ? d.name : 'Dashboard';
+  $('seoEmbedUrl').textContent = d ? d.url : '';
+  if (!d){ frame.removeAttribute('src'); return; }
+  frame.src = d.url;
+  /* A refused frame doesn't report anything useful from another origin, so
+     this is a deadline rather than a detector: if nothing has loaded by
+     now, say so and offer the way out. */
+  seoEmbedLoadTimer = setTimeout(() => note.classList.add('on'), 6000);
+}
+if ($('seoEmbedFrame')){
+  $('seoEmbedFrame').addEventListener('load', () => {
+    clearTimeout(seoEmbedLoadTimer);
+    $('seoEmbedNote').classList.remove('on');
+  });
+}
+function seoCurrentDash(){
+  const c = activeSeoClient();
+  if (!c || seoActiveTab.indexOf('dash:') !== 0) return null;
+  return seoDashById(c, seoActiveTab.slice(5));
+}
+function seoExitEmbedFullscreen(){
+  const wrap = $('seoEmbedWrap');
+  if (wrap && wrap.classList.contains('fullscreen')){
+    wrap.classList.remove('fullscreen');
+    document.body.classList.remove('map-locked');
+    const b = $('seoEmbedFull'); if (b) b.textContent = 'Full screen';
+  }
+}
+if ($('seoEmbedFull')) $('seoEmbedFull').addEventListener('click', () => {
+  const wrap = $('seoEmbedWrap');
+  const on = wrap.classList.toggle('fullscreen');
+  document.body.classList.toggle('map-locked', on);
+  $('seoEmbedFull').textContent = on ? 'Exit full screen' : 'Full screen';
+});
+if ($('seoEmbedReload')) $('seoEmbedReload').addEventListener('click', () => seoLoadEmbed(seoCurrentDash()));
+const seoEmbedOpenIt = () => { const d = seoCurrentDash(); if (d) window.open(d.url, '_blank', 'noopener'); };
+if ($('seoEmbedOpen')) $('seoEmbedOpen').addEventListener('click', seoEmbedOpenIt);
+if ($('seoEmbedNoteOpen')) $('seoEmbedNoteOpen').addEventListener('click', seoEmbedOpenIt);
+if ($('seoEmbedEdit')) $('seoEmbedEdit').addEventListener('click', () => {
+  const d = seoCurrentDash();
+  if (d) openSeoDashModal(d.id);
+});
+if ($('seoEmbedRemove')) $('seoEmbedRemove').addEventListener('click', () => {
+  const c = activeSeoClient(), d = seoCurrentDash();
+  if (!c || !d) return;
+  if (!confirm('Remove the \u201c' + d.name + '\u201d tab from ' + (c.name || 'this client') + '? The page itself isn\u2019t touched \u2014 only the link to it.')) return;
+  tombstone('seoDash', d.id);
+  c.dashboards = seoDashboards(c).filter(x => x.id !== d.id);
+  if (c.activeDashboardId === d.id) c.activeDashboardId = null;
+  save();
+  seoShowTab('dashboard');
+  toast('Tab removed');
+});
+
+/* ---- add / edit dialog ---- */
+let seoDashEditingId = null;
+function openSeoDashModal(id){
+  const c = activeSeoClient();
+  if (!c){ toast('Open a client first', 'err'); return; }
+  seoDashEditingId = id || null;
+  const d = id ? seoDashById(c, id) : null;
+  $('seoDashModalTitle').textContent = d ? 'Edit this dashboard' : 'Add a dashboard to ' + (c.name || 'this client');
+  $('seoDashName').value = d ? d.name : '';
+  $('seoDashUrl').value = d ? d.url : '';
+  $('seoDashOk').textContent = d ? 'Save changes' : 'Add dashboard';
+  setStatus('seoDashStatus', '', '');
+  $('seoDashBackdrop').classList.add('on');
+  setTimeout(() => $('seoDashName').focus(), 40);
+}
+function closeSeoDashModal(){ $('seoDashBackdrop').classList.remove('on'); seoDashEditingId = null; }
+$('seoDashCancel').addEventListener('click', closeSeoDashModal);
+$('seoDashBackdrop').addEventListener('click', e => { if (e.target === $('seoDashBackdrop')) closeSeoDashModal(); });
+$('seoDashOk').addEventListener('click', () => {
+  ensureSeoState();
+  const c = activeSeoClient();
+  if (!c) return;
+  const name = $('seoDashName').value.trim();
+  const url = seoNormalizeDashUrl($('seoDashUrl').value);
+  if (!name){ setStatus('seoDashStatus', 'Give the tab a name \u2014 it\u2019s what you\u2019ll click on.', 'err'); return; }
+  if (!url){ setStatus('seoDashStatus', 'That doesn\u2019t look like a web address. Paste the full link, e.g. https://username.github.io/client-ga4/', 'err'); return; }
+  let d = seoDashEditingId ? seoDashById(c, seoDashEditingId) : null;
+  if (d){ d.name = name; d.url = url; }
+  else {
+    d = {id: uid(), name: name, url: url};
+    seoDashboards(c).push(d);
+  }
+  c.activeDashboardId = d.id;
+  save();
+  closeSeoDashModal();
+  seoShowTab('dash:' + d.id);
+  toast(seoDashEditingId ? 'Dashboard updated' : 'Dashboard added');
+});
+['seoDashName', 'seoDashUrl'].forEach(id => {
+  $(id).addEventListener('keydown', e => {
+    if (e.key === 'Enter'){ e.preventDefault(); $('seoDashOk').click(); }
+    if (e.key === 'Escape') closeSeoDashModal();
+  });
+});
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  const wrap = $('seoEmbedWrap');
+  if (wrap && wrap.classList.contains('fullscreen')) seoExitEmbedFullscreen();
+});
+
+/* One listener on the strip rather than one per button, because the tabs
+   are rebuilt every time a client is opened. */
+const seoModesNav = $('seoModes');
+if (seoModesNav) seoModesNav.addEventListener('click', e => {
+  const btn = e.target.closest('.seo-mode');
+  if (!btn) return;
+  seoShowTab(btn.dataset.seoview);
 });
 
 /* ---------- top-level render + module switch ---------- */
@@ -10171,6 +11461,10 @@ function renderSeoAll(){
   ensureSeoState();
   renderSeoTree();
   const c = activeSeoClient();
+  /* Tabs belong to the client, so opening a different one has to rebuild
+     them - and drop you back on a tab that exists. */
+  if (seoActiveTab.indexOf('dash:') === 0 && !seoDashById(c, seoActiveTab.slice(5))) seoShowTab('dashboard');
+  renderSeoTabs();
   $('seoEmptyState').style.display = c ? 'none' : '';
   $('seoDashboardView').style.display = c ? 'block' : 'none';
   $('seoKeywordsView').style.display = c ? 'block' : 'none';
@@ -10386,6 +11680,7 @@ function setModule(m){
     if (!state.activeSeoClientId && state.seoClients.length) state.activeSeoClientId = state.seoClients[0].id;
     seoShowTab('dashboard');
     renderSeoAll();
+    renderSeoTabs();
   } else if (m === 'serp'){
     serpShowView(state.serpView || 'checker');
     renderSerpRecents();
@@ -10480,7 +11775,95 @@ function seoReportDefaults(c){
     intro: '',
     locKeys: null,          // null means "every location"
     showDates: true, showLinks: true, showDelta: true,
-    showStats: true, showUnranked: true, openAll: true
+    showStats: true, showUnranked: true, openAll: true,
+    /* null means "whatever the latest scan says". A timestamp pins the link
+       to one particular run. */
+    asOf: null,
+    showSnapshot: false,
+    autoPublish: false
+  };
+}
+
+/* ==========================================================================
+   SCAN VERSIONS
+
+   A client can be scanned three times in a month, and the link a client
+   opens should be the one you chose to send them - not simply the newest
+   numbers the tool happens to be holding.
+
+   A version is a run: every check that happened within a few hours of every
+   other. Runs are worked out from the history already stored on each
+   location, so nothing new is recorded, nothing changes in the database, and
+   every past month a client already has is available immediately.
+
+   Publishing with a run selected freezes the report at that run. Publishing
+   with "most recent" selected behaves exactly as it always did.
+   ========================================================================== */
+const SEO_RUN_WINDOW = 6 * 60 * 60 * 1000;   /* a run is one sitting, not one instant */
+const SEO_RUN_MAX = 24;                      /* two years of monthlies is plenty to offer */
+
+function seoRunLabel(ts, count){
+  const d = new Date(ts);
+  const when = d.toLocaleDateString(undefined, {year:'numeric', month:'short', day:'numeric'}) +
+    ' \u00b7 ' + d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  return count ? when + '  (' + count + ' check' + (count === 1 ? '' : 's') + ')' : when;
+}
+
+function seoScanRunsFor(c){
+  const stamps = [];
+  (c.keywords || []).forEach(k => (k.locations || []).forEach(l => {
+    (l.history || []).forEach(h => { if (h && h.checkedAt) stamps.push(h.checkedAt); });
+    /* A location checked before history was being kept still has its own
+       stamp, and it would be odd for the newest run to be the one missing. */
+    if (l.checkedAt && !(l.history || []).some(h => h && h.checkedAt === l.checkedAt)) stamps.push(l.checkedAt);
+  }));
+  if (!stamps.length) return [];
+  stamps.sort((a, b) => a - b);
+  const runs = [];
+  stamps.forEach(ts => {
+    const cur = runs[runs.length - 1];
+    if (cur && ts - cur.last <= SEO_RUN_WINDOW){ cur.last = ts; cur.count++; }
+    else runs.push({first: ts, last: ts, count: 1});
+  });
+  return runs
+    .map(r => ({ts: r.last, first: r.first, count: r.count, label: seoRunLabel(r.last, r.count)}))
+    .sort((a, b) => b.ts - a.ts)
+    .slice(0, SEO_RUN_MAX);
+}
+
+/* What one location looked like at a point in time. With no asOf this is
+   simply the live values, which is why an unpinned report is byte for byte
+   what it used to be. */
+function seoLocRankAsOf(loc, asOf){
+  if (!asOf){
+    return {
+      rank: loc.rank == null ? null : loc.rank,
+      prevRank: loc.prevRank == null ? null : loc.prevRank,
+      checkedAt: loc.checkedAt || null,
+      manual: !!loc.manual,
+      history: (loc.history || []).filter(h => h && h.rank != null)
+    };
+  }
+  const hist = (loc.history || [])
+    .filter(h => h && h.rank != null && h.checkedAt != null && h.checkedAt <= asOf)
+    .sort((a, b) => a.checkedAt - b.checkedAt);
+  if (!hist.length){
+    /* No history that far back. If the live reading itself predates the
+       chosen run it's still the truth at that moment; otherwise this
+       keyword simply hadn't been checked yet. */
+    if (loc.checkedAt && loc.checkedAt <= asOf){
+      return {rank: loc.rank, prevRank: null, checkedAt: loc.checkedAt, manual: !!loc.manual, history: []};
+    }
+    return {rank: null, prevRank: null, checkedAt: null, manual: false, history: []};
+  }
+  const cur = hist[hist.length - 1];
+  const prev = hist.length > 1 ? hist[hist.length - 2] : null;
+  return {
+    rank: cur.rank,
+    prevRank: prev ? prev.rank : null,
+    checkedAt: cur.checkedAt,
+    manual: !!cur.manual,
+    history: hist
   };
 }
 
@@ -10489,6 +11872,9 @@ function seoReportDefaults(c){
 function buildSeoReportPayload(c, opts){
   const {groups} = seoBuildLocationGroups(c);
   const wanted = Array.isArray(opts.locKeys) ? opts.locKeys : groups.map(g => g.key);
+  /* One number decides the whole report: null publishes the live figures,
+     a timestamp rebuilds every row as it stood at that run. */
+  const asOf = opts.asOf ? Number(opts.asOf) : null;
   const outGroups = groups
     .filter(g => wanted.indexOf(g.key) !== -1)
     .map(g => ({
@@ -10496,21 +11882,24 @@ function buildSeoReportPayload(c, opts){
       keywords: g.entries
         .slice()
         .sort((a, b) => a.k.text.localeCompare(b.k.text))
-        .filter(({loc}) => opts.showUnranked || (loc.rank != null && loc.rank > 0))
-        .map(({k, loc}) => ({
-          text: k.text || '',
-          rank: loc.rank == null ? null : loc.rank,
-          prevRank: opts.showDelta && loc.prevRank != null ? loc.prevRank : null,
-          manual: !!loc.manual,
-          checkedAt: opts.showDates && loc.checkedAt ? loc.checkedAt : null,
-          sourceUrl: opts.showLinks && loc.sourceUrl ? loc.sourceUrl : null,
-          /* Ten points is enough to show a direction and small enough that a
-             hundred-keyword client still publishes in one write. Tied to the
-             same switch as the change column, since both describe movement. */
-          history: opts.showDelta
-            ? (loc.history || []).filter(h => h && h.rank != null).slice(-10).map(h => ({rank: h.rank}))
-            : []
-        }))
+        .map(({k, loc}) => {
+          const snap = seoLocRankAsOf(loc, asOf);
+          return {
+            text: k.text || '',
+            rank: snap.rank == null ? null : snap.rank,
+            prevRank: opts.showDelta && snap.prevRank != null ? snap.prevRank : null,
+            manual: !!snap.manual,
+            checkedAt: opts.showDates && snap.checkedAt ? snap.checkedAt : null,
+            sourceUrl: opts.showLinks && loc.sourceUrl ? loc.sourceUrl : null,
+            /* Ten points is enough to show a direction and small enough that a
+               hundred-keyword client still publishes in one write. Tied to the
+               same switch as the change column, since both describe movement. */
+            history: opts.showDelta
+              ? snap.history.slice(-10).map(h => ({rank: h.rank}))
+              : []
+          };
+        })
+        .filter(row => opts.showUnranked || (row.rank != null && row.rank > 0))
     }))
     .filter(g => g.keywords.length);
 
@@ -10524,6 +11913,13 @@ function buildSeoReportPayload(c, opts){
     intro: (opts.intro || '').trim() || null,
     showStats: !!opts.showStats,
     openAll: !!opts.openAll,
+    /* Which run this snapshot came from, and whether the client should see
+       it. Both are new and optional, so a report published before today
+       simply doesn't carry them and renders exactly as it did. */
+    asOf: asOf,
+    snapshotLabel: (asOf && opts.showSnapshot)
+      ? ('Scan of ' + new Date(asOf).toLocaleDateString(undefined, {year:'numeric', month:'long', day:'numeric'}))
+      : null,
     groups: outGroups,
     updatedAt: Date.now(),
     updatedBy: fbUid || null
@@ -10547,6 +11943,7 @@ let seoShareClientId = null;
 function seoShareReadOpts(){
   const locKeys = Array.from($('seoShareLocs').querySelectorAll('input[type=checkbox]'))
     .filter(cb => cb.checked).map(cb => cb.value);
+  const rawVersion = ($('seoShareVersion').value || '').trim();
   return {
     title: $('seoShareTitle').value,
     intro: $('seoShareIntro').value,
@@ -10556,7 +11953,10 @@ function seoShareReadOpts(){
     showDelta: $('seoShareShowDelta').checked,
     showStats: $('seoShareShowStats').checked,
     showUnranked: $('seoShareShowUnranked').checked,
-    openAll: $('seoShareOpenAll').checked
+    openAll: $('seoShareOpenAll').checked,
+    asOf: rawVersion ? Number(rawVersion) : null,
+    showSnapshot: $('seoShareShowSnapshot').checked,
+    autoPublish: $('seoShareAutoPublish').checked
   };
 }
 function openSeoShareModal(){
@@ -10578,6 +11978,44 @@ function openSeoShareModal(){
   $('seoShareShowStats').checked = saved.showStats !== false;
   $('seoShareShowUnranked').checked = saved.showUnranked !== false;
   $('seoShareOpenAll').checked = saved.openAll !== false;
+  $('seoShareShowSnapshot').checked = !!saved.showSnapshot;
+  $('seoShareAutoPublish').checked = !!saved.autoPublish;
+
+  /* Every run this client has on record, newest first. The one that was
+     published last time is reselected, so reopening the dialog shows you
+     what the client is currently looking at rather than resetting to now. */
+  const versionSel = $('seoShareVersion');
+  const runs = seoScanRunsFor(c);
+  versionSel.innerHTML = '';
+  const live = document.createElement('option');
+  live.value = '';
+  live.textContent = 'Most recent scan \u2014 moves forward each time you publish';
+  versionSel.appendChild(live);
+  runs.forEach((r, i) => {
+    const o = document.createElement('option');
+    o.value = String(r.ts);
+    o.textContent = (i === 0 ? 'Latest run \u2014 ' : 'Scan of ') + r.label;
+    versionSel.appendChild(o);
+  });
+  const savedAsOf = saved.asOf ? String(saved.asOf) : '';
+  if (savedAsOf && !runs.some(r => String(r.ts) === savedAsOf)){
+    /* Pinned to a run that has since aged out of the stored history. Keep it
+       selectable rather than silently pushing the client's link forward. */
+    const o = document.createElement('option');
+    o.value = savedAsOf;
+    o.textContent = 'Scan of ' + seoRunLabel(Number(savedAsOf));
+    versionSel.appendChild(o);
+  }
+  versionSel.value = savedAsOf;
+  const versionHint = $('seoShareVersionHint');
+  const paintVersionHint = () => {
+    const pinned = !!versionSel.value;
+    versionHint.textContent = pinned
+      ? 'Pinned. The link shows this run\u2019s positions and stays there \u2014 later scans won\u2019t move it until you pick a different version and publish.'
+      : 'Live. Every time you press Publish the link updates to the newest positions.';
+  };
+  versionSel.onchange = paintVersionHint;
+  paintVersionHint();
 
   const box = $('seoShareLocs');
   box.innerHTML = '';
@@ -10632,6 +12070,12 @@ $('seoShareOk').addEventListener('click', async () => {
     return;
   }
 
+  /* Once a link exists, a finished scan has a decision to make about it -
+     this is the flag that tells it so. */
+  c.reportPublished = true;
+  c.reportPublishedAt = Date.now();
+  save();
+
   const url = seoReportUrlFor(res.id);
   $('seoShareUrl').value = url;
   $('seoShareEmbed').value = seoReportEmbedCode(url);
@@ -10639,7 +12083,9 @@ $('seoShareOk').addEventListener('click', async () => {
   $('seoSharePreview').style.display = '';
   $('seoShareOk').textContent = 'Publish again';
   try{ await navigator.clipboard.writeText(url); }catch(e){ /* the link is on screen either way */ }
-  setStatus('seoShareStatus', 'Published \u2014 link copied. Publish again any time to refresh it; the link stays the same.', 'ok');
+  setStatus('seoShareStatus', opts.asOf
+    ? 'Published \u2014 link copied. It is pinned to the scan you picked and will stay on it until you publish a different version.'
+    : 'Published \u2014 link copied. Publish again any time to refresh it; the link stays the same.', 'ok');
 });
 $('seoSharePreview').addEventListener('click', () => {
   const u = $('seoShareUrl').value;
@@ -10776,6 +12222,15 @@ function renderSeoReport(data){
     headText.appendChild(p);
   }
   head.appendChild(headText);
+  /* When a prior version was deliberately published, say so. Without it a
+     client comparing two months has no way to tell which is which. Reports
+     published on the live setting carry no label and print nothing. */
+  if (data.snapshotLabel){
+    const stamp = document.createElement('div');
+    stamp.className = 'kwr-stamp';
+    stamp.textContent = data.snapshotLabel;
+    head.appendChild(stamp);
+  }
   /* No "updated" stamp and no per-row timestamps: the report is a snapshot
      that gets republished, and a date on the page only ever raises the
      question of whether it's the freshest one. The publish date still lives
